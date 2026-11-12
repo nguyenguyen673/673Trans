@@ -1,4 +1,5 @@
-// Shared settings form for LLM based translators (DeepSeek, Claude, OpenAI compatible...).
+// Shared settings form for AI providers: translators (DeepSeek, Claude, ...),
+// OCR (mode='ocr') and text to speech (mode='tts').
 // To add another provider: copy src/services/translate/deepseek, change the
 // defaults, then register it in src/services/translate/index.jsx,
 // src-tauri/src/config.rs (builtin_translate_list) and the i18n files.
@@ -51,6 +52,12 @@ export function LlmConfig(props) {
         modelHint,
         requestPathHint,
         supportsStream = true,
+        // 'translate' (system + user prompt), 'ocr' (one prompt), 'tts' (no prompt)
+        mode = 'translate',
+        // extra text fields: [{ key, label, desc }]
+        extraFields = [],
+        // async (config) => void, throws when the settings do not work. Default: translate "hello"
+        test,
     } = props;
     const { t } = useTranslation();
     const [config, setConfig] = useConfig(
@@ -58,10 +65,10 @@ export function LlmConfig(props) {
         {
             [INSTANCE_NAME_CONFIG_KEY]: title,
             apiKey: '',
-            stream: supportsStream,
             timeout: DEFAULT_TIMEOUT,
-            systemPrompt: DEFAULT_SYSTEM_PROMPT,
-            userPrompt: DEFAULT_USER_PROMPT,
+            ...(mode === 'translate'
+                ? { stream: supportsStream, systemPrompt: DEFAULT_SYSTEM_PROMPT, userPrompt: DEFAULT_USER_PROMPT }
+                : {}),
             ...defaults,
         },
         { sync: false }
@@ -77,7 +84,10 @@ export function LlmConfig(props) {
                     e.preventDefault();
                     setIsLoading(true);
                     // Test with one real request before saving
-                    translate('hello', Language.auto, Language.vi, { config: { ...config, stream: false } }).then(
+                    const runTest = test
+                        ? test(config)
+                        : translate('hello', Language.auto, Language.vi, { config: { ...config, stream: false } });
+                    Promise.resolve(runTest).then(
                         () => {
                             setIsLoading(false);
                             setConfig(config, true);
@@ -165,7 +175,21 @@ export function LlmConfig(props) {
                             onValueChange={(v) => set('model', v)}
                         />
                     </Field>
-                    {supportsStream && (
+                    {extraFields.map((field) => (
+                        <Field
+                            key={field.key}
+                            label={field.label}
+                            desc={field.desc}
+                        >
+                            <Input
+                                aria-label={field.key}
+                                value={config[field.key] ?? ''}
+                                variant='bordered'
+                                onValueChange={(v) => set(field.key, v)}
+                            />
+                        </Field>
+                    ))}
+                    {mode === 'translate' && supportsStream && (
                         <Field
                             label={t('services.llm.stream')}
                             desc={t('services.llm.stream_desc')}
@@ -181,35 +205,51 @@ export function LlmConfig(props) {
                     )}
                 </Group>
 
-                <Group title={t('services.llm.prompt')}>
-                    <div className='py-2'>
-                        <Textarea
-                            label={t('services.llm.system_prompt')}
-                            labelPlacement='outside'
-                            variant='bordered'
-                            minRows={2}
-                            value={config.systemPrompt}
-                            onValueChange={(v) => set('systemPrompt', v)}
-                        />
-                        <Textarea
-                            className='mt-2'
-                            label={t('services.llm.user_prompt')}
-                            labelPlacement='outside'
-                            variant='bordered'
-                            minRows={2}
-                            value={config.userPrompt}
-                            onValueChange={(v) => set('userPrompt', v)}
-                        />
-                        <p className='config-desc'>{t('services.llm.prompt_description')}</p>
-                    </div>
-                </Group>
+                {mode === 'translate' && (
+                    <Group title={t('services.llm.prompt')}>
+                        <div className='py-2'>
+                            <Textarea
+                                label={t('services.llm.system_prompt')}
+                                labelPlacement='outside'
+                                variant='bordered'
+                                minRows={2}
+                                value={config.systemPrompt}
+                                onValueChange={(v) => set('systemPrompt', v)}
+                            />
+                            <Textarea
+                                className='mt-2'
+                                label={t('services.llm.user_prompt')}
+                                labelPlacement='outside'
+                                variant='bordered'
+                                minRows={2}
+                                value={config.userPrompt}
+                                onValueChange={(v) => set('userPrompt', v)}
+                            />
+                            <p className='config-desc'>{t('services.llm.prompt_description')}</p>
+                        </div>
+                    </Group>
+                )}
+                {mode === 'ocr' && (
+                    <Group title={t('services.llm.prompt')}>
+                        <div className='py-2'>
+                            <Textarea
+                                aria-label='prompt'
+                                variant='bordered'
+                                minRows={2}
+                                value={config.prompt}
+                                onValueChange={(v) => set('prompt', v)}
+                            />
+                            <p className='config-desc'>{t('services.llm.ocr_prompt_description')}</p>
+                        </div>
+                    </Group>
+                )}
 
                 <Button
                     type='submit'
                     isLoading={isLoading}
                     fullWidth
                     color='primary'
-                    className='mt-4'
+                    className='llm-save mt-4'
                 >
                     {t('common.save')}
                 </Button>

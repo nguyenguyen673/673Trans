@@ -67,7 +67,7 @@ export default function Recognize(props) {
             <Card
                 className={`${
                     osType === 'Linux' ? 'h-[calc(100vh-140px)]' : 'h-[calc(100vh-120px)]'
-                } overflow-y-auto p-5 flex justify-between`}
+                } overflow-y-auto p-3 flex justify-between`}
             >
                 <DragDropContext onDragEnd={onDragEnd}>
                     <Droppable
@@ -103,7 +103,7 @@ export default function Recognize(props) {
                                                                 setCurrentConfigKey={setCurrentConfigKey}
                                                                 onConfigOpen={onConfigOpen}
                                                             />
-                                                            <Spacer y={2} />
+                                                            <Spacer y={1.5} />
                                                         </div>
                                                     );
                                                 }}

@@ -348,3 +348,23 @@
     flex: none;
     width: 52%;
 }
+
+/* ---------- Service list rows (compact) ---------- */
+.service-row {
+    align-items: center;
+    border-radius: 10px;
+}
+
+.service-row h2 {
+    font-size: 13.5px;
+    font-weight: 500;
+}
+
+/* Save button of the AI provider form stays visible while the form scrolls
+   (in the translation service dialog it is replaced by the footer buttons) */
+.llm-save {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    box-shadow: 0 -10px 12px 2px hsl(var(--nextui-content1));
+}

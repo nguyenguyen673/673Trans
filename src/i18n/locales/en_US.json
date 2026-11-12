@@ -495,12 +495,36 @@
                 },
                 "qrcode": {
                     "title": "QR Code"
+                },
+                "openai_ocr": {
+                    "title": "GPT (OpenAI) OCR"
+                },
+                "openai_compatible_ocr": {
+                    "title": "OpenAI compatible OCR"
+                },
+                "claude_ocr": {
+                    "title": "Claude OCR"
+                },
+                "gemini_ocr": {
+                    "title": "Gemini OCR"
                 }
             },
             "tts": {
                 "lingva_tts": {
                     "title": "Lingva",
                     "request_path": "Request Path"
+                },
+                "openai_tts": {
+                    "title": "OpenAI TTS",
+                    "voice_hint": "e.g. alloy, nova, shimmer"
+                },
+                "elevenlabs_tts": {
+                    "title": "ElevenLabs",
+                    "voice_hint": "The Voice ID (not the name) from your ElevenLabs voice library."
+                },
+                "gemini_tts": {
+                    "title": "Gemini TTS",
+                    "voice_hint": "e.g. Kore, Puck, Aoede"
                 }
             },
             "collection": {
@@ -527,10 +551,13 @@
                 "timeout": "Timeout",
                 "timeout_desc": "Give up when the provider has not answered after this long.",
                 "api_key_desc": "Stored only in the config file on this computer.",
-                "request_path_desc": "Full URL of the chat endpoint.",
+                "request_path_desc": "Address of the provider API.",
                 "model_desc": "Type the model name exactly as the provider writes it.",
                 "stream_desc": "Show the translation while it is being written.",
-                "prompt": "Prompt"
+                "prompt": "Prompt",
+                "voice": "Voice",
+                "ocr_prompt_description": "What the model is told to do with the screenshot.",
+                "vision_model_hint": "Must be a model that accepts images."
             }
         },
         "translate": {

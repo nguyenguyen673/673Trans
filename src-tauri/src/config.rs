@@ -53,6 +53,10 @@ fn check_available(list: Vec<String>, builtin: Vec<&str>, plugin: Vec<String>, k
 pub fn check_service_available() -> Result<(), Error> {
     let builtin_recognize_list: Vec<&str> = vec![
         "baidu_ocr",
+        "openai_ocr",
+        "openai_compatible_ocr",
+        "claude_ocr",
+        "gemini_ocr",
         "baidu_accurate_ocr",
         "baidu_img_ocr",
         "iflytek_ocr",
@@ -94,7 +98,8 @@ pub fn check_service_available() -> Result<(), Error> {
         "yandex",
         "youdao",
     ];
-    let builtin_tts_list: Vec<&str> = vec!["lingva_tts"];
+    let builtin_tts_list: Vec<&str> =
+        vec!["lingva_tts", "openai_tts", "elevenlabs_tts", "gemini_tts"];
     let builtin_collection_list: Vec<&str> = vec!["anki", "eudic"];
 
     let plugin_recognize_list: Vec<String> = get_plugin_list("recognize").unwrap_or_default();

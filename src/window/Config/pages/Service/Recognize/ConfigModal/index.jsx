@@ -30,8 +30,9 @@ export default function ConfigModal(props) {
             isOpen={isOpen}
             onOpenChange={onOpenChange}
             scrollBehavior='inside'
+            size='2xl'
         >
-            <ModalContent className='max-h-[75vh]'>
+            <ModalContent className='max-h-[88vh]'>
                 {(onClose) => (
                     <>
                         <ModalHeader>

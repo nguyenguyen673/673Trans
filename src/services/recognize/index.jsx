@@ -13,6 +13,10 @@ import * as _tencent_img_ocr from './tencent_img';
 import * as _volcengine_ocr from './volcengine';
 import * as _volcengine_multi_lang_ocr from './volcengine_multi_lang';
 import * as _qrcode from './qrcode';
+import * as _openai_ocr from './openai_ai';
+import * as _openai_compatible_ocr from './openai_compatible_ai';
+import * as _claude_ocr from './claude_ai';
+import * as _gemini_ocr from './gemini_ai';
 
 export const system = _system;
 export const tesseract = _tesseract;
@@ -29,3 +33,7 @@ export const tencent_img_ocr = _tencent_img_ocr;
 export const volcengine_ocr = _volcengine_ocr;
 export const volcengine_multi_lang_ocr = _volcengine_multi_lang_ocr;
 export const qrcode = _qrcode;
+export const openai_ocr = _openai_ocr;
+export const openai_compatible_ocr = _openai_compatible_ocr;
+export const claude_ocr = _claude_ocr;
+export const gemini_ocr = _gemini_ocr;

@@ -9,8 +9,9 @@ Bản Pot riêng của Nguyen, fork từ [pot-app/pot-desktop](https://github.co
 3. **Giao diện cài đặt mới**: font Inter (có sẵn trong app, hỗ trợ tiếng Việt), bảng màu mới, sidebar và các dòng cài đặt gọn hơn.
 4. **Giao diện tiếng Việt** (Cài đặt chung → Ngôn ngữ ứng dụng) và **màu chủ đạo** chọn được.
 5. **Trình dịch AI có sẵn**: DeepSeek, Claude, GPT (OpenAI), Gemini, và "Tương thích OpenAI" cho mọi hãng khác (OpenRouter, Qwen, Kimi, SiliconFlow, LM Studio…: tự nhập địa chỉ API và tên mô hình). Thêm ở Dịch vụ → Thêm dịch vụ có sẵn, cần khóa API của từng hãng. Tên mô hình tự nhập được.
-6. **Nút nguồn cho từng dịch vụ dịch** (trang Dịch vụ): sáng = tự dịch; tắt = dịch vụ vẫn hiện trong cửa sổ dịch nhưng chỉ dịch khi bạn bấm mở thẻ của nó. Tiện cho dịch vụ tốn tiền hoặc chậm.
-7. **Tắt tự kiểm tra cập nhật** lúc mở app (bản gốc không còn cập nhật nữa).
+6. **OCR bằng AI**: Gemini, GPT, Claude, và "tương thích OpenAI" (ảnh chụp được gửi cho mô hình đọc chữ). **Giọng đọc**: ElevenLabs, OpenAI TTS, Gemini TTS. Thêm ở Dịch vụ → OCR / Giọng nói.
+7. **Nút nguồn cho từng dịch vụ dịch** (trang Dịch vụ): sáng = tự dịch; tắt = dịch vụ vẫn hiện trong cửa sổ dịch nhưng chỉ dịch khi bạn bấm mở thẻ của nó. Tiện cho dịch vụ tốn tiền hoặc chậm.
+8. **Tắt tự kiểm tra cập nhật** lúc mở app (bản gốc không còn cập nhật nữa).
 
 Mọi thứ khác giữ nguyên. Bản này dùng chung cấu hình và plugin với Pot gốc (`%APPDATA%\com.pot-app.desktop`), nên plugin TTS, từ điển, OCR đã cài vẫn chạy. Vì vậy **không mở được cùng lúc với Pot gốc**: thoát Pot gốc ở khay hệ thống trước.
 
@@ -28,7 +29,7 @@ Chưa làm: chọn chữ bằng Shift + mũi tên chưa bật thanh.
 
 ## Số phiên bản
 
-Mỗi bản build có số riêng, xem ở tooltip của icon khay hệ thống hoặc trang Giới thiệu (bản này: 3.5.0). Đổi số ở `version` trong `src-tauri/tauri.conf.json`.
+Mỗi bản build có số riêng, xem ở tooltip của icon khay hệ thống hoặc trang Giới thiệu (bản này: 3.6.0). Đổi số ở `version` trong `src-tauri/tauri.conf.json`.
 
 ## Code nằm ở đâu
 
@@ -43,6 +44,7 @@ Mỗi bản build có số riêng, xem ở tooltip của icon khay hệ thống 
 | Danh sách màu chủ đạo | `src/utils/accent.js` |
 | Icon các trình dịch | `public/logo/<tên dịch vụ>.svg` (thay file cùng tên rồi build lại) |
 | Hộp thoại thêm/sửa dịch vụ dịch | `src/window/Config/pages/Service/Translate/ConfigModal/index.jsx` |
+| OCR / giọng đọc bằng AI | `src/services/recognize/*_ai/`, `src/services/tts/{openai,elevenlabs,gemini}/`, phần dùng chung ở `src/services/_ai/` |
 | Trình dịch AI (form chung, prompt mặc định) | `src/services/translate/_llm/`, từng hãng ở `deepseek/`, `claude/`, `openai/`, `geminipro/` |
 | Bảng màu sáng/tối, màu nhấn (`primary`) | `tailwind.config.cjs` |
 | Font chữ toàn app (`--app-font`) | `src/style.css` |

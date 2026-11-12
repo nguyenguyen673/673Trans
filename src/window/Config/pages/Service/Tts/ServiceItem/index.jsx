@@ -27,11 +27,11 @@ export default function ServiceItem(props) {
         <></>
     ) : (
         serviceInstanceConfig !== null && (
-            <div className='bg-content2 rounded-md px-[10px] py-[20px] flex justify-between'>
+            <div className='bg-content2 rounded-md service-row px-[10px] py-[7px] flex justify-between'>
                 <div className='flex'>
                     <div
                         {...drag}
-                        className='text-2xl my-auto'
+                        className='text-[19px] my-auto'
                     >
                         <RxDragHandleHorizontal />
                     </div>
@@ -41,7 +41,7 @@ export default function ServiceItem(props) {
                         <>
                             <img
                                 src={`${builtinServices[serviceName].info.icon}`}
-                                className='h-[24px] w-[24px] my-auto'
+                                className='service-icon my-auto'
                                 draggable={false}
                             />
                             <Spacer x={2} />
@@ -55,7 +55,7 @@ export default function ServiceItem(props) {
                         <>
                             <img
                                 src={pluginList[serviceName].icon}
-                                className='h-[24px] w-[24px] my-auto'
+                                className='service-icon my-auto'
                                 draggable={false}
                             />
                             <Spacer x={2} />
@@ -73,7 +73,7 @@ export default function ServiceItem(props) {
                             onConfigOpen();
                         }}
                     >
-                        <BiSolidEdit className='text-2xl' />
+                        <BiSolidEdit className='text-[19px]' />
                     </Button>
                     <Spacer x={2} />
                     <Button
@@ -85,7 +85,7 @@ export default function ServiceItem(props) {
                             deleteServiceInstance(serviceInstanceKey);
                         }}
                     >
-                        <MdDeleteOutline className='text-2xl' />
+                        <MdDeleteOutline className='text-[19px]' />
                     </Button>
                 </div>
             </div>

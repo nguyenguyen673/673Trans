@@ -293,10 +293,13 @@
                 "timeout": "Thời gian chờ",
                 "timeout_desc": "Bỏ cuộc nếu sau khoảng này nhà cung cấp chưa trả lời.",
                 "api_key_desc": "Chỉ lưu trong file cấu hình trên máy này.",
-                "request_path_desc": "Địa chỉ đầy đủ của endpoint chat.",
+                "request_path_desc": "Địa chỉ API của nhà cung cấp.",
                 "model_desc": "Nhập đúng tên mô hình như nhà cung cấp ghi.",
                 "stream_desc": "Hiện bản dịch ngay trong lúc đang được viết ra.",
-                "prompt": "Prompt"
+                "prompt": "Prompt",
+                "voice": "Giọng đọc",
+                "ocr_prompt_description": "Lời dặn mô hình phải làm gì với ảnh chụp.",
+                "vision_model_hint": "Phải là mô hình nhận được ảnh."
             },
             "translate": {
                 "deepseek": {
@@ -311,6 +314,34 @@
                     "title": "Tương thích OpenAI",
                     "request_path_hint": "vd: https://openrouter.ai/api/v1/chat/completions",
                     "model_hint": "ID mô hình của nhà cung cấp"
+                }
+            },
+            "recognize": {
+                "openai_ocr": {
+                    "title": "GPT (OpenAI) OCR"
+                },
+                "openai_compatible_ocr": {
+                    "title": "OCR tương thích OpenAI"
+                },
+                "claude_ocr": {
+                    "title": "Claude OCR"
+                },
+                "gemini_ocr": {
+                    "title": "Gemini OCR"
+                }
+            },
+            "tts": {
+                "openai_tts": {
+                    "title": "OpenAI TTS",
+                    "voice_hint": "vd: alloy, nova, shimmer"
+                },
+                "elevenlabs_tts": {
+                    "title": "ElevenLabs",
+                    "voice_hint": "Voice ID (không phải tên) trong thư viện giọng ElevenLabs của bạn."
+                },
+                "gemini_tts": {
+                    "title": "Gemini TTS",
+                    "voice_hint": "vd: Kore, Puck, Aoede"
                 }
             }
         },
