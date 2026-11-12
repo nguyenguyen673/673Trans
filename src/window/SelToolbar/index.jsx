@@ -1,13 +1,15 @@
 // Selection toolbar: the small floating bar shown after selecting text anywhere.
 // Native side (mouse hook, positioning, focus handling): src-tauri/src/sel_toolbar.rs
 //
-// Want another button? Add an entry to the JSX at the bottom and widen
-// BAR_W in sel_toolbar.rs (about 40px per button).
+// Which buttons are shown (and their order) comes from the config key
+// `selection_toolbar_actions`, edited in Config > Selection toolbar.
+// Want a new kind of button? Add it to `actions` below and to ACTION_IDS in
+// src/window/Config/pages/Toolbar/index.jsx. The bar resizes itself.
 import { sendNotification } from '@tauri-apps/api/notification';
 import { BaseDirectory, readTextFile } from '@tauri-apps/api/fs';
 import React, { useEffect, useRef, useState } from 'react';
-import { MdOutlineContentPasteGo } from 'react-icons/md';
-import { HiOutlineVolumeUp, HiOutlineStop, HiTranslate } from 'react-icons/hi';
+import { LuLanguages, LuReplace, LuVolume2, LuSquare, LuCopy, LuClipboardCopy, LuCheck } from 'react-icons/lu';
+import { writeText } from '@tauri-apps/api/clipboard';
 import { useTranslation } from 'react-i18next';
 import { listen } from '@tauri-apps/api/event';
 import { error as logError } from 'tauri-plugin-log-api';
@@ -19,10 +21,12 @@ import * as builtinTtsServices from '../../services/tts';
 import { invoke_plugin } from '../../utils/invoke_plugin';
 import detect from '../../utils/lang_detect';
 import { store } from '../../utils/store';
+import { useConfig } from '../../hooks';
 import './style.css';
 
 const DEFAULT_TRANSLATE_SERVICES = ['deepl', 'bing', 'lingva', 'yandex', 'google', 'ecdict'];
 const DEFAULT_TTS_SERVICES = ['lingva_tts'];
+export const DEFAULT_ACTIONS = ['translate', 'replace', 'speak'];
 
 async function readPluginInfo(pluginType, pluginName) {
     const text = await readTextFile(`plugins/${pluginType}/${pluginName}/info.json`, {
@@ -162,12 +166,16 @@ export default function SelToolbar() {
     const [speaking, setSpeaking] = useState(false);
     // name of the button that just failed (flashes red)
     const [failed, setFailed] = useState(null);
+    // name of the button that just succeeded (shows a check mark)
+    const [done, setDone] = useState(null);
+    const [enabledActions] = useConfig('selection_toolbar_actions', DEFAULT_ACTIONS);
     const failTimer = useRef(null);
 
     useEffect(() => {
         // The bar was shown for a new selection
         const unlisten = listen('sel_toolbar_show', () => {
             setFailed(null);
+            setDone(null);
         });
         return () => {
             unlisten.then((f) => f());
@@ -193,20 +201,52 @@ export default function SelToolbar() {
         }
     };
 
-    const onPaste = async () => {
+    // Shared flow for the buttons that translate first: `finish` gets the translation
+    const translateThen = async (button, finish) => {
         if (busy) return;
-        setBusy('paste');
+        setBusy(button);
         await invoke('sel_toolbar_busy', { busy: true });
         try {
             const text = (await invoke('sel_toolbar_capture', { hide: false })).trim();
             if (text === '') throw new Error(t('translate.no_selection'));
             const result = await translateForPaste(text);
-            await invoke('sel_toolbar_paste', { text: result });
+            await finish(result);
         } catch (e) {
-            fail('paste', e);
+            fail(button, e);
             await invoke('sel_toolbar_busy', { busy: false });
         } finally {
             setBusy(null);
+        }
+    };
+
+    // Show a check mark for a moment, then hide the bar
+    const flashDone = async (button) => {
+        setDone(button);
+        await new Promise((resolve) => setTimeout(resolve, 650));
+        setDone(null);
+        await invoke('sel_toolbar_hide');
+    };
+
+    // Translate, then paste over the selection
+    const onReplace = () => translateThen('replace', (result) => invoke('sel_toolbar_paste', { text: result }));
+
+    // Translate, then put the translation on the clipboard
+    const onTranslateCopy = () =>
+        translateThen('translate_copy', async (result) => {
+            await writeText(result);
+            await flashDone('translate_copy');
+        });
+
+    // Copy the selected text as is
+    const onCopy = async () => {
+        if (busy) return;
+        try {
+            const text = (await invoke('sel_toolbar_capture', { hide: false })).trim();
+            if (text === '') throw new Error(t('translate.no_selection'));
+            await writeText(text);
+            await flashDone('copy');
+        } catch (e) {
+            fail('copy', e);
         }
     };
 
@@ -216,7 +256,7 @@ export default function SelToolbar() {
             return;
         }
         if (busy) return;
-        setBusy('voice');
+        setBusy('speak');
         // Stay on screen while loading / speaking so it can be stopped
         await invoke('sel_toolbar_sticky', { sticky: true });
         try {
@@ -229,34 +269,29 @@ export default function SelToolbar() {
             });
             setSpeaking(true);
         } catch (e) {
-            fail('voice', e);
+            fail('speak', e);
             await invoke('sel_toolbar_sticky', { sticky: false });
         } finally {
             setBusy(null);
         }
     };
 
-    const buttons = [
-        {
-            name: 'translate',
-            title: t('translate.translate'),
-            icon: <HiTranslate />,
-            onClick: onTranslate,
-        },
-        {
-            name: 'paste',
-            title: t('translate.paste_translation'),
-            icon: <MdOutlineContentPasteGo />,
-            onClick: onPaste,
-        },
-        {
-            name: 'voice',
+    // Every button the bar knows about
+    const actions = {
+        translate: { title: t('translate.translate'), icon: <LuLanguages />, onClick: onTranslate },
+        replace: { title: t('translate.paste_translation'), icon: <LuReplace />, onClick: onReplace },
+        translate_copy: { title: t('translate.translate_copy'), icon: <LuClipboardCopy />, onClick: onTranslateCopy },
+        speak: {
             title: speaking ? t('translate.stop') : t('translate.speak'),
-            icon: speaking ? <HiOutlineStop /> : <HiOutlineVolumeUp />,
+            icon: speaking ? <LuSquare /> : <LuVolume2 />,
             onClick: onVoice,
             active: speaking,
         },
-    ];
+        copy: { title: t('translate.copy'), icon: <LuCopy />, onClick: onCopy },
+    };
+    const buttons = (enabledActions ?? DEFAULT_ACTIONS)
+        .filter((name) => name in actions)
+        .map((name) => ({ name, ...actions[name] }));
 
     return (
         <div className='sel-toolbar-root'>
@@ -275,7 +310,13 @@ export default function SelToolbar() {
                         onMouseDown={(e) => e.preventDefault()}
                         onClick={button.onClick}
                     >
-                        {busy === button.name ? <span className='sel-toolbar-spinner' /> : button.icon}
+                        {busy === button.name ? (
+                            <span className='sel-toolbar-spinner' />
+                        ) : done === button.name ? (
+                            <LuCheck className='text-success' />
+                        ) : (
+                            button.icon
+                        )}
                     </button>
                 ))}
             </div>

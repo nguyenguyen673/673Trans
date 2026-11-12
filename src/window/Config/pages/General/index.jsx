@@ -17,6 +17,7 @@ import { invoke } from '@tauri-apps/api';
 import { useTheme } from 'next-themes';
 
 import { useConfig } from '../../../../hooks/useConfig';
+import { ACCENTS, DEFAULT_ACCENT, accentCss } from '../../../../utils/accent';
 import { LanguageFlag } from '../../../../utils/language';
 import { useToastStyle } from '../../../../hooks';
 import { osType } from '../../../../utils/env';
@@ -43,13 +44,15 @@ export default function General() {
     const [proxyPassword, setProxyPassword] = useConfig('proxy_password', '');
     const [noProxy, setNoProxy] = useConfig('no_proxy', 'localhost,127.0.0.1');
     const { t, i18n } = useTranslation();
-    const { setTheme } = useTheme();
+    const [appAccent, setAppAccent] = useConfig('app_accent', DEFAULT_ACCENT);
+    const { setTheme, resolvedTheme } = useTheme();
     const toastStyle = useToastStyle();
 
     const languageName = {
         zh_cn: '简体中文',
         zh_tw: '繁體中文',
         en: 'English',
+        vi: 'Tiếng Việt',
         ja: '日本語',
         ko: '한국어',
         fr: 'Français',
@@ -80,6 +83,7 @@ export default function General() {
     return (
         <>
             <Toaster />
+            <h4 className='config-section-title'>{t('config.general.section_startup')}</h4>
             <Card className='mb-[10px]'>
                 <CardBody>
                     <div className='config-item'>
@@ -101,7 +105,10 @@ export default function General() {
                         />
                     </div>
                     <div className='config-item'>
-                        <h3 className='my-auto'>{t('config.general.server_port')}</h3>
+                        <div className='config-label'>
+                            <h3>{t('config.general.server_port')}</h3>
+                            <p className='config-desc'>{t('config.general.server_port_desc')}</p>
+                        </div>
                         {serverPort !== null && (
                             <Input
                                 type='number'
@@ -136,6 +143,7 @@ export default function General() {
                     </div>
                 </CardBody>
             </Card>
+            <h4 className='config-section-title'>{t('config.general.section_appearance')}</h4>
             <Card className='mb-[10px]'>
                 <CardBody>
                     <div className='config-item'>
@@ -145,7 +153,7 @@ export default function General() {
                                 <DropdownTrigger>
                                     <Button
                                         variant='bordered'
-                                        startContent={<span className={`fi fi-${LanguageFlag[appLanguage]}`} />}
+                                        startContent={<span className={`fi fi-${LanguageFlag[appLanguage] ?? 'vn'}`} />}
                                     >
                                         {languageName[appLanguage]}
                                     </Button>
@@ -176,6 +184,12 @@ export default function General() {
                                         startContent={<span className={`fi fi-${LanguageFlag.en}`} />}
                                     >
                                         English
+                                    </DropdownItem>
+                                    <DropdownItem
+                                        key='vi'
+                                        startContent={<span className='fi fi-vn' />}
+                                    >
+                                        Tiếng Việt
                                     </DropdownItem>
                                     <DropdownItem
                                         key='ja'
@@ -313,6 +327,23 @@ export default function General() {
                                     <DropdownItem key='dark'>{t('config.general.theme.dark')}</DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
+                        )}
+                    </div>
+                    <div className='config-item'>
+                        <h3 className='my-auto'>{t('config.general.accent')}</h3>
+                        {appAccent !== null && (
+                            <div className='accent-swatches'>
+                                {Object.keys(ACCENTS).map((name) => (
+                                    <button
+                                        key={name}
+                                        type='button'
+                                        title={name}
+                                        className={`accent-swatch ${appAccent === name ? 'is-active' : ''}`}
+                                        style={{ backgroundColor: accentCss(name, resolvedTheme !== 'light') }}
+                                        onClick={() => setAppAccent(name)}
+                                    />
+                                ))}
+                            </div>
                         )}
                     </div>
                     <div className='config-item'>
@@ -458,7 +489,10 @@ export default function General() {
                         )}
                     </div>
                     <div className={`config-item ${osType === 'Darwin' && 'hidden'}`}>
-                        <h3>{t('config.general.transparent')}</h3>
+                        <div className='config-label'>
+                            <h3>{t('config.general.transparent')}</h3>
+                            <p className='config-desc'>{t('config.general.transparent_desc')}</p>
+                        </div>
                         {transparent !== null && (
                             <Switch
                                 isSelected={transparent}
@@ -469,7 +503,10 @@ export default function General() {
                         )}
                     </div>
                     <div className='config-item'>
-                        <h3>{t('config.general.dev_mode')}</h3>
+                        <div className='config-label'>
+                            <h3>{t('config.general.dev_mode')}</h3>
+                            <p className='config-desc'>{t('config.general.dev_mode_desc')}</p>
+                        </div>
                         {devMode !== null && (
                             <Switch
                                 isSelected={devMode}
@@ -481,7 +518,8 @@ export default function General() {
                     </div>
                 </CardBody>
             </Card>
-            <Card>
+            <h4 className='config-section-title'>{t('config.general.section_network')}</h4>
+            <Card className='mb-[10px]'>
                 <CardBody>
                     <div className='config-item'>
                         <h3>{t('config.general.proxy.title')}</h3>

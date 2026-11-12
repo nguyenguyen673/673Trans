@@ -6,7 +6,7 @@ export async function translate(text, from, to, options = {}) {
 
     let { apiKey, stream, promptList, requestPath } = config;
     if (!requestPath) {
-        requestPath = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro';
+        requestPath = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest';
     }
     if (!/https?:\/\/.+/.test(requestPath)) {
         requestPath = `https://${requestPath}`;

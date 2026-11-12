@@ -4,52 +4,51 @@ Bản Pot riêng của Nguyen, fork từ [pot-app/pot-desktop](https://github.co
 
 ## Khác gì bản gốc
 
-1. **Thanh 3 icon khi tô chữ** ở bất kỳ app nào: Dịch · Thay bằng bản dịch · Đọc.
+1. **Thanh icon khi chọn chữ** ở bất kỳ app nào (kéo chuột, nhấp đúp, hoặc Ctrl+A trong ô nhập). Có 5 nút bật/tắt được: Dịch · Dịch và thay thế · Dịch và sao chép · Đọc to · Sao chép.
 2. **Tên mới 673Trans** (file chạy, tooltip ở khay, trang About). Icon vẫn là icon Pot.
 3. **Giao diện cài đặt mới**: font Inter (có sẵn trong app, hỗ trợ tiếng Việt), bảng màu mới, sidebar và các dòng cài đặt gọn hơn.
-4. **Tắt tự kiểm tra cập nhật** lúc mở app (bản gốc không còn cập nhật nữa).
+4. **Giao diện tiếng Việt** (Cài đặt chung → Ngôn ngữ ứng dụng) và **màu chủ đạo** chọn được.
+5. **Trình dịch AI có sẵn**: DeepSeek, Claude, GPT (OpenAI), Gemini. Thêm ở Dịch vụ → Thêm dịch vụ có sẵn, cần khóa API của từng hãng. Tên mô hình tự nhập được.
+6. **Tắt tự kiểm tra cập nhật** lúc mở app (bản gốc không còn cập nhật nữa).
 
 Mọi thứ khác giữ nguyên. Bản này dùng chung cấu hình và plugin với Pot gốc (`%APPDATA%\com.pot-app.desktop`), nên plugin TTS, từ điển, OCR đã cài vẫn chạy. Vì vậy **không mở được cùng lúc với Pot gốc**: thoát Pot gốc ở khay hệ thống trước.
 
-## Thanh 3 icon
+## Thanh icon khi chọn chữ
 
-Kéo chuột tô chữ, hoặc double-click một từ, thanh sẽ hiện cạnh con trỏ.
+Kéo chuột tô chữ, nhấp đúp một từ, hoặc bấm Ctrl+A trong ô nhập: thanh hiện cạnh con trỏ (với Ctrl+A là cạnh dấu nháy nếu Windows biết vị trí). Thanh tự ẩn sau 6 giây, hoặc khi click chỗ khác, cuộn chuột.
 
-| Nút | Làm gì |
-|---|---|
-| Dịch | Mở cửa sổ dịch quen thuộc với đoạn đang tô |
-| Thay bằng bản dịch | Dịch rồi dán đè lên đoạn đang tô. Dùng dịch vụ dịch đầu tiên trong danh sách trả được chữ thuần; ngôn ngữ đích lấy theo cài đặt Dịch (đoạn đã là ngôn ngữ đích thì dịch sang ngôn ngữ phụ) |
-| Đọc | Đọc đoạn đang tô bằng dịch vụ TTS đầu tiên trong danh sách. Bấm lần nữa để dừng |
+Mọi cài đặt nằm ở trang **Trợ lý chọn văn bản**: bật/tắt từng cách kích hoạt, chọn nút nào hiện trên thanh, danh sách app không muốn thanh xuất hiện.
 
-Thanh tự ẩn sau 6 giây, hoặc khi click chỗ khác, cuộn chuột.
+- "Dịch và thay thế" / "Dịch và sao chép" dùng dịch vụ dịch đầu tiên trong danh sách trả được chữ thuần; ngôn ngữ đích lấy theo Cài đặt dịch.
+- "Đọc to" dùng dịch vụ giọng nói đầu tiên trong danh sách.
+- "Chỉ khi con trỏ là con trỏ văn bản" giúp kéo thả trong After Effects, Photoshop, Explorer… không làm thanh bật lên. App nào có chữ mà thanh không hiện (vd Word) thì tắt mục này.
 
-Cài đặt nằm cuối trang **Config → Translate**:
-
-- **Selection Toolbar**: bật/tắt.
-- **only when the cursor is a text cursor**: chỉ hiện khi con trỏ là hình chữ I. Nhờ vậy kéo thả trong After Effects, Photoshop, Explorer… không làm thanh bật lên. Nếu một app có chữ mà thanh không hiện (app tự vẽ con trỏ riêng, ví dụ Word), tắt mục này.
-- **disabled in these apps**: danh sách tên file exe không muốn thanh xuất hiện, cách nhau bằng dấu phẩy. Ví dụ `AfterFX.exe, Photoshop.exe`.
-
-Chưa làm: tô chữ bằng bàn phím (Shift + mũi tên, Ctrl + A) chưa bật thanh.
+Chưa làm: chọn chữ bằng Shift + mũi tên chưa bật thanh.
 
 ## Code nằm ở đâu
 
 | Muốn sửa | File |
 |---|---|
-| Giao diện thanh 3 icon (màu, bo góc, cỡ icon) | `src/window/SelToolbar/style.css` |
+| Giao diện thanh icon (màu, bo góc, cỡ icon) | `src/window/SelToolbar/style.css` |
 | Nút và hành vi từng nút | `src/window/SelToolbar/index.jsx` |
 | Khi nào thanh hiện, vị trí, thời gian tự ẩn, kích thước cửa sổ | `src-tauri/src/sel_toolbar.rs` |
 | Cửa sổ dịch | `src/window/Translate/` |
-| Trang cài đặt | `src/window/Config/pages/` |
+| Trang cài đặt | `src/window/Config/pages/` (khối dựng sẵn `Section`, `Row` ở `src/window/Config/components/Setting`) |
+| Trang Trợ lý chọn văn bản | `src/window/Config/pages/Toolbar/index.jsx` |
+| Danh sách màu chủ đạo | `src/utils/accent.js` |
+| Trình dịch AI (form chung, prompt mặc định) | `src/services/translate/_llm/`, từng hãng ở `deepseek/`, `claude/`, `openai/`, `geminipro/` |
 | Bảng màu sáng/tối, màu nhấn (`primary`) | `tailwind.config.cjs` |
 | Font chữ toàn app (`--app-font`) | `src/style.css` |
 | Khung cửa sổ cài đặt, sidebar, kiểu các dòng cài đặt | `src/window/Config/style.css`, `src/window/Config/index.jsx`, `src/window/Config/components/SideBar/index.jsx` |
 | Tên app | `productName` trong `src-tauri/tauri.conf.json` |
-| Chữ trên giao diện | `src/i18n/locales/en_US.json` |
+| Chữ trên giao diện | `src/i18n/locales/vi_VN.json` (tiếng Việt), `en_US.json` (tiếng Anh) |
 | Phím tắt, khay hệ thống, cửa sổ (Rust) | `src-tauri/src/` |
 
 Giao diện viết bằng React + Tailwind + NextUI. Phần hệ thống viết bằng Rust (Tauri 1).
 
-Thêm một nút vào thanh: thêm một mục vào mảng `buttons` trong `src/window/SelToolbar/index.jsx`, rồi tăng `BAR_W` trong `src-tauri/src/sel_toolbar.rs` thêm khoảng 40.
+Thêm một loại nút mới cho thanh: thêm vào `actions` trong `src/window/SelToolbar/index.jsx` và `ACTION_IDS` trong `src/window/Config/pages/Toolbar/index.jsx`. Thanh tự giãn theo số nút.
+
+Thêm một hãng AI tương thích OpenAI: copy thư mục `src/services/translate/deepseek`, đổi địa chỉ và mô hình mặc định, rồi đăng ký ở `src/services/translate/index.jsx`, `src-tauri/src/config.rs` (`builtin_translate_list`) và file ngôn ngữ.
 
 ## Build lại sau khi sửa
 

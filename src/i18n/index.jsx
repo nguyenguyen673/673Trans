@@ -3,6 +3,7 @@ import i18n from 'i18next';
 import zh_CN from './locales/zh_CN.json';
 import zh_TW from './locales/zh_TW.json';
 import en_US from './locales/en_US.json';
+import vi_VN from './locales/vi_VN.json';
 import ru_RU from './locales/ru_RU.json';
 import pt_BR from './locales/pt_BR.json';
 import de_DE from './locales/de_DE.json';
@@ -38,6 +39,7 @@ i18n.use(initReactI18next).init({
     },
     resources: {
         en: en_US,
+        vi: vi_VN,
         zh_cn: zh_CN,
         zh_tw: zh_TW,
         ja: ja_JP,

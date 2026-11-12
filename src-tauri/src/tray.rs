@@ -44,6 +44,7 @@ pub fn update_tray(app_handle: tauri::AppHandle, mut language: String, mut copy_
     tray_handle
         .set_menu(match language.as_str() {
             "en" => tray_menu_en(),
+            "vi" => tray_menu_vi(),
             "zh_cn" => tray_menu_zh_cn(),
             "zh_tw" => tray_menu_zh_tw(),
             "ja" => tray_menu_ja(),
@@ -222,6 +223,44 @@ fn tray_menu_en() -> tauri::SystemTrayMenu {
         .add_item(clipboard_monitor)
         .add_submenu(SystemTraySubmenu::new(
             "Auto Copy",
+            SystemTrayMenu::new()
+                .add_item(copy_source)
+                .add_item(copy_target)
+                .add_item(copy_source_target)
+                .add_native_item(SystemTrayMenuItem::Separator)
+                .add_item(copy_disable),
+        ))
+        .add_native_item(SystemTrayMenuItem::Separator)
+        .add_item(ocr_recognize)
+        .add_item(ocr_translate)
+        .add_native_item(SystemTrayMenuItem::Separator)
+        .add_item(config)
+        .add_item(check_update)
+        .add_item(view_log)
+        .add_native_item(SystemTrayMenuItem::Separator)
+        .add_item(restart)
+        .add_item(quit)
+}
+
+fn tray_menu_vi() -> tauri::SystemTrayMenu {
+    let input_translate = CustomMenuItem::new("input_translate", "Dịch văn bản nhập");
+    let copy_source = CustomMenuItem::new("copy_source", "Văn bản gốc");
+    let copy_target = CustomMenuItem::new("copy_target", "Bản dịch");
+    let clipboard_monitor = CustomMenuItem::new("clipboard_monitor", "Theo dõi clipboard");
+    let copy_source_target = CustomMenuItem::new("copy_source_target", "Gốc + bản dịch");
+    let copy_disable = CustomMenuItem::new("copy_disable", "Tắt");
+    let ocr_recognize = CustomMenuItem::new("ocr_recognize", "Nhận dạng chữ (OCR)");
+    let ocr_translate = CustomMenuItem::new("ocr_translate", "Dịch ảnh chụp màn hình");
+    let config = CustomMenuItem::new("config", "Cài đặt");
+    let check_update = CustomMenuItem::new("check_update", "Kiểm tra cập nhật");
+    let view_log = CustomMenuItem::new("view_log", "Xem log");
+    let restart = CustomMenuItem::new("restart", "Khởi động lại");
+    let quit = CustomMenuItem::new("quit", "Thoát");
+    SystemTrayMenu::new()
+        .add_item(input_translate)
+        .add_item(clipboard_monitor)
+        .add_submenu(SystemTraySubmenu::new(
+            "Tự động sao chép",
             SystemTrayMenu::new()
                 .add_item(copy_source)
                 .add_item(copy_target)

@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { CardBody } from '@nextui-org/react';
 import { Dropdown } from '@nextui-org/react';
 import { Switch } from '@nextui-org/react';
-import { Input } from '@nextui-org/react';
 import { Button } from '@nextui-org/react';
 import { Card } from '@nextui-org/react';
 import React from 'react';
@@ -33,13 +32,11 @@ export default function Translate() {
     const [hideWindow, setHideWindow] = useConfig('translate_hide_window', false);
     const [closeOnBlur, setCloseOnBlur] = useConfig('translate_close_on_blur', true);
     const [alwaysOnTop, setAlwaysOnTop] = useConfig('translate_always_on_top', false);
-    const [selToolbarEnable, setSelToolbarEnable] = useConfig('selection_toolbar_enable', true);
-    const [selToolbarIbeamOnly, setSelToolbarIbeamOnly] = useConfig('selection_toolbar_ibeam_only', true);
-    const [selToolbarBlacklist, setSelToolbarBlacklist] = useConfig('selection_toolbar_blacklist', '');
     const { t } = useTranslation();
 
     return (
         <>
+            <h4 className='config-section-title'>{t('config.translate.section_language')}</h4>
             <Card className='mb-[10px]'>
                 <CardBody>
                     <div className='config-item'>
@@ -86,7 +83,10 @@ export default function Translate() {
                         )}
                     </div>
                     <div className='config-item'>
-                        <h3 className='my-auto mx-0'>{t('config.translate.second_language')}</h3>
+                        <div className='config-label'>
+                            <h3>{t('config.translate.second_language')}</h3>
+                            <p className='config-desc'>{t('config.translate.second_language_desc')}</p>
+                        </div>
                         {secondLanguage !== null && (
                             <Dropdown>
                                 <DropdownTrigger>
@@ -133,6 +133,7 @@ export default function Translate() {
                     </div>
                 </CardBody>
             </Card>
+            <h4 className='config-section-title'>{t('config.translate.section_behavior')}</h4>
             <Card className='mb-[10px]'>
                 <CardBody>
                     <div className='config-item'>
@@ -172,7 +173,10 @@ export default function Translate() {
                         )}
                     </div>
                     <div className='config-item'>
-                        <h3 className='my-auto mx-0'>{t('config.translate.incremental_translate')}</h3>
+                        <div className='config-label'>
+                            <h3>{t('config.translate.incremental_translate')}</h3>
+                            <p className='config-desc'>{t('config.translate.incremental_translate_desc')}</p>
+                        </div>
                         {incrementalTranslate !== null && (
                             <Switch
                                 isSelected={incrementalTranslate}
@@ -183,7 +187,10 @@ export default function Translate() {
                         )}
                     </div>
                     <div className='config-item'>
-                        <h3 className='my-auto mx-0'>{t('config.translate.dynamic_translate')}</h3>
+                        <div className='config-label'>
+                            <h3>{t('config.translate.dynamic_translate')}</h3>
+                            <p className='config-desc'>{t('config.translate.dynamic_translate_desc')}</p>
+                        </div>
                         {dynamicTranslate !== null && (
                             <Switch
                                 isSelected={dynamicTranslate}
@@ -194,7 +201,10 @@ export default function Translate() {
                         )}
                     </div>
                     <div className='config-item'>
-                        <h3 className='my-auto mx-0'>{t('config.translate.delete_newline')}</h3>
+                        <div className='config-label'>
+                            <h3>{t('config.translate.delete_newline')}</h3>
+                            <p className='config-desc'>{t('config.translate.delete_newline_desc')}</p>
+                        </div>
                         {deleteNewline !== null && (
                             <Switch
                                 isSelected={deleteNewline}
@@ -205,7 +215,10 @@ export default function Translate() {
                         )}
                     </div>
                     <div className='config-item'>
-                        <h3 className='my-auto mx-0'>{t('config.translate.remember_language')}</h3>
+                        <div className='config-label'>
+                            <h3>{t('config.translate.remember_language')}</h3>
+                            <p className='config-desc'>{t('config.translate.remember_language_desc')}</p>
+                        </div>
                         {rememberLanguage !== null && (
                             <Switch
                                 isSelected={rememberLanguage}
@@ -217,7 +230,8 @@ export default function Translate() {
                     </div>
                 </CardBody>
             </Card>
-            <Card>
+            <h4 className='config-section-title'>{t('config.translate.section_window')}</h4>
+            <Card className='mb-[10px]'>
                 <CardBody>
                     {/* <div className='config-item'>
                         <h3 className='my-auto mx-0'>{t('config.translate.font_size.title')}</h3>
@@ -278,7 +292,10 @@ export default function Translate() {
                         )}
                     </div>
                     <div className='config-item'>
-                        <h3 className='my-auto mx-0'>{t('config.translate.close_on_blur')}</h3>
+                        <div className='config-label'>
+                            <h3>{t('config.translate.close_on_blur')}</h3>
+                            <p className='config-desc'>{t('config.translate.close_on_blur_desc')}</p>
+                        </div>
                         {closeOnBlur !== null && (
                             <Switch
                                 isSelected={closeOnBlur}
@@ -322,53 +339,15 @@ export default function Translate() {
                         )}
                     </div>
                     <div className='config-item'>
-                        <h3 className='my-auto mx-0'>{t('config.translate.hide_window')}</h3>
+                        <div className='config-label'>
+                            <h3>{t('config.translate.hide_window')}</h3>
+                            <p className='config-desc'>{t('config.translate.hide_window_desc')}</p>
+                        </div>
                         {hideWindow !== null && (
                             <Switch
                                 isSelected={hideWindow}
                                 onValueChange={(v) => {
                                     setHideWindow(v);
-                                }}
-                            />
-                        )}
-                    </div>
-                </CardBody>
-            </Card>
-            {/* Selection toolbar (src/window/SelToolbar + src-tauri/src/sel_toolbar.rs) */}
-            <Card className='mb-[10px]'>
-                <CardBody>
-                    <div className='config-item'>
-                        <h3 className='my-auto mx-0'>{t('config.translate.selection_toolbar')}</h3>
-                        {selToolbarEnable !== null && (
-                            <Switch
-                                isSelected={selToolbarEnable}
-                                onValueChange={(v) => {
-                                    setSelToolbarEnable(v);
-                                }}
-                            />
-                        )}
-                    </div>
-                    <div className='config-item'>
-                        <h3 className='my-auto mx-0'>{t('config.translate.selection_toolbar_ibeam_only')}</h3>
-                        {selToolbarIbeamOnly !== null && (
-                            <Switch
-                                isSelected={selToolbarIbeamOnly}
-                                onValueChange={(v) => {
-                                    setSelToolbarIbeamOnly(v);
-                                }}
-                            />
-                        )}
-                    </div>
-                    <div className='config-item'>
-                        <h3 className='my-auto mx-0'>{t('config.translate.selection_toolbar_blacklist')}</h3>
-                        {selToolbarBlacklist !== null && (
-                            <Input
-                                variant='bordered'
-                                className='max-w-[50%]'
-                                placeholder='AfterFX.exe, Photoshop.exe'
-                                value={selToolbarBlacklist}
-                                onValueChange={(v) => {
-                                    setSelToolbarBlacklist(v);
                                 }}
                             />
                         )}

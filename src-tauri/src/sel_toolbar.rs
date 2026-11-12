@@ -12,20 +12,36 @@
 //!
 //! Frontend lives in `src/window/SelToolbar`.
 //! Settings keys (config.json):
-//!   selection_toolbar_enable      bool   default true
-//!   selection_toolbar_ibeam_only  bool   default true
-//!   selection_toolbar_blacklist   string default ""   (exe names, comma separated)
+//!   selection_toolbar_enable        bool     default true
+//!   selection_toolbar_double_click  bool     default true   (double click on a word)
+//!   selection_toolbar_ctrl_a        bool     default true   (Ctrl+A inside a text field)
+//!   selection_toolbar_ibeam_only    bool     default true
+//!   selection_toolbar_blacklist     string   default ""     (exe names, comma separated)
+//!   selection_toolbar_actions       string[] default ["translate","replace","speak"]
+//!                                   (buttons shown, in order; see src/window/SelToolbar)
 
 use crate::config::{get, set};
 
 /// Window label of the toolbar (also the key in `windowMap` in src/App.jsx)
 pub const LABEL: &str = "seltoolbar";
 
-// Logical size of the toolbar window. Keep in sync with src/window/SelToolbar.
+// Logical size of the toolbar window. Keep in sync with src/window/SelToolbar/style.css.
 #[allow(dead_code)]
-const BAR_W: f64 = 132.0;
+const BAR_PADDING: f64 = 12.0;
+#[allow(dead_code)]
+const BUTTON_W: f64 = 40.0;
 #[allow(dead_code)]
 const BAR_H: f64 = 44.0;
+
+/// Width of the bar for the buttons the user enabled
+#[allow(dead_code)]
+fn bar_width() -> f64 {
+    let count = match get("selection_toolbar_actions") {
+        Some(v) => v.as_array().map_or(3, |a| a.len()),
+        None => 3,
+    };
+    BAR_PADDING + BUTTON_W * count.clamp(1, 8) as f64
+}
 
 #[allow(dead_code)]
 fn cfg_bool(key: &str, default: bool) -> bool {
@@ -51,7 +67,7 @@ fn cfg_string(key: &str) -> String {
 // ---------------------------------------------------------------------------
 #[cfg(target_os = "windows")]
 mod imp {
-    use super::{cfg_bool, cfg_string, BAR_H, BAR_W, LABEL};
+    use super::{bar_width, cfg_bool, cfg_string, BAR_H, LABEL};
     use crate::APP;
     use log::{info, warn};
     use once_cell::sync::OnceCell;
@@ -67,7 +83,14 @@ mod imp {
         CloseHandle, HINSTANCE, HWND, LPARAM, LRESULT, POINT, WPARAM,
     };
     use windows::Win32::Graphics::Gdi::{
-        GetMonitorInfoW, MonitorFromPoint, MONITORINFO, MONITOR_DEFAULTTONEAREST,
+        ClientToScreen, GetMonitorInfoW, MonitorFromPoint, MONITORINFO, MONITOR_DEFAULTTONEAREST,
+    };
+    use windows::Win32::System::Com::{
+        CoCreateInstance, CoInitializeEx, CLSCTX_INPROC_SERVER, COINIT_MULTITHREADED,
+    };
+    use windows::Win32::UI::Accessibility::{
+        CUIAutomation, IUIAutomation, IUIAutomationTextPattern, UIA_DocumentControlTypeId,
+        UIA_EditControlTypeId, UIA_TextPatternId,
     };
     use windows::Win32::System::LibraryLoader::GetModuleHandleW;
     use windows::Win32::System::Threading::{
@@ -76,12 +99,14 @@ mod imp {
     };
     use windows::Win32::UI::HiDpi::{GetDpiForMonitor, MDT_EFFECTIVE_DPI};
     use windows::Win32::UI::Input::KeyboardAndMouse::{
-        GetDoubleClickTime, SendInput, INPUT, INPUT_0, INPUT_KEYBOARD, KEYBDINPUT,
-        KEYBD_EVENT_FLAGS, KEYEVENTF_KEYUP, VIRTUAL_KEY, VK_CONTROL, VK_V,
+        GetAsyncKeyState, GetDoubleClickTime, SendInput, INPUT, INPUT_0, INPUT_KEYBOARD,
+        KEYBDINPUT, KEYBD_EVENT_FLAGS, KEYEVENTF_KEYUP, VIRTUAL_KEY, VK_A, VK_CONTROL, VK_LWIN,
+        VK_MENU, VK_SHIFT, VK_V,
     };
     use windows::Win32::UI::WindowsAndMessaging::{
         BringWindowToTop, CallNextHookEx, DispatchMessageW, GetCursorInfo, GetCursorPos,
-        GetForegroundWindow, GetMessageW, GetWindowLongPtrW, GetWindowThreadProcessId,
+        GetForegroundWindow, GetGUIThreadInfo, GetMessageW, GetWindowLongPtrW, GUITHREADINFO,
+        KBDLLHOOKSTRUCT, LLKHF_INJECTED, WH_KEYBOARD_LL, WM_KEYUP, GetWindowThreadProcessId,
         IsWindowVisible, LoadCursorW, SetForegroundWindow, SetWindowLongPtrW, SetWindowPos,
         SetWindowsHookExW, ShowWindow, TranslateMessage, CURSORINFO, GWL_EXSTYLE, HHOOK,
         HWND_TOPMOST, IDC_IBEAM, MSG, MSLLHOOKSTRUCT, SWP_NOACTIVATE, SWP_SHOWWINDOW, SW_HIDE,
@@ -97,10 +122,12 @@ mod imp {
     const AUTO_HIDE: Duration = Duration::from_secs(6);
 
     enum Ev {
-        Down { x: i32, y: i32, t: u32, ibeam: bool },
+        Down { x: i32, y: i32, ibeam: bool },
         Up { x: i32, y: i32, t: u32, ibeam: bool },
         /// wheel / right click / middle click
         Dismiss { x: i32, y: i32 },
+        /// Ctrl+A was pressed
+        SelectAll,
     }
 
     static TX: OnceCell<Sender<Ev>> = OnceCell::new();
@@ -161,7 +188,6 @@ mod imp {
                         WM_LBUTTONDOWN => Ev::Down {
                             x,
                             y,
-                            t,
                             ibeam: cursor_is_ibeam(),
                         },
                         WM_LBUTTONUP => Ev::Up {
@@ -179,6 +205,59 @@ mod imp {
         CallNextHookEx(HHOOK::default(), code, wparam, lparam)
     }
 
+    // Low-level keyboard hook: only looks for Ctrl+A (released A while Ctrl is held)
+    unsafe extern "system" fn keyboard_proc(code: i32, wparam: WPARAM, lparam: LPARAM) -> LRESULT {
+        if code >= 0 && wparam.0 as u32 == WM_KEYUP {
+            let info = &*(lparam.0 as *const KBDLLHOOKSTRUCT);
+            let injected = info.flags.0 & LLKHF_INJECTED.0 != 0;
+            if info.vkCode == VK_A.0 as u32 && !injected {
+                let down = |vk: VIRTUAL_KEY| GetAsyncKeyState(vk.0 as i32) < 0;
+                if down(VK_CONTROL) && !down(VK_MENU) && !down(VK_SHIFT) && !down(VK_LWIN) {
+                    if let Some(tx) = TX.get() {
+                        let _ = tx.send(Ev::SelectAll);
+                    }
+                }
+            }
+        }
+        CallNextHookEx(HHOOK::default(), code, wparam, lparam)
+    }
+
+    /// Is the keyboard focus inside something you can type / select text in?
+    /// Returns the caret position (screen coordinates) when Windows knows it.
+    unsafe fn focused_text_field(window: HWND) -> Option<Option<(i32, i32)>> {
+        // 1. Classic Win32 controls (and Chromium) expose a system caret
+        let thread = GetWindowThreadProcessId(window, None);
+        let mut gui = GUITHREADINFO {
+            cbSize: size_of::<GUITHREADINFO>() as u32,
+            ..Default::default()
+        };
+        if GetGUIThreadInfo(thread, &mut gui).is_ok() && !gui.hwndCaret.0.is_null() {
+            let mut pt = POINT {
+                x: gui.rcCaret.left,
+                y: gui.rcCaret.bottom,
+            };
+            if ClientToScreen(gui.hwndCaret, &mut pt).as_bool() && (pt.x != 0 || pt.y != 0) {
+                return Some(Some((pt.x, pt.y)));
+            }
+            return Some(None);
+        }
+        // 2. Everything else: ask UI Automation what kind of element has focus
+        let _ = CoInitializeEx(None, COINIT_MULTITHREADED);
+        let automation: IUIAutomation =
+            CoCreateInstance(&CUIAutomation, None, CLSCTX_INPROC_SERVER).ok()?;
+        let element = automation.GetFocusedElement().ok()?;
+        let kind = element.CurrentControlType().ok()?;
+        if kind == UIA_EditControlTypeId || kind == UIA_DocumentControlTypeId {
+            return Some(None);
+        }
+        let has_text: Result<IUIAutomationTextPattern, _> =
+            element.GetCurrentPatternAs(UIA_TextPatternId);
+        if has_text.is_ok() {
+            return Some(None);
+        }
+        None
+    }
+
     fn hook_thread() {
         unsafe {
             if let Ok(cursor) = LoadCursorW(HINSTANCE::default(), IDC_IBEAM) {
@@ -191,6 +270,9 @@ mod imp {
                     warn!("Selection toolbar: failed to install mouse hook: {:?}", e);
                     return;
                 }
+            }
+            if let Err(e) = SetWindowsHookExW(WH_KEYBOARD_LL, Some(keyboard_proc), module, 0) {
+                warn!("Selection toolbar: failed to install keyboard hook: {:?}", e);
             }
             // A low-level hook needs a message loop on the installing thread
             let mut msg = MSG::default();
@@ -209,7 +291,7 @@ mod imp {
         info!("Selection toolbar: creating window");
         let w = tauri::WindowBuilder::new(app, LABEL, tauri::WindowUrl::App("index.html".into()))
             .title("Selection Toolbar")
-            .inner_size(BAR_W, BAR_H)
+            .inner_size(bar_width(), BAR_H)
             .decorations(false)
             .transparent(true)
             .resizable(false)
@@ -262,7 +344,7 @@ mod imp {
             let (mut dpi_x, mut dpi_y) = (96u32, 96u32);
             let _ = GetDpiForMonitor(monitor, MDT_EFFECTIVE_DPI, &mut dpi_x, &mut dpi_y);
             let scale = dpi_x as f64 / 96.0;
-            let w = (BAR_W * scale).round() as i32;
+            let w = (bar_width() * scale).round() as i32;
             let h = (BAR_H * scale).round() as i32;
             let area = mi.rcWork;
 
@@ -393,6 +475,9 @@ mod imp {
                     if !(is_drag || is_double) {
                         continue;
                     }
+                    if is_double && !is_drag && !cfg_bool("selection_toolbar_double_click", true) {
+                        continue;
+                    }
                     if !cfg_bool("selection_toolbar_enable", true) {
                         continue;
                     }
@@ -411,6 +496,38 @@ mod imp {
                     }
                     // Give the app a moment to finish updating its selection
                     thread::sleep(Duration::from_millis(60));
+                    show_at(x, y, source);
+                    shown_at = Instant::now();
+                }
+                Ok(Ev::SelectAll) => {
+                    if !cfg_bool("selection_toolbar_enable", true)
+                        || !cfg_bool("selection_toolbar_ctrl_a", true)
+                    {
+                        continue;
+                    }
+                    let source = unsafe { GetForegroundWindow() };
+                    if source.0.is_null() {
+                        continue;
+                    }
+                    let field = unsafe {
+                        if window_pid(source) == GetCurrentProcessId() || blacklisted(source) {
+                            continue;
+                        }
+                        focused_text_field(source)
+                    };
+                    // Ctrl+A in a file list, on the desktop... is not a text selection
+                    let Some(caret) = field else {
+                        continue;
+                    };
+                    thread::sleep(Duration::from_millis(60));
+                    let mut pt = POINT::default();
+                    let (x, y) = match caret {
+                        Some(pos) => pos,
+                        None => {
+                            let _ = unsafe { GetCursorPos(&mut pt) };
+                            (pt.x, pt.y)
+                        }
+                    };
                     show_at(x, y, source);
                     shown_at = Instant::now();
                 }

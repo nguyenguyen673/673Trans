@@ -77,6 +77,8 @@ pub fn check_service_available() -> Result<(), Error> {
         "caiyun",
         "cambridge_dict",
         "chatglm",
+        "claude",
+        "deepseek",
         "deepl",
         "ecdict",
         "lingva",

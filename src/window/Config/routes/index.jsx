@@ -1,6 +1,7 @@
 import { Navigate } from 'react-router-dom';
 
 import Translate from '../pages/Translate';
+import Toolbar from '../pages/Toolbar';
 import Recognize from '../pages/Recognize';
 import General from '../pages/General';
 import Service from '../pages/Service';
@@ -17,6 +18,10 @@ const routes = [
     {
         path: '/translate',
         element: <Translate />,
+    },
+    {
+        path: '/toolbar',
+        element: <Toolbar />,
     },
     {
         path: '/recognize',

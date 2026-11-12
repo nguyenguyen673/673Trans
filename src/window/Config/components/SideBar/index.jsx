@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import {
     LuSettings2,
     LuLanguages,
+    LuTextSelect,
     LuScanLine,
     LuKeyboard,
     LuPuzzle,
@@ -16,6 +17,7 @@ import React from 'react';
 const items = [
     { path: '/general', icon: LuSettings2 },
     { path: '/translate', icon: LuLanguages },
+    { path: '/toolbar', icon: LuTextSelect },
     { path: '/recognize', icon: LuScanLine },
     { path: '/hotkey', icon: LuKeyboard },
     { path: '/service', icon: LuPuzzle },

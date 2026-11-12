@@ -114,7 +114,7 @@ export default function Hotkey() {
     }
 
     return (
-        <Card>
+        <Card className='mb-[10px]'>
             <Toaster />
             <CardBody>
                 <div className='config-item'>

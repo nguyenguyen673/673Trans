@@ -19,11 +19,15 @@ import * as _geminipro from './geminipro';
 import * as _ollama from './ollama';
 import * as _ecdict from './ecdict';
 import * as _lingva from './lingva';
+import * as _deepseek from './deepseek';
+import * as _claude from './claude';
 
 export const deepl = _deepl;
 export const bing = _bing;
 export const yandex = _yandex;
 export const openai = _openai;
+export const deepseek = _deepseek;
+export const claude = _claude;
 export const google = _google;
 export const transmart = _transmart;
 export const alibaba = _alibaba;

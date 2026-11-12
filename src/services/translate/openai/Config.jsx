@@ -31,7 +31,7 @@ export function Config(props) {
             [INSTANCE_NAME_CONFIG_KEY]: t('services.translate.openai.title'),
             service: 'openai',
             requestPath: 'https://api.openai.com/v1/chat/completions',
-            model: 'gpt-3.5-turbo',
+            model: 'gpt-6-luna',
             apiKey: '',
             stream: false,
             promptList: [
@@ -42,7 +42,8 @@ export function Config(props) {
                 },
                 { role: 'user', content: `Translate into $to:\n"""\n$text\n"""` },
             ],
-            requestArguments: defaultRequestArguments,
+            // Newer GPT models reject custom temperature / penalties, so start empty
+            requestArguments: '{}',
         },
         { sync: false }
     );
@@ -199,32 +200,6 @@ export function Config(props) {
                         }}
                     />
                 </div>
-                <Card
-                    isBlurred
-                    className='border-none bg-success/20 dark:bg-success/10'
-                    shadow='sm'
-                >
-                    <CardBody>
-                        <div>
-                            推荐
-                            <Link
-                                isExternal
-                                href='https://aihubmix.com/register?aff=trJY'
-                                color='primary'
-                            >
-                                AiHubMix
-                            </Link>
-                            的OpenAI API 密钥，速度飞快，经济实惠，1美元的OpenAI API 额度只需人民币6.3元
-                            <Link
-                                isExternal
-                                href='https://pot-app.com/ads/aihubmix.html'
-                                color='primary'
-                            >
-                                配置文档
-                            </Link>
-                        </div>
-                    </CardBody>
-                </Card>
                 <div className={`config-item ${openaiConfig.service === 'azure' && 'hidden'}`}>
                     <Input
                         label={t('services.translate.openai.model')}

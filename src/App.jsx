@@ -11,6 +11,7 @@ import SelToolbar from './window/SelToolbar';
 import Translate from './window/Translate';
 import Recognize from './window/Recognize';
 import Updater from './window/Updater';
+import { applyAccent, DEFAULT_ACCENT } from './utils/accent';
 import { store } from './utils/store';
 import Config from './window/Config';
 import { useConfig } from './hooks';
@@ -34,7 +35,8 @@ export default function App() {
     const [appFont] = useConfig('app_font', 'default');
     const [appFallbackFont] = useConfig('app_fallback_font', 'default');
     const [appFontSize] = useConfig('app_font_size', 16);
-    const { setTheme } = useTheme();
+    const [appAccent] = useConfig('app_accent', DEFAULT_ACCENT);
+    const { setTheme, resolvedTheme } = useTheme();
     const { i18n } = useTranslation();
 
     useEffect(() => {
@@ -98,6 +100,13 @@ export default function App() {
             }
         }
     }, [appTheme]);
+
+    // Accent colour (Config > General)
+    useEffect(() => {
+        if (appAccent !== null) {
+            applyAccent(appAccent, resolvedTheme !== 'light');
+        }
+    }, [appAccent, resolvedTheme]);
 
     useEffect(() => {
         if (appLanguage !== null) {

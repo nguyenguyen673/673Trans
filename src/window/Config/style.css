@@ -160,7 +160,8 @@
     font-size: 13px;
 }
 
-.config-item [data-slot='input-wrapper'] {
+/* (inputs with a floating label inside keep their own height) */
+.config-item [data-slot='input-wrapper']:not(:has(label)) {
     height: 32px;
     min-height: 32px;
     border-width: 1px;
@@ -169,4 +170,102 @@
 
 .config-item [data-slot='input'] {
     font-size: 13px;
+}
+
+/* ---------- Section title above a card ---------- */
+.config-section-title {
+    margin: 14px 2px 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: hsl(var(--nextui-default-500));
+}
+
+.config-page > .config-section-title:first-child {
+    margin-top: 2px;
+}
+
+/* Label + small description on the left of a row */
+.config-label {
+    min-width: 0;
+    flex: 1;
+    padding: 4px 0;
+}
+
+.config-label > h3 {
+    margin: 0;
+    font-size: 13.5px;
+    font-weight: 500;
+    line-height: 1.35;
+}
+
+.config-desc {
+    margin-top: 2px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: hsl(var(--nextui-default-500));
+}
+
+/* ---------- Accent colour swatches ---------- */
+.accent-swatches {
+    display: flex;
+    gap: 8px;
+}
+
+.accent-swatch {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: 7px;
+    cursor: pointer;
+    outline: none;
+    background-clip: padding-box;
+    transition: transform 120ms;
+}
+
+.accent-swatch:hover {
+    transform: scale(1.08);
+}
+
+.accent-swatch.is-active {
+    border-color: hsl(var(--nextui-foreground));
+    box-shadow: 0 0 0 2px hsl(var(--nextui-background)) inset;
+}
+
+/* ---------- Selection toolbar preview ---------- */
+.toolbar-preview {
+    position: relative;
+    height: 120px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    border: 1px solid hsl(var(--nextui-default-100));
+    border-radius: 12px;
+    background: hsl(var(--nextui-content1));
+}
+
+.toolbar-preview-text {
+    padding: 1px 3px;
+    font-size: 14px;
+    color: hsl(var(--nextui-primary-foreground));
+    background: hsl(var(--nextui-primary));
+}
+
+.toolbar-preview-bar {
+    height: 38px;
+    padding: 0 6px;
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+.toolbar-preview-bar > span {
+    width: 36px;
+    display: flex;
+    justify-content: center;
+    font-size: 17px;
 }
