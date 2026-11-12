@@ -1,5 +1,172 @@
-.config-item {
-    margin: 10px 0;
+/* Settings window (673Trans look).
+   Layout: sidebar (220px) + main area. Colours come from tailwind.config.cjs. */
+
+/* ---------- Sidebar ---------- */
+.config-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 220px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.config-brand {
+    height: 64px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 17px;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+}
+
+.config-brand-mark {
+    padding: 2px 7px;
+    border-radius: 7px;
+    color: hsl(var(--nextui-primary-foreground));
+    background: hsl(var(--nextui-primary));
+    font-variant-numeric: tabular-nums;
+}
+
+.config-nav {
+    flex: 1;
+    padding: 4px 10px 12px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.config-nav-item {
+    position: relative;
+    height: 36px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: hsl(var(--nextui-default-600));
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    outline: none;
+    transition:
+        background-color 120ms,
+        color 120ms;
+}
+
+.config-nav-item:hover {
+    background: hsl(var(--nextui-default-100));
+    color: hsl(var(--nextui-foreground));
+}
+
+.config-nav-item.is-active {
+    background: hsl(var(--nextui-default-100));
+    color: hsl(var(--nextui-foreground));
+}
+
+.config-nav-item.is-active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10px;
+    bottom: 10px;
+    width: 3px;
+    border-radius: 3px;
+    background: hsl(var(--nextui-primary));
+}
+
+.config-nav-icon {
+    flex: none;
+    font-size: 17px;
+}
+
+.config-nav-item.is-active .config-nav-icon {
+    color: hsl(var(--nextui-primary));
+}
+
+/* ---------- Main area ---------- */
+.config-main {
+    margin-left: 220px;
+    height: 100vh;
+}
+
+.config-header {
+    height: 52px;
     display: flex;
     justify-content: space-between;
+}
+
+.config-title {
+    margin: auto 0 auto 24px;
+    font-size: 18px;
+    font-weight: 620;
+    letter-spacing: -0.015em;
+}
+
+.config-page {
+    height: calc(100vh - 52px);
+    padding: 4px 24px 24px;
+    overflow-y: auto;
+    font-size: 13.5px;
+}
+
+/* Cards that group settings */
+.config-page [data-slot='base'].mb-\[10px\],
+.config-page > .mb-\[10px\] {
+    margin-bottom: 14px;
+    border: 1px solid hsl(var(--nextui-default-100));
+    border-radius: 12px;
+    box-shadow: none;
+}
+
+/* ---------- One setting row ---------- */
+.config-item {
+    min-height: 44px;
+    margin: 0;
+    padding: 5px 2px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.config-item + .config-item {
+    border-top: 1px solid hsl(var(--nextui-default-100));
+}
+
+.config-item > h3 {
+    margin: 0;
+    font-size: 13.5px;
+    font-weight: 500;
+    line-height: 1.35;
+}
+
+/* Dropdown triggers / buttons on the right side of a row */
+.config-item > button,
+.config-item > div > button {
+    height: 32px;
+    min-width: 0;
+    padding: 0 12px;
+    border-width: 1px;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+.config-item [data-slot='input-wrapper'] {
+    height: 32px;
+    min-height: 32px;
+    border-width: 1px;
+    border-radius: 8px;
+}
+
+.config-item [data-slot='input'] {
+    font-size: 13px;
 }

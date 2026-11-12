@@ -181,7 +181,7 @@ export default function SelToolbar() {
         setFailed(button);
         clearTimeout(failTimer.current);
         failTimer.current = setTimeout(() => setFailed(null), 1500);
-        sendNotification({ title: 'Pot', body: message });
+        sendNotification({ title: '673Trans', body: message });
     };
 
     const onTranslate = async () => {

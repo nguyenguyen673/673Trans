@@ -7,7 +7,7 @@
         "withGlobalTauri": false
     },
     "package": {
-        "productName": "pot",
+        "productName": "673Trans",
         "version": "3.0.7"
     },
     "tauri": {

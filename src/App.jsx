@@ -14,6 +14,7 @@ import Updater from './window/Updater';
 import { store } from './utils/store';
 import Config from './window/Config';
 import { useConfig } from './hooks';
+import '@fontsource-variable/inter';
 import './style.css';
 import './i18n';
 
@@ -106,9 +107,10 @@ export default function App() {
 
     useEffect(() => {
         if (appFont !== null && appFallbackFont !== null) {
-            document.documentElement.style.fontFamily = `"${appFont === 'default' ? 'sans-serif' : appFont}","${
-                appFallbackFont === 'default' ? 'sans-serif' : appFallbackFont
-            }"`;
+            // 'default' = the bundled UI font stack (see --app-font in src/style.css)
+            const families = [appFont, appFallbackFont].filter((f) => f !== 'default').map((f) => `"${f}"`);
+            families.push('var(--app-font)');
+            document.documentElement.style.fontFamily = families.join(',');
         }
         if (appFontSize !== null) {
             document.documentElement.style.fontSize = `${appFontSize}px`;

@@ -1,7 +1,6 @@
 import { useLocation, useRoutes } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import { appWindow } from '@tauri-apps/api/window';
-import { Card, Divider } from '@nextui-org/react';
 import { useTranslation } from 'react-i18next';
 
 import WindowControl from '../../components/WindowControl';
@@ -25,56 +24,44 @@ export default function Config() {
 
     return (
         <>
-            <Card
-                shadow='none'
-                className={`${
-                    transparent ? 'bg-background/90' : 'bg-content1'
-                } float-left w-[230px] h-screen rounded-none ${
+            <aside
+                className={`config-sidebar ${transparent ? 'bg-background/90' : 'bg-background'} ${
                     osType === 'Linux' && 'rounded-l-[10px] border-1'
                 } border-r-1 border-default-100 select-none cursor-default`}
             >
-                <div className='h-[35px] p-[5px]'>
-                    <div
-                        className='w-full h-full'
+                <div
+                    className='config-brand'
+                    data-tauri-drag-region='true'
+                >
+                    <span
+                        className='config-brand-mark'
                         data-tauri-drag-region='true'
-                    />
-                </div>
-                <div className='p-[5px]'>
-                    <div data-tauri-drag-region='true'>
-                        <img
-                            alt='pot logo'
-                            src='icon.svg'
-                            className='h-[60px] w-[60px] m-auto mb-[30px]'
-                            draggable={false}
-                        />
-                    </div>
+                    >
+                        673
+                    </span>
+                    <span
+                        className='config-brand-name'
+                        data-tauri-drag-region='true'
+                    >
+                        Trans
+                    </span>
                 </div>
                 <SideBar />
-            </Card>
+            </aside>
             <div
-                className={`bg-background ml-[230px] h-screen select-none cursor-default ${
+                className={`config-main bg-background select-none cursor-default ${
                     osType === 'Linux' && 'rounded-r-[10px] border-1 border-l-0 border-default-100'
                 }`}
             >
                 <div
                     data-tauri-drag-region='true'
-                    className='top-[5px] left-[235px] right-[5px] h-[30px] fixed'
+                    className='top-[5px] left-[225px] right-[110px] h-[40px] fixed'
                 />
-                <div className='h-[35px] flex justify-between'>
-                    <div className='flex'>
-                        <h2 className='m-auto ml-[10px]'>{t(`config.${location.pathname.slice(1)}.title`)}</h2>
-                    </div>
-
+                <div className='config-header'>
+                    <h2 className='config-title'>{t(`config.${location.pathname.slice(1)}.title`)}</h2>
                     <div className='flex'>{osType !== 'Darwin' && <WindowControl />}</div>
                 </div>
-                <Divider />
-                <div
-                    className={`p-[10px] overflow-y-auto ${
-                        osType === 'Linux' ? 'h-[calc(100vh-38px)]' : 'h-[calc(100vh-36px)]'
-                    }`}
-                >
-                    {page}
-                </div>
+                <div className='config-page'>{page}</div>
             </div>
         </>
     );

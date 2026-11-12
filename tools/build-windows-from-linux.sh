@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build pot.exe for Windows (x64) from a Linux machine / cloud container.
+# Build 673Trans.exe for Windows (x64) from a Linux machine / cloud container.
 # This is how the first build of this fork was made. On a real Windows PC you
 # do not need this script: see HUONG-DAN.md ("Tự build trên Windows").
 #
@@ -19,4 +19,4 @@ pnpm install
 pnpm tauri build --runner cargo-xwin --target x86_64-pc-windows-msvc -b none
 
 echo
-echo "Done: src-tauri/target/x86_64-pc-windows-msvc/release/pot.exe"
+echo "Done: src-tauri/target/x86_64-pc-windows-msvc/release/673Trans.exe"

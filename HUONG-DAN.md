@@ -1,11 +1,13 @@
-# Pot — bản riêng của Nguyen
+# 673Trans
 
-Fork từ [pot-app/pot-desktop](https://github.com/pot-app/pot-desktop) bản 3.0.7 (repo gốc đã archive 9/2026). Giấy phép GPL-3.0 như bản gốc.
+Bản Pot riêng của Nguyen, fork từ [pot-app/pot-desktop](https://github.com/pot-app/pot-desktop) bản 3.0.7 (repo gốc đã archive 9/2026). Giấy phép GPL-3.0 như bản gốc.
 
 ## Khác gì bản gốc
 
 1. **Thanh 3 icon khi tô chữ** ở bất kỳ app nào: Dịch · Thay bằng bản dịch · Đọc.
-2. **Tắt tự kiểm tra cập nhật** lúc mở app (bản gốc không còn cập nhật nữa).
+2. **Tên mới 673Trans** (file chạy, tooltip ở khay, trang About). Icon vẫn là icon Pot.
+3. **Giao diện cài đặt mới**: font Inter (có sẵn trong app, hỗ trợ tiếng Việt), bảng màu mới, sidebar và các dòng cài đặt gọn hơn.
+4. **Tắt tự kiểm tra cập nhật** lúc mở app (bản gốc không còn cập nhật nữa).
 
 Mọi thứ khác giữ nguyên. Bản này dùng chung cấu hình và plugin với Pot gốc (`%APPDATA%\com.pot-app.desktop`), nên plugin TTS, từ điển, OCR đã cài vẫn chạy. Vì vậy **không mở được cùng lúc với Pot gốc**: thoát Pot gốc ở khay hệ thống trước.
 
@@ -38,7 +40,10 @@ Chưa làm: tô chữ bằng bàn phím (Shift + mũi tên, Ctrl + A) chưa bậ
 | Khi nào thanh hiện, vị trí, thời gian tự ẩn, kích thước cửa sổ | `src-tauri/src/sel_toolbar.rs` |
 | Cửa sổ dịch | `src/window/Translate/` |
 | Trang cài đặt | `src/window/Config/pages/` |
-| Màu, theme chung | `tailwind.config.cjs`, `src/style.css` |
+| Bảng màu sáng/tối, màu nhấn (`primary`) | `tailwind.config.cjs` |
+| Font chữ toàn app (`--app-font`) | `src/style.css` |
+| Khung cửa sổ cài đặt, sidebar, kiểu các dòng cài đặt | `src/window/Config/style.css`, `src/window/Config/index.jsx`, `src/window/Config/components/SideBar/index.jsx` |
+| Tên app | `productName` trong `src-tauri/tauri.conf.json` |
 | Chữ trên giao diện | `src/i18n/locales/en_US.json` |
 | Phím tắt, khay hệ thống, cửa sổ (Rust) | `src-tauri/src/` |
 
@@ -48,7 +53,7 @@ Thêm một nút vào thanh: thêm một mục vào mảng `buttons` trong `src/
 
 ## Build lại sau khi sửa
 
-**Cách 1: nhờ Claude.** Đưa thư mục này cho Claude, nói muốn sửa gì. Claude build được file exe cho Windows ngay trên máy chủ của nó bằng `tools/build-windows-from-linux.sh`, rồi chép `pot.exe` mới về.
+**Cách 1: nhờ Claude.** Đưa thư mục này cho Claude, nói muốn sửa gì. Claude build được file exe cho Windows ngay trên máy chủ của nó bằng `tools/build-windows-from-linux.sh`, rồi chép `673Trans.exe` mới về.
 
 **Cách 2: tự build trên Windows.** Cài một lần:
 

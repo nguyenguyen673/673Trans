@@ -101,17 +101,6 @@ export default function General() {
                         />
                     </div>
                     <div className='config-item'>
-                        <h3>{t('config.general.check_update')}</h3>
-                        {checkUpdate !== null && (
-                            <Switch
-                                isSelected={checkUpdate}
-                                onValueChange={(v) => {
-                                    setCheckUpdate(v);
-                                }}
-                            />
-                        )}
-                    </div>
-                    <div className='config-item'>
                         <h3 className='my-auto'>{t('config.general.server_port')}</h3>
                         {serverPort !== null && (
                             <Input
