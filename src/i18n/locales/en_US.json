@@ -187,7 +187,11 @@
                 "install_plugin": "Install Plugin",
                 "view_plugin_list": "View Plugin List",
                 "uninstall_success": "Plugin Uninstall Successfully",
-                "homepage": "Homepage"
+                "homepage": "Homepage",
+                "add_translate_service": "Add translation service",
+                "edit_translate_service": "Edit translation service",
+                "builtin_service": "Built-in service",
+                "service_name": "Service name"
             },
             "history": {
                 "label": "History",
@@ -411,6 +415,11 @@
                 "claude": {
                     "title": "Claude",
                     "model_hint": "e.g. claude-haiku-5-5, claude-sonnet-5-5, claude-opus-5-5"
+                },
+                "openai_compatible": {
+                    "title": "OpenAI compatible",
+                    "request_path_hint": "e.g. https://openrouter.ai/api/v1/chat/completions",
+                    "model_hint": "The model ID from your provider"
                 }
             },
             "recognize": {
@@ -511,7 +520,15 @@
                 "stream": "Stream the answer",
                 "system_prompt": "System prompt",
                 "user_prompt": "User prompt",
-                "prompt_description": "$text, $from, $to and $detect are replaced with the text, the source language, the target language and the detected language."
+                "prompt_description": "$text, $from, $to and $detect are replaced with the text, the source language, the target language and the detected language.",
+                "general": "General",
+                "timeout": "Timeout",
+                "timeout_desc": "Give up when the provider has not answered after this long.",
+                "api_key_desc": "Stored only in the config file on this computer.",
+                "request_path_desc": "Full URL of the chat endpoint.",
+                "model_desc": "Type the model name exactly as the provider writes it.",
+                "stream_desc": "Show the translation while it is being written.",
+                "prompt": "Prompt"
             }
         },
         "translate": {

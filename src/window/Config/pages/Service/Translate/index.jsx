@@ -9,7 +9,7 @@ import SelectPluginModal from '../SelectPluginModal';
 import { osType } from '../../../../../utils/env';
 import { useConfig, deleteKey } from '../../../../../hooks';
 import ServiceItem from './ServiceItem';
-import SelectModal from './SelectModal';
+import { createServiceInstanceKey } from '../../../../../utils/service_instance';
 import ConfigModal from './ConfigModal';
 
 export default function Translate(props) {
@@ -19,9 +19,10 @@ export default function Translate(props) {
         onOpen: onSelectPluginOpen,
         onOpenChange: onSelectPluginOpenChange,
     } = useDisclosure();
-    const { isOpen: isSelectOpen, onOpen: onSelectOpen, onOpenChange: onSelectOpenChange } = useDisclosure();
     const { isOpen: isConfigOpen, onOpen: onConfigOpen, onOpenChange: onConfigOpenChange } = useDisclosure();
     const [currentConfigKey, setCurrentConfigKey] = useState('deepl');
+    // true while the dialog is adding a new service (the provider can still be switched)
+    const [isAdding, setIsAdding] = useState(false);
     // now it's service instance list
     const [translateServiceInstanceList, setTranslateServiceInstanceList] = useConfig('translate_service_list', [
         'deepl',
@@ -104,7 +105,10 @@ export default function Translate(props) {
                                                                 serviceInstanceKey={x}
                                                                 pluginList={pluginList}
                                                                 deleteServiceInstance={deleteServiceInstance}
-                                                                setCurrentConfigKey={setCurrentConfigKey}
+                                                                setCurrentConfigKey={(key) => {
+                                                                    setIsAdding(false);
+                                                                    setCurrentConfigKey(key);
+                                                                }}
                                                                 onConfigOpen={onConfigOpen}
                                                             />
                                                             <Spacer y={2} />
@@ -122,7 +126,11 @@ export default function Translate(props) {
                 <div className='flex'>
                     <Button
                         fullWidth
-                        onPress={onSelectOpen}
+                        onPress={() => {
+                            setCurrentConfigKey(createServiceInstanceKey('deepseek'));
+                            setIsAdding(true);
+                            onConfigOpen();
+                        }}
                     >
                         {t('config.service.add_builtin_service')}
                     </Button>
@@ -138,20 +146,25 @@ export default function Translate(props) {
             <SelectPluginModal
                 isOpen={isSelectPluginOpen}
                 onOpenChange={onSelectPluginOpenChange}
-                setCurrentConfigKey={setCurrentConfigKey}
+                setCurrentConfigKey={(key) => {
+                    setIsAdding(false);
+                    setCurrentConfigKey(key);
+                }}
                 onConfigOpen={onConfigOpen}
                 pluginType='translate'
                 pluginList={pluginList}
                 deleteService={deleteServiceInstance}
             />
-            <SelectModal
-                isOpen={isSelectOpen}
-                onOpenChange={onSelectOpenChange}
-                setCurrentConfigKey={setCurrentConfigKey}
-                onConfigOpen={onConfigOpen}
-            />
             <ConfigModal
                 serviceInstanceKey={currentConfigKey}
+                isAdding={isAdding}
+                onSwitchService={(name) => {
+                    // Drop the draft of the provider we are leaving
+                    if (!translateServiceInstanceList.includes(currentConfigKey)) {
+                        deleteKey(currentConfigKey);
+                    }
+                    setCurrentConfigKey(createServiceInstanceKey(name));
+                }}
                 pluginList={pluginList}
                 isOpen={isConfigOpen}
                 onOpenChange={onConfigOpenChange}

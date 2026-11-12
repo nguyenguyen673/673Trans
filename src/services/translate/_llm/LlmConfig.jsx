@@ -1,4 +1,4 @@
-// Shared settings form for LLM based translators (DeepSeek, Claude, ...).
+// Shared settings form for LLM based translators (DeepSeek, Claude, OpenAI compatible...).
 // To add another provider: copy src/services/translate/deepseek, change the
 // defaults, then register it in src/services/translate/index.jsx,
 // src-tauri/src/config.rs (builtin_translate_list) and the i18n files.
@@ -14,11 +14,29 @@ import { useConfig } from '../../../hooks/useConfig';
 import { useToastStyle } from '../../../hooks';
 import { Language } from './languages';
 
-const inputClassNames = {
-    base: 'justify-between',
-    label: 'text-[length:--nextui-font-size-medium]',
-    mainWrapper: 'max-w-[55%]',
-};
+const DEFAULT_TIMEOUT = 30000;
+
+// One row: label (+ small description) on the left, control on the right
+function Field({ label, desc, children }) {
+    return (
+        <div className='config-item'>
+            <div className='config-label'>
+                <h3>{label}</h3>
+                {desc && <p className='config-desc'>{desc}</p>}
+            </div>
+            <div className='llm-field-control'>{children}</div>
+        </div>
+    );
+}
+
+function Group({ title, children }) {
+    return (
+        <>
+            <h4 className='config-section-title'>{title}</h4>
+            <div className='llm-group'>{children}</div>
+        </>
+    );
+}
 
 export function LlmConfig(props) {
     const {
@@ -31,6 +49,7 @@ export function LlmConfig(props) {
         defaults,
         keyUrl,
         modelHint,
+        requestPathHint,
         supportsStream = true,
     } = props;
     const { t } = useTranslation();
@@ -40,6 +59,7 @@ export function LlmConfig(props) {
             [INSTANCE_NAME_CONFIG_KEY]: title,
             apiKey: '',
             stream: supportsStream,
+            timeout: DEFAULT_TIMEOUT,
             systemPrompt: DEFAULT_SYSTEM_PROMPT,
             userPrompt: DEFAULT_USER_PROMPT,
             ...defaults,
@@ -72,95 +92,124 @@ export function LlmConfig(props) {
                 }}
             >
                 <Toaster />
-                <div className='config-item'>
-                    <Input
-                        label={t('services.instance_name')}
-                        labelPlacement='outside-left'
-                        value={config[INSTANCE_NAME_CONFIG_KEY]}
-                        variant='bordered'
-                        classNames={inputClassNames}
-                        onValueChange={(v) => set(INSTANCE_NAME_CONFIG_KEY, v)}
-                    />
-                </div>
-                <div className='config-item'>
-                    <Input
-                        label={t('services.llm.api_key')}
-                        labelPlacement='outside-left'
-                        type='password'
-                        value={config.apiKey}
-                        variant='bordered'
-                        classNames={inputClassNames}
-                        onValueChange={(v) => set('apiKey', v)}
-                    />
-                </div>
-                {keyUrl && (
-                    <p className='config-desc text-right'>
-                        <a
-                            className='text-primary cursor-pointer'
-                            onClick={() => open(keyUrl)}
-                        >
-                            {t('services.llm.get_key')}
-                        </a>
-                    </p>
-                )}
-                <div className='config-item'>
-                    <Input
-                        label={t('services.llm.model')}
-                        labelPlacement='outside-left'
-                        value={config.model}
-                        variant='bordered'
-                        classNames={inputClassNames}
-                        onValueChange={(v) => set('model', v)}
-                    />
-                </div>
-                {modelHint && <p className='config-desc text-right'>{modelHint}</p>}
-                <div className='config-item'>
-                    <Input
+                <Group title={t('services.llm.general')}>
+                    <Field label={t('config.service.service_name')}>
+                        <Input
+                            aria-label='name'
+                            value={config[INSTANCE_NAME_CONFIG_KEY]}
+                            variant='bordered'
+                            onValueChange={(v) => set(INSTANCE_NAME_CONFIG_KEY, v)}
+                        />
+                    </Field>
+                    <Field
+                        label={t('services.llm.timeout')}
+                        desc={t('services.llm.timeout_desc')}
+                    >
+                        <Input
+                            aria-label='timeout'
+                            type='number'
+                            min={1000}
+                            step={1000}
+                            value={String(config.timeout ?? DEFAULT_TIMEOUT)}
+                            variant='bordered'
+                            endContent={<span className='text-default-500 text-[12px]'>ms</span>}
+                            onValueChange={(v) => set('timeout', parseInt(v) || DEFAULT_TIMEOUT)}
+                        />
+                    </Field>
+                </Group>
+
+                <Group title={title}>
+                    <Field
                         label={t('services.llm.request_path')}
-                        labelPlacement='outside-left'
-                        value={config.requestPath}
-                        variant='bordered'
-                        classNames={inputClassNames}
-                        onValueChange={(v) => set('requestPath', v)}
-                    />
-                </div>
-                {supportsStream && (
-                    <div className='config-item'>
-                        <Switch
-                            isSelected={config.stream}
-                            onValueChange={(v) => set('stream', v)}
-                            classNames={{ base: 'flex flex-row-reverse justify-between w-full max-w-full' }}
+                        desc={requestPathHint ?? t('services.llm.request_path_desc')}
+                    >
+                        <Input
+                            aria-label='url'
+                            value={config.requestPath}
+                            variant='bordered'
+                            onValueChange={(v) => set('requestPath', v)}
+                        />
+                    </Field>
+                    <Field
+                        label={t('services.llm.api_key')}
+                        desc={
+                            <>
+                                {t('services.llm.api_key_desc')}{' '}
+                                {keyUrl && (
+                                    <a
+                                        className='text-primary cursor-pointer underline'
+                                        onClick={() => open(keyUrl)}
+                                    >
+                                        {t('services.llm.get_key')}
+                                    </a>
+                                )}
+                            </>
+                        }
+                    >
+                        <Input
+                            aria-label='api key'
+                            type='password'
+                            value={config.apiKey}
+                            variant='bordered'
+                            onValueChange={(v) => set('apiKey', v)}
+                        />
+                    </Field>
+                    <Field
+                        label={t('services.llm.model')}
+                        desc={modelHint ?? t('services.llm.model_desc')}
+                    >
+                        <Input
+                            aria-label='model'
+                            value={config.model}
+                            variant='bordered'
+                            onValueChange={(v) => set('model', v)}
+                        />
+                    </Field>
+                    {supportsStream && (
+                        <Field
+                            label={t('services.llm.stream')}
+                            desc={t('services.llm.stream_desc')}
                         >
-                            {t('services.llm.stream')}
-                        </Switch>
+                            <div className='flex justify-end'>
+                                <Switch
+                                    aria-label='stream'
+                                    isSelected={config.stream}
+                                    onValueChange={(v) => set('stream', v)}
+                                />
+                            </div>
+                        </Field>
+                    )}
+                </Group>
+
+                <Group title={t('services.llm.prompt')}>
+                    <div className='py-2'>
+                        <Textarea
+                            label={t('services.llm.system_prompt')}
+                            labelPlacement='outside'
+                            variant='bordered'
+                            minRows={2}
+                            value={config.systemPrompt}
+                            onValueChange={(v) => set('systemPrompt', v)}
+                        />
+                        <Textarea
+                            className='mt-2'
+                            label={t('services.llm.user_prompt')}
+                            labelPlacement='outside'
+                            variant='bordered'
+                            minRows={2}
+                            value={config.userPrompt}
+                            onValueChange={(v) => set('userPrompt', v)}
+                        />
+                        <p className='config-desc'>{t('services.llm.prompt_description')}</p>
                     </div>
-                )}
-                <div className='mt-2'>
-                    <Textarea
-                        label={t('services.llm.system_prompt')}
-                        labelPlacement='outside'
-                        variant='bordered'
-                        minRows={2}
-                        value={config.systemPrompt}
-                        onValueChange={(v) => set('systemPrompt', v)}
-                    />
-                </div>
-                <div className='mt-2'>
-                    <Textarea
-                        label={t('services.llm.user_prompt')}
-                        labelPlacement='outside'
-                        variant='bordered'
-                        minRows={2}
-                        value={config.userPrompt}
-                        onValueChange={(v) => set('userPrompt', v)}
-                    />
-                </div>
-                <p className='config-desc mb-3'>{t('services.llm.prompt_description')}</p>
+                </Group>
+
                 <Button
                     type='submit'
                     isLoading={isLoading}
                     fullWidth
                     color='primary'
+                    className='mt-4'
                 >
                     {t('common.save')}
                 </Button>

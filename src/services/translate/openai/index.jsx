@@ -5,7 +5,7 @@ import { defaultRequestArguments } from './Config';
 export async function translate(text, from, to, options) {
     const { config, setResult, detect } = options;
 
-    let { service, requestPath, model, apiKey, stream, promptList, requestArguments } = config;
+    let { service, requestPath, model, apiKey, stream, promptList, requestArguments, timeout } = config;
 
     if (!/https?:\/\/.+/.test(requestPath)) {
         requestPath = `https://${requestPath}`;
@@ -65,6 +65,7 @@ export async function translate(text, from, to, options) {
             method: 'POST',
             headers: headers,
             body: JSON.stringify(body),
+            signal: timeout ? AbortSignal.timeout(timeout) : undefined,
         });
         if (res.ok) {
             let target = '';
@@ -122,6 +123,7 @@ export async function translate(text, from, to, options) {
             method: 'POST',
             headers: headers,
             body: Body.json(body),
+            timeout: timeout ? Math.ceil(timeout / 1000) : undefined,
         });
         if (res.ok) {
             let result = res.data;

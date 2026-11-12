@@ -20,6 +20,7 @@ export async function translate(text, from, to, options = {}) {
                 { role: 'user', content: config.userPrompt ?? DEFAULT_USER_PROMPT },
             ],
             requestArguments: '{}',
+            timeout: config.timeout,
         },
     });
     return typeof result === 'string' ? cleanResult(result) : result;

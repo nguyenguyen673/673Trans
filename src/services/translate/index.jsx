@@ -21,6 +21,7 @@ import * as _ecdict from './ecdict';
 import * as _lingva from './lingva';
 import * as _deepseek from './deepseek';
 import * as _claude from './claude';
+import * as _openai_compatible from './openai_compatible';
 
 export const deepl = _deepl;
 export const bing = _bing;
@@ -28,6 +29,7 @@ export const yandex = _yandex;
 export const openai = _openai;
 export const deepseek = _deepseek;
 export const claude = _claude;
+export const openai_compatible = _openai_compatible;
 export const google = _google;
 export const transmart = _transmart;
 export const alibaba = _alibaba;

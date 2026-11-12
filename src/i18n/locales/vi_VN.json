@@ -216,7 +216,11 @@
                 "install_plugin": "Cài plugin",
                 "view_plugin_list": "Xem danh sách plugin",
                 "uninstall_success": "Đã gỡ plugin",
-                "homepage": "Trang chủ"
+                "homepage": "Trang chủ",
+                "add_translate_service": "Thêm dịch vụ dịch",
+                "edit_translate_service": "Sửa dịch vụ dịch",
+                "builtin_service": "Dịch vụ tích hợp sẵn",
+                "service_name": "Tên dịch vụ"
             },
             "history": {
                 "label": "Lịch sử",
@@ -282,7 +286,15 @@
                 "stream": "Hiện kết quả dần dần (stream)",
                 "system_prompt": "Prompt hệ thống",
                 "user_prompt": "Prompt người dùng",
-                "prompt_description": "$text, $from, $to và $detect sẽ được thay bằng văn bản, ngôn ngữ nguồn, ngôn ngữ đích và ngôn ngữ phát hiện được."
+                "prompt_description": "$text, $from, $to và $detect sẽ được thay bằng văn bản, ngôn ngữ nguồn, ngôn ngữ đích và ngôn ngữ phát hiện được.",
+                "general": "Chung",
+                "timeout": "Thời gian chờ",
+                "timeout_desc": "Bỏ cuộc nếu sau khoảng này nhà cung cấp chưa trả lời.",
+                "api_key_desc": "Chỉ lưu trong file cấu hình trên máy này.",
+                "request_path_desc": "Địa chỉ đầy đủ của endpoint chat.",
+                "model_desc": "Nhập đúng tên mô hình như nhà cung cấp ghi.",
+                "stream_desc": "Hiện bản dịch ngay trong lúc đang được viết ra.",
+                "prompt": "Prompt"
             },
             "translate": {
                 "deepseek": {
@@ -292,6 +304,11 @@
                 "claude": {
                     "title": "Claude",
                     "model_hint": "vd: claude-haiku-5-5, claude-sonnet-5-5, claude-opus-5-5"
+                },
+                "openai_compatible": {
+                    "title": "Tương thích OpenAI",
+                    "request_path_hint": "vd: https://openrouter.ai/api/v1/chat/completions",
+                    "model_hint": "ID mô hình của nhà cung cấp"
                 }
             }
         },

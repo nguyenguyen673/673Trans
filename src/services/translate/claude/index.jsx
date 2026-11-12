@@ -14,6 +14,7 @@ export async function translate(text, from, to, options = {}) {
 
     const res = await fetch(requestPath, {
         method: 'POST',
+        timeout: config.timeout ? Math.ceil(config.timeout / 1000) : undefined,
         headers: {
             'Content-Type': 'application/json',
             'x-api-key': config.apiKey,
