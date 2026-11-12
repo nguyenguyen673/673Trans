@@ -26,6 +26,10 @@ Mọi cài đặt nằm ở trang **Trợ lý chọn văn bản**: bật/tắt t
 
 Chưa làm: chọn chữ bằng Shift + mũi tên chưa bật thanh.
 
+## Số phiên bản
+
+Mỗi bản build có số riêng, xem ở tooltip của icon khay hệ thống hoặc trang Giới thiệu (bản này: 3.5.0). Đổi số ở `version` trong `src-tauri/tauri.conf.json`.
+
 ## Code nằm ở đâu
 
 | Muốn sửa | File |

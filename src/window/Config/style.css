@@ -311,10 +311,21 @@
     gap: 8px;
 }
 
-.service-dialog-cancel {
-    margin-top: 6px;
-    align-self: center;
-    color: hsl(var(--nextui-default-500));
+.service-dialog-footer {
+    padding: 12px 24px;
+    border-top: 1px solid hsl(var(--nextui-default-100));
+}
+
+.service-dialog-footer button {
+    min-width: 88px;
+    height: 34px;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+/* The provider form's own Save button (see useFormSaveButton) */
+.service-dialog-hidden-save {
+    display: none !important;
 }
 
 .service-icon {
