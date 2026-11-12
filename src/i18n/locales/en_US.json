@@ -133,7 +133,10 @@
                 "google": "Google",
                 "bing": "Bing",
                 "yandex": "Yandex",
-                "local": "Local"
+                "local": "Local",
+                "selection_toolbar": "Selection Toolbar (translate / paste translation / speak)",
+                "selection_toolbar_ibeam_only": "Selection Toolbar: only when the cursor is a text cursor",
+                "selection_toolbar_blacklist": "Selection Toolbar: disabled in these apps"
             },
             "recognize": {
                 "label": "Recognize",
@@ -458,7 +461,10 @@
             "copy": "Copy",
             "retry": "Try again",
             "delete_newline": "Delete Newline",
-            "translate_back": "Translation back to the original"
+            "translate_back": "Translation back to the original",
+            "paste_translation": "Replace with translation",
+            "stop": "Stop",
+            "no_selection": "No text selected"
         },
         "recognize": {
             "recognize": "Recognize",

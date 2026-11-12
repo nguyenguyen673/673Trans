@@ -7,6 +7,7 @@ import { useTheme } from 'next-themes';
 
 import { invoke } from '@tauri-apps/api/tauri';
 import Screenshot from './window/Screenshot';
+import SelToolbar from './window/SelToolbar';
 import Translate from './window/Translate';
 import Recognize from './window/Recognize';
 import Updater from './window/Updater';
@@ -22,6 +23,7 @@ const windowMap = {
     recognize: <Recognize />,
     config: <Config />,
     updater: <Updater />,
+    seltoolbar: <SelToolbar />,
 };
 
 export default function App() {

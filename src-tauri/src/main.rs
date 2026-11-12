@@ -9,9 +9,11 @@ mod error;
 mod hotkey;
 mod lang_detect;
 mod screenshot;
+mod sel_toolbar;
 mod server;
 mod system_ocr;
 mod tray;
+#[allow(dead_code)]
 mod updater;
 mod window;
 
@@ -24,6 +26,7 @@ use lang_detect::*;
 use log::info;
 use once_cell::sync::OnceCell;
 use screenshot::screenshot;
+use sel_toolbar::*;
 use server::*;
 use std::sync::Mutex;
 use system_ocr::*;
@@ -31,7 +34,6 @@ use tauri::api::notification::Notification;
 use tauri::Manager;
 use tauri_plugin_log::LogTarget;
 use tray::*;
-use updater::check_update;
 use window::config_window;
 use window::updater_window;
 
@@ -107,8 +109,10 @@ fn main() {
                 }
                 None => {}
             }
-            // Check Update
-            check_update(app.handle());
+            // Personal fork: upstream is archived, so the automatic update check is off.
+            // To turn it back on: updater::check_update(app.handle());
+            // Floating toolbar shown after selecting text anywhere
+            init_selection_toolbar();
             if let Some(engine) = get("translate_detect_engine") {
                 if engine.as_str().unwrap() == "local" {
                     init_lang_detect();
@@ -147,7 +151,13 @@ fn main() {
             local,
             install_plugin,
             font_list,
-            aliyun
+            aliyun,
+            sel_toolbar_capture,
+            sel_toolbar_translate,
+            sel_toolbar_paste,
+            sel_toolbar_hide,
+            sel_toolbar_sticky,
+            sel_toolbar_busy
         ])
         .on_system_tray_event(tray_event_handler)
         .build(tauri::generate_context!())

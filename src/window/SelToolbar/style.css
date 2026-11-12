@@ -1,0 +1,74 @@
+/* Selection toolbar look. The window itself is 132x44 (see sel_toolbar.rs). */
+.sel-toolbar-root {
+    width: 100vw;
+    height: 100vh;
+    padding: 3px;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: default;
+}
+
+.sel-toolbar {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 2px;
+    padding: 0 4px;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
+
+.sel-toolbar-button {
+    flex: 1;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    line-height: 1;
+    color: inherit;
+    background: transparent;
+    border: none;
+    border-radius: 7px;
+    outline: none;
+    cursor: pointer;
+    transition:
+        background-color 120ms,
+        color 120ms;
+}
+
+.sel-toolbar-button:hover {
+    background: rgba(127, 127, 127, 0.22);
+}
+
+.sel-toolbar-button:active {
+    background: rgba(127, 127, 127, 0.36);
+}
+
+.sel-toolbar-button.is-active {
+    color: #f31260;
+}
+
+.sel-toolbar-button.is-failed {
+    color: #f31260;
+    background: rgba(243, 18, 96, 0.15);
+}
+
+.sel-toolbar-spinner {
+    width: 15px;
+    height: 15px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: sel-toolbar-spin 0.7s linear infinite;
+}
+
+@keyframes sel-toolbar-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

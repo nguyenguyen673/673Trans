@@ -1,0 +1,641 @@
+//! Selection toolbar
+//!
+//! A small floating bar with three buttons (translate / paste translation / speak)
+//! that pops up next to the cursor right after the user selects text in ANY app.
+//!
+//! How it works (Windows only for now):
+//!   1. A low-level mouse hook watches for "drag" or "double click" gestures.
+//!   2. If the gesture looks like a text selection (I-beam cursor), the bar is
+//!      shown next to the cursor WITHOUT taking focus from the source app.
+//!   3. Nothing is copied until the user actually clicks a button. Only then the
+//!      selected text is read (UI Automation, falling back to a simulated Ctrl+C).
+//!
+//! Frontend lives in `src/window/SelToolbar`.
+//! Settings keys (config.json):
+//!   selection_toolbar_enable      bool   default true
+//!   selection_toolbar_ibeam_only  bool   default true
+//!   selection_toolbar_blacklist   string default ""   (exe names, comma separated)
+
+use crate::config::{get, set};
+
+/// Window label of the toolbar (also the key in `windowMap` in src/App.jsx)
+pub const LABEL: &str = "seltoolbar";
+
+// Logical size of the toolbar window. Keep in sync with src/window/SelToolbar.
+#[allow(dead_code)]
+const BAR_W: f64 = 132.0;
+#[allow(dead_code)]
+const BAR_H: f64 = 44.0;
+
+#[allow(dead_code)]
+fn cfg_bool(key: &str, default: bool) -> bool {
+    match get(key) {
+        Some(v) => v.as_bool().unwrap_or(default),
+        None => {
+            set(key, default);
+            default
+        }
+    }
+}
+
+#[allow(dead_code)]
+fn cfg_string(key: &str) -> String {
+    match get(key) {
+        Some(v) => v.as_str().unwrap_or("").to_string(),
+        None => String::new(),
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Windows implementation
+// ---------------------------------------------------------------------------
+#[cfg(target_os = "windows")]
+mod imp {
+    use super::{cfg_bool, cfg_string, BAR_H, BAR_W, LABEL};
+    use crate::APP;
+    use log::{info, warn};
+    use once_cell::sync::OnceCell;
+    use std::ffi::c_void;
+    use std::mem::size_of;
+    use std::sync::atomic::{AtomicBool, AtomicI32, AtomicIsize, Ordering::SeqCst};
+    use std::sync::mpsc::{channel, Receiver, RecvTimeoutError, Sender};
+    use std::thread;
+    use std::time::{Duration, Instant};
+    use tauri::Manager;
+    use windows::core::PWSTR;
+    use windows::Win32::Foundation::{
+        CloseHandle, HINSTANCE, HWND, LPARAM, LRESULT, POINT, WPARAM,
+    };
+    use windows::Win32::Graphics::Gdi::{
+        GetMonitorInfoW, MonitorFromPoint, MONITORINFO, MONITOR_DEFAULTTONEAREST,
+    };
+    use windows::Win32::System::LibraryLoader::GetModuleHandleW;
+    use windows::Win32::System::Threading::{
+        AttachThreadInput, GetCurrentProcessId, GetCurrentThreadId, OpenProcess,
+        QueryFullProcessImageNameW, PROCESS_NAME_WIN32, PROCESS_QUERY_LIMITED_INFORMATION,
+    };
+    use windows::Win32::UI::HiDpi::{GetDpiForMonitor, MDT_EFFECTIVE_DPI};
+    use windows::Win32::UI::Input::KeyboardAndMouse::{
+        GetDoubleClickTime, SendInput, INPUT, INPUT_0, INPUT_KEYBOARD, KEYBDINPUT,
+        KEYBD_EVENT_FLAGS, KEYEVENTF_KEYUP, VIRTUAL_KEY, VK_CONTROL, VK_V,
+    };
+    use windows::Win32::UI::WindowsAndMessaging::{
+        BringWindowToTop, CallNextHookEx, DispatchMessageW, GetCursorInfo, GetCursorPos,
+        GetForegroundWindow, GetMessageW, GetWindowLongPtrW, GetWindowThreadProcessId,
+        IsWindowVisible, LoadCursorW, SetForegroundWindow, SetWindowLongPtrW, SetWindowPos,
+        SetWindowsHookExW, ShowWindow, TranslateMessage, CURSORINFO, GWL_EXSTYLE, HHOOK,
+        HWND_TOPMOST, IDC_IBEAM, MSG, MSLLHOOKSTRUCT, SWP_NOACTIVATE, SWP_SHOWWINDOW, SW_HIDE,
+        WH_MOUSE_LL, WM_LBUTTONDOWN, WM_LBUTTONUP, WM_MBUTTONDOWN, WM_MOUSEWHEEL,
+        WM_RBUTTONDOWN, WS_EX_NOACTIVATE, WS_EX_TOOLWINDOW, WS_EX_TOPMOST,
+    };
+
+    /// Minimum mouse travel (physical px) for a press-move-release to count as a drag
+    const DRAG_THRESHOLD: i32 = 8;
+    /// Max distance between two clicks of a double click
+    const DBL_CLICK_SLOP: i32 = 4;
+    /// Hide the bar automatically after this long without interaction
+    const AUTO_HIDE: Duration = Duration::from_secs(6);
+
+    enum Ev {
+        Down { x: i32, y: i32, t: u32, ibeam: bool },
+        Up { x: i32, y: i32, t: u32, ibeam: bool },
+        /// wheel / right click / middle click
+        Dismiss { x: i32, y: i32 },
+    }
+
+    static TX: OnceCell<Sender<Ev>> = OnceCell::new();
+    /// Is the bar currently on screen
+    static VISIBLE: AtomicBool = AtomicBool::new(false);
+    /// When true, clicking elsewhere does not hide the bar (used while speaking)
+    static STICKY: AtomicBool = AtomicBool::new(false);
+    /// When true, the bar does not auto-hide after a few seconds (a button is working).
+    /// Clicking elsewhere still hides it, which cancels a pending paste.
+    static BUSY: AtomicBool = AtomicBool::new(false);
+    /// Bar rectangle in physical screen coordinates
+    static RECT_L: AtomicI32 = AtomicI32::new(0);
+    static RECT_T: AtomicI32 = AtomicI32::new(0);
+    static RECT_R: AtomicI32 = AtomicI32::new(0);
+    static RECT_B: AtomicI32 = AtomicI32::new(0);
+    /// Window that had focus when the selection was made
+    static SRC_HWND: AtomicIsize = AtomicIsize::new(0);
+    /// Native handle of the bar window
+    static BAR_HWND: AtomicIsize = AtomicIsize::new(0);
+    /// Handle of the system I-beam cursor
+    static IBEAM: AtomicIsize = AtomicIsize::new(0);
+
+    fn hwnd(raw: isize) -> HWND {
+        HWND(raw as *mut c_void)
+    }
+
+    fn in_bar(x: i32, y: i32) -> bool {
+        x >= RECT_L.load(SeqCst)
+            && x < RECT_R.load(SeqCst)
+            && y >= RECT_T.load(SeqCst)
+            && y < RECT_B.load(SeqCst)
+    }
+
+    unsafe fn cursor_is_ibeam() -> bool {
+        let ibeam = IBEAM.load(SeqCst);
+        if ibeam == 0 {
+            return false;
+        }
+        let mut ci = CURSORINFO {
+            cbSize: size_of::<CURSORINFO>() as u32,
+            ..Default::default()
+        };
+        GetCursorInfo(&mut ci).is_ok() && ci.hCursor.0 as isize == ibeam
+    }
+
+    // Runs inside the low-level hook: keep it tiny, just forward to the worker.
+    unsafe extern "system" fn mouse_proc(code: i32, wparam: WPARAM, lparam: LPARAM) -> LRESULT {
+        if code >= 0 {
+            let msg = wparam.0 as u32;
+            if matches!(
+                msg,
+                WM_LBUTTONDOWN | WM_LBUTTONUP | WM_RBUTTONDOWN | WM_MBUTTONDOWN | WM_MOUSEWHEEL
+            ) {
+                if let Some(tx) = TX.get() {
+                    let info = &*(lparam.0 as *const MSLLHOOKSTRUCT);
+                    let (x, y, t) = (info.pt.x, info.pt.y, info.time);
+                    let ev = match msg {
+                        WM_LBUTTONDOWN => Ev::Down {
+                            x,
+                            y,
+                            t,
+                            ibeam: cursor_is_ibeam(),
+                        },
+                        WM_LBUTTONUP => Ev::Up {
+                            x,
+                            y,
+                            t,
+                            ibeam: cursor_is_ibeam(),
+                        },
+                        _ => Ev::Dismiss { x, y },
+                    };
+                    let _ = tx.send(ev);
+                }
+            }
+        }
+        CallNextHookEx(HHOOK::default(), code, wparam, lparam)
+    }
+
+    fn hook_thread() {
+        unsafe {
+            if let Ok(cursor) = LoadCursorW(HINSTANCE::default(), IDC_IBEAM) {
+                IBEAM.store(cursor.0 as isize, SeqCst);
+            }
+            let module: HINSTANCE = GetModuleHandleW(None).unwrap_or_default().into();
+            match SetWindowsHookExW(WH_MOUSE_LL, Some(mouse_proc), module, 0) {
+                Ok(_) => info!("Selection toolbar: mouse hook installed"),
+                Err(e) => {
+                    warn!("Selection toolbar: failed to install mouse hook: {:?}", e);
+                    return;
+                }
+            }
+            // A low-level hook needs a message loop on the installing thread
+            let mut msg = MSG::default();
+            while GetMessageW(&mut msg, HWND::default(), 0, 0).as_bool() {
+                let _ = TranslateMessage(&msg);
+                DispatchMessageW(&msg);
+            }
+        }
+    }
+
+    fn bar_window() -> Option<tauri::Window> {
+        let app = APP.get()?;
+        if let Some(w) = app.get_window(LABEL) {
+            return Some(w);
+        }
+        info!("Selection toolbar: creating window");
+        let w = tauri::WindowBuilder::new(app, LABEL, tauri::WindowUrl::App("index.html".into()))
+            .title("Selection Toolbar")
+            .inner_size(BAR_W, BAR_H)
+            .decorations(false)
+            .transparent(true)
+            .resizable(false)
+            .always_on_top(true)
+            .skip_taskbar(true)
+            .focused(false)
+            .visible(false)
+            // All webviews of the app must share the same browser args
+            .additional_browser_args("--disable-web-security")
+            .build()
+            .map_err(|e| warn!("Selection toolbar: failed to create window: {:?}", e))
+            .ok()?;
+        let raw = w.hwnd().ok()?.0 as isize;
+        unsafe {
+            // Never take focus when clicked, stay out of Alt+Tab
+            let ex = GetWindowLongPtrW(hwnd(raw), GWL_EXSTYLE);
+            let extra = (WS_EX_NOACTIVATE.0 | WS_EX_TOOLWINDOW.0 | WS_EX_TOPMOST.0) as isize;
+            SetWindowLongPtrW(hwnd(raw), GWL_EXSTYLE, ex | extra);
+        }
+        BAR_HWND.store(raw, SeqCst);
+        Some(w)
+    }
+
+    pub fn hide() {
+        let raw = BAR_HWND.load(SeqCst);
+        if raw != 0 {
+            unsafe {
+                let _ = ShowWindow(hwnd(raw), SW_HIDE);
+            }
+        }
+        VISIBLE.store(false, SeqCst);
+        BUSY.store(false, SeqCst);
+    }
+
+    fn show_at(x: i32, y: i32, source: HWND) {
+        let Some(window) = bar_window() else {
+            return;
+        };
+        let raw = BAR_HWND.load(SeqCst);
+        if raw == 0 {
+            return;
+        }
+        unsafe {
+            let monitor = MonitorFromPoint(POINT { x, y }, MONITOR_DEFAULTTONEAREST);
+            let mut mi = MONITORINFO {
+                cbSize: size_of::<MONITORINFO>() as u32,
+                ..Default::default()
+            };
+            let _ = GetMonitorInfoW(monitor, &mut mi);
+            let (mut dpi_x, mut dpi_y) = (96u32, 96u32);
+            let _ = GetDpiForMonitor(monitor, MDT_EFFECTIVE_DPI, &mut dpi_x, &mut dpi_y);
+            let scale = dpi_x as f64 / 96.0;
+            let w = (BAR_W * scale).round() as i32;
+            let h = (BAR_H * scale).round() as i32;
+            let area = mi.rcWork;
+
+            // Prefer just above the cursor so the selection itself stays visible
+            let mut px = x + (8.0 * scale) as i32;
+            let mut py = y - h - (14.0 * scale) as i32;
+            if py < area.top {
+                py = y + (22.0 * scale) as i32;
+            }
+            if area.right - w > area.left {
+                px = px.clamp(area.left, area.right - w);
+            }
+            if area.bottom - h > area.top {
+                py = py.clamp(area.top, area.bottom - h);
+            }
+
+            RECT_L.store(px, SeqCst);
+            RECT_T.store(py, SeqCst);
+            RECT_R.store(px + w, SeqCst);
+            RECT_B.store(py + h, SeqCst);
+            SRC_HWND.store(source.0 as isize, SeqCst);
+
+            let _ = SetWindowPos(
+                hwnd(raw),
+                HWND_TOPMOST,
+                px,
+                py,
+                w,
+                h,
+                SWP_NOACTIVATE | SWP_SHOWWINDOW,
+            );
+        }
+        VISIBLE.store(true, SeqCst);
+        let _ = window.emit("sel_toolbar_show", ());
+    }
+
+    unsafe fn window_pid(window: HWND) -> u32 {
+        let mut pid = 0u32;
+        GetWindowThreadProcessId(window, Some(&mut pid));
+        pid
+    }
+
+    /// Lower-case exe name ("chrome.exe") of the process owning `window`
+    unsafe fn process_name(window: HWND) -> String {
+        let pid = window_pid(window);
+        if pid == 0 {
+            return String::new();
+        }
+        let Ok(handle) = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, false, pid) else {
+            return String::new();
+        };
+        let mut buf = [0u16; 1024];
+        let mut len = buf.len() as u32;
+        let ok = QueryFullProcessImageNameW(
+            handle,
+            PROCESS_NAME_WIN32,
+            PWSTR(buf.as_mut_ptr()),
+            &mut len,
+        )
+        .is_ok();
+        let _ = CloseHandle(handle);
+        if !ok {
+            return String::new();
+        }
+        let path = String::from_utf16_lossy(&buf[..len as usize]);
+        path.rsplit(['\\', '/'])
+            .next()
+            .unwrap_or("")
+            .to_lowercase()
+    }
+
+    unsafe fn blacklisted(window: HWND) -> bool {
+        let list = cfg_string("selection_toolbar_blacklist");
+        if list.trim().is_empty() {
+            return false;
+        }
+        let name = process_name(window);
+        if name.is_empty() {
+            return false;
+        }
+        let bare = name.trim_end_matches(".exe");
+        list.split([',', ';', '\n'])
+            .map(|s| s.trim().to_lowercase())
+            .filter(|s| !s.is_empty())
+            .any(|s| s == name || s.trim_end_matches(".exe") == bare)
+    }
+
+    fn worker(rx: Receiver<Ev>) {
+        let mut down: Option<(i32, i32)> = None;
+        let mut down_ibeam = false;
+        let mut pressed_in_bar = false;
+        let mut prev_click: Option<(i32, i32, u32)> = None;
+        let mut shown_at = Instant::now();
+
+        loop {
+            match rx.recv_timeout(Duration::from_millis(500)) {
+                Ok(Ev::Down { x, y, ibeam, .. }) => {
+                    if VISIBLE.load(SeqCst) && in_bar(x, y) {
+                        // A click on one of our buttons, the webview handles it
+                        pressed_in_bar = true;
+                        shown_at = Instant::now();
+                        continue;
+                    }
+                    pressed_in_bar = false;
+                    if VISIBLE.load(SeqCst) && !STICKY.load(SeqCst) {
+                        hide();
+                    }
+                    down = Some((x, y));
+                    down_ibeam = ibeam;
+                }
+                Ok(Ev::Up { x, y, t, ibeam }) => {
+                    if pressed_in_bar {
+                        pressed_in_bar = false;
+                        continue;
+                    }
+                    let Some((dx, dy)) = down.take() else {
+                        continue;
+                    };
+                    let dist = (x - dx).abs().max((y - dy).abs());
+                    let is_drag = dist >= DRAG_THRESHOLD;
+                    let is_double = !is_drag
+                        && prev_click.map_or(false, |(px, py, pt)| {
+                            t.wrapping_sub(pt) <= unsafe { GetDoubleClickTime() }
+                                && (x - px).abs() <= DBL_CLICK_SLOP
+                                && (y - py).abs() <= DBL_CLICK_SLOP
+                        });
+                    prev_click = if is_drag { None } else { Some((x, y, t)) };
+                    if !(is_drag || is_double) {
+                        continue;
+                    }
+                    if !cfg_bool("selection_toolbar_enable", true) {
+                        continue;
+                    }
+                    if cfg_bool("selection_toolbar_ibeam_only", true) && !(ibeam || down_ibeam) {
+                        continue;
+                    }
+                    let source = unsafe { GetForegroundWindow() };
+                    if source.0.is_null() {
+                        continue;
+                    }
+                    unsafe {
+                        // Skip our own windows and apps the user excluded
+                        if window_pid(source) == GetCurrentProcessId() || blacklisted(source) {
+                            continue;
+                        }
+                    }
+                    // Give the app a moment to finish updating its selection
+                    thread::sleep(Duration::from_millis(60));
+                    show_at(x, y, source);
+                    shown_at = Instant::now();
+                }
+                Ok(Ev::Dismiss { x, y }) => {
+                    if VISIBLE.load(SeqCst) && !STICKY.load(SeqCst) && !in_bar(x, y) {
+                        hide();
+                    }
+                }
+                Err(RecvTimeoutError::Timeout) => {
+                    if VISIBLE.load(SeqCst)
+                        && !STICKY.load(SeqCst)
+                        && !BUSY.load(SeqCst)
+                        && shown_at.elapsed() > AUTO_HIDE
+                    {
+                        let mut pt = POINT::default();
+                        let hovering =
+                            unsafe { GetCursorPos(&mut pt).is_ok() } && in_bar(pt.x, pt.y);
+                        if hovering {
+                            shown_at = Instant::now();
+                        } else {
+                            hide();
+                        }
+                    }
+                }
+                Err(RecvTimeoutError::Disconnected) => break,
+            }
+        }
+    }
+
+    pub fn init() {
+        let (tx, rx) = channel::<Ev>();
+        if TX.set(tx).is_err() {
+            return;
+        }
+        thread::spawn(move || {
+            // Warm up the webview so the first popup is instant
+            if cfg_bool("selection_toolbar_enable", true) {
+                thread::sleep(Duration::from_millis(1500));
+                let _ = bar_window();
+            }
+            worker(rx);
+        });
+        thread::spawn(hook_thread);
+    }
+
+    /// Bring `target` to the foreground even if another process owns the focus.
+    unsafe fn force_foreground(target: HWND) {
+        let foreground = GetForegroundWindow();
+        if foreground == target {
+            return;
+        }
+        let current_thread = GetCurrentThreadId();
+        let foreground_thread = GetWindowThreadProcessId(foreground, None);
+        let attached = foreground_thread != 0
+            && foreground_thread != current_thread
+            && AttachThreadInput(current_thread, foreground_thread, true).as_bool();
+        let _ = BringWindowToTop(target);
+        let _ = SetForegroundWindow(target);
+        if attached {
+            let _ = AttachThreadInput(current_thread, foreground_thread, false);
+        }
+    }
+
+    /// Make sure the app where the text was selected has the keyboard focus again
+    fn refocus_source() {
+        let source = SRC_HWND.load(SeqCst);
+        if source == 0 {
+            return;
+        }
+        unsafe {
+            if GetForegroundWindow().0 as isize != source {
+                force_foreground(hwnd(source));
+                thread::sleep(Duration::from_millis(120));
+            }
+        }
+    }
+
+    pub fn capture(hide_bar: bool) -> String {
+        if hide_bar {
+            STICKY.store(false, SeqCst);
+            hide();
+        }
+        refocus_source();
+        selection::get_text()
+    }
+
+    pub fn set_sticky(sticky: bool) {
+        STICKY.store(sticky, SeqCst);
+    }
+
+    pub fn set_busy(busy: bool) {
+        BUSY.store(busy, SeqCst);
+    }
+
+    fn key(vk: VIRTUAL_KEY, up: bool) -> INPUT {
+        INPUT {
+            r#type: INPUT_KEYBOARD,
+            Anonymous: INPUT_0 {
+                ki: KEYBDINPUT {
+                    wVk: vk,
+                    wScan: 0,
+                    dwFlags: if up {
+                        KEYEVENTF_KEYUP
+                    } else {
+                        KEYBD_EVENT_FLAGS(0)
+                    },
+                    time: 0,
+                    dwExtraInfo: 0,
+                },
+            },
+        }
+    }
+
+    pub fn paste(text: String) -> Result<(), String> {
+        // The bar was dismissed while translating (the user clicked somewhere else):
+        // pasting now would land in the wrong place, so give up quietly.
+        if !VISIBLE.load(SeqCst) {
+            return Err("cancelled".into());
+        }
+        STICKY.store(false, SeqCst);
+        hide();
+        arboard::Clipboard::new()
+            .and_then(|mut c| c.set_text(text))
+            .map_err(|e| e.to_string())?;
+        refocus_source();
+        thread::sleep(Duration::from_millis(60));
+        let inputs = [
+            key(VK_CONTROL, false),
+            key(VK_V, false),
+            key(VK_V, true),
+            key(VK_CONTROL, true),
+        ];
+        let sent = unsafe { SendInput(&inputs, size_of::<INPUT>() as i32) };
+        if sent as usize != inputs.len() {
+            return Err("Failed to send Ctrl+V".into());
+        }
+        Ok(())
+    }
+
+    /// The translate window is shown by its own webview a bit later. Our process
+    /// usually is not the foreground one at that moment, so help it get focus
+    /// (otherwise "close on blur" never fires).
+    pub fn focus_translate_window() {
+        let Some(app) = APP.get() else {
+            return;
+        };
+        for _ in 0..40 {
+            thread::sleep(Duration::from_millis(50));
+            let Some(w) = app.get_window("translate") else {
+                continue;
+            };
+            let Ok(h) = w.hwnd() else {
+                continue;
+            };
+            let target = hwnd(h.0 as isize);
+            unsafe {
+                if IsWindowVisible(target).as_bool() {
+                    force_foreground(target);
+                    break;
+                }
+            }
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Other platforms: not implemented yet, everything is a no-op
+// ---------------------------------------------------------------------------
+#[cfg(not(target_os = "windows"))]
+mod imp {
+    pub fn init() {}
+    pub fn hide() {}
+    pub fn capture(_hide_bar: bool) -> String {
+        String::new()
+    }
+    pub fn set_sticky(_sticky: bool) {}
+    pub fn set_busy(_busy: bool) {}
+    pub fn paste(_text: String) -> Result<(), String> {
+        Err("Selection toolbar is only available on Windows".into())
+    }
+    pub fn focus_translate_window() {}
+}
+
+/// Start watching for text selections. Call once after the config is loaded.
+pub fn init_selection_toolbar() {
+    imp::init();
+}
+
+/// Read the text currently selected in the source app.
+#[tauri::command(async)]
+pub fn sel_toolbar_capture(hide: bool) -> String {
+    imp::capture(hide)
+}
+
+/// Button 1: open the normal translate window with the selected text.
+#[tauri::command(async)]
+pub fn sel_toolbar_translate() {
+    let text = imp::capture(true);
+    if text.trim().is_empty() {
+        return;
+    }
+    crate::window::text_translate(text);
+    imp::focus_translate_window();
+}
+
+/// Button 2 (second half): replace the selection with `text` via Ctrl+V.
+#[tauri::command(async)]
+pub fn sel_toolbar_paste(text: String) -> Result<(), String> {
+    imp::paste(text)
+}
+
+#[tauri::command(async)]
+pub fn sel_toolbar_hide() {
+    imp::set_sticky(false);
+    imp::hide();
+}
+
+/// While sticky, clicking elsewhere does not dismiss the bar (used while speaking).
+#[tauri::command(async)]
+pub fn sel_toolbar_sticky(sticky: bool) {
+    imp::set_sticky(sticky);
+}
+
+/// While busy, the bar does not auto-hide (a button is still working).
+#[tauri::command(async)]
+pub fn sel_toolbar_busy(busy: bool) {
+    imp::set_busy(busy);
+}
