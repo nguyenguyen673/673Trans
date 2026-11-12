@@ -363,7 +363,7 @@
 /* Save button of the AI provider form stays visible while the form scrolls
    (in the translation service dialog it is replaced by the footer buttons) */
 .llm-save {
-    position: sticky;
+    position: sticky !important;
     bottom: 0;
     z-index: 5;
     box-shadow: 0 -10px 12px 2px hsl(var(--nextui-content1));
