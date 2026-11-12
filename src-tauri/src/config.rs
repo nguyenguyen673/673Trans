@@ -53,6 +53,7 @@ fn check_available(list: Vec<String>, builtin: Vec<&str>, plugin: Vec<String>, k
 pub fn check_service_available() -> Result<(), Error> {
     let builtin_recognize_list: Vec<&str> = vec![
         "baidu_ocr",
+        "deepseek_ocr",
         "openai_ocr",
         "openai_compatible_ocr",
         "claude_ocr",

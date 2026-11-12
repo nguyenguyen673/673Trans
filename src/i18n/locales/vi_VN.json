@@ -328,6 +328,9 @@
                 },
                 "gemini_ocr": {
                     "title": "Gemini OCR"
+                },
+                "deepseek_ocr": {
+                    "title": "DeepSeek OCR"
                 }
             },
             "tts": {
