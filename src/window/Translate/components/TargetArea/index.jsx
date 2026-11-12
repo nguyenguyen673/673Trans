@@ -67,6 +67,10 @@ export default function TargetArea(props) {
     const [historyDisable] = useConfig('history_disable', false);
     const [isLoading, setIsLoading] = useState(false);
     const [hide, setHide] = useState(true);
+    // "Translate only when opened" (the power button in Config > Service):
+    // when off, this card waits until the user expands it.
+    const autoRun = (serviceInstanceConfigMap[currentTranslateServiceInstanceKey] ?? {})['auto'] ?? true;
+    const [pending, setPending] = useState(false);
 
     const [result, setResult] = useState('');
     const [error, setError] = useState('');
@@ -111,7 +115,16 @@ export default function TargetArea(props) {
                     }
                 });
             }
-            translate();
+            if (autoRun) {
+                setPending(false);
+                translate();
+            } else {
+                // Wait for the user to expand this card
+                translateID[index] = nanoid();
+                setIsLoading(false);
+                setHide(true);
+                setPending(true);
+            }
         }
     }, [
         sourceText,
@@ -482,7 +495,14 @@ export default function TargetArea(props) {
                         isIconOnly
                         variant='light'
                         className='h-[20px] w-[20px]'
-                        onPress={() => setHide(!hide)}
+                        onPress={() => {
+                            if (pending) {
+                                setPending(false);
+                                translate();
+                            } else {
+                                setHide(!hide);
+                            }
+                        }}
                     >
                         {hide ? (
                             <BiExpandVertical className='text-[16px]' />

@@ -191,7 +191,9 @@
                 "add_translate_service": "Add translation service",
                 "edit_translate_service": "Edit translation service",
                 "builtin_service": "Built-in service",
-                "service_name": "Service name"
+                "service_name": "Service name",
+                "auto_on": "Translates automatically. Click to translate only when its card is opened.",
+                "auto_off": "Translates only when you open its card in the translation window."
             },
             "history": {
                 "label": "History",

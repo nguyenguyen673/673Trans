@@ -95,8 +95,17 @@ async function translateForPaste(text) {
         targetLanguage = secondLanguage;
     }
 
-    let lastError = new Error('No translate service configured');
+    // Disabled services are skipped; services set to "only when opened" are tried last
+    const automatic = [];
+    const manual = [];
     for (const instanceKey of serviceList) {
+        const config = (await store.get(instanceKey)) ?? {};
+        if (!(config.enable ?? true)) continue;
+        ((config.auto ?? true) ? automatic : manual).push(instanceKey);
+    }
+
+    let lastError = new Error('No translate service configured');
+    for (const instanceKey of [...automatic, ...manual]) {
         try {
             return await translateWith(instanceKey, text, sourceLanguage, targetLanguage, detected);
         } catch (e) {

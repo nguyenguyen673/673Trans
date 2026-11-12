@@ -1,8 +1,9 @@
 import { RxDragHandleHorizontal } from 'react-icons/rx';
-import { Spacer, Button, Switch } from '@nextui-org/react';
+import { Spacer, Button, Switch, Tooltip } from '@nextui-org/react';
 import { MdDeleteOutline } from 'react-icons/md';
 import { useTranslation } from 'react-i18next';
 import { BiSolidEdit } from 'react-icons/bi';
+import { LuPower } from 'react-icons/lu';
 import React from 'react';
 
 import * as builtinServices from '../../../../../../services/translate';
@@ -54,7 +55,33 @@ export default function ServiceItem(props) {
                         </>
                     )}
                 </div>
-                <div className='flex'>
+                <div className='flex items-center'>
+                    {/* Power button: on = translate automatically, off = only when its card is opened */}
+                    <Tooltip
+                        content={
+                            (serviceInstanceConfig['auto'] ?? true)
+                                ? t('config.service.auto_on')
+                                : t('config.service.auto_off')
+                        }
+                        delay={400}
+                    >
+                        <Button
+                            isIconOnly
+                            size='sm'
+                            variant={(serviceInstanceConfig['auto'] ?? true) ? 'flat' : 'light'}
+                            color={(serviceInstanceConfig['auto'] ?? true) ? 'primary' : 'default'}
+                            isDisabled={!(serviceInstanceConfig['enable'] ?? true)}
+                            onPress={() => {
+                                setServiceInstanceConfig({
+                                    ...serviceInstanceConfig,
+                                    auto: !(serviceInstanceConfig['auto'] ?? true),
+                                });
+                            }}
+                        >
+                            <LuPower className='text-[17px]' />
+                        </Button>
+                    </Tooltip>
+                    <Spacer x={3} />
                     <Switch
                         size='sm'
                         isSelected={serviceInstanceConfig['enable'] ?? true}
