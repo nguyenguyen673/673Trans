@@ -175,35 +175,51 @@ pub async fn local(operate: &str, path: String) -> Result<String, Error> {
     }
 }
 
-#[tauri::command(async)]
-pub async fn aliyun(operate: &str, path: String, url: String) -> Result<String, Error> {
-    match operate {
-        "put" => {
-            let _ = reqwest::Client::new()
-                .put(&url)
-                .body(std::fs::read(&path)?)
-                .send()
-                .await?;
-            Ok("".to_string())
+/// Zip config.json, history.db and plugins into memory (same layout as the other backups).
+pub fn build_archive() -> Result<Vec<u8>, Error> {
+    let config_dir_path = match config_dir() {
+        Some(v) => v.join("com.pot-app.desktop"),
+        None => return Err(Error::Error("Get Config Dir Error".into())),
+    };
+    let mut buffer = std::io::Cursor::new(Vec::new());
+    {
+        let mut zip = zip::ZipWriter::new(&mut buffer);
+        let options = SimpleFileOptions::default().compression_method(zip::CompressionMethod::Stored);
+        zip.start_file("config.json", options)?;
+        zip.write_all(&std::fs::read(config_dir_path.join("config.json"))?)?;
+        let database_path = config_dir_path.join("history.db");
+        if database_path.exists() {
+            zip.start_file("history.db", options)?;
+            zip.write_all(&std::fs::read(&database_path)?)?;
         }
-        "get" => {
-            let res = reqwest::Client::new().get(&url).send().await?;
-            let data = res.bytes().await?;
-            let mut config_dir_path = config_dir().unwrap();
-            config_dir_path = config_dir_path.join("com.pot-app.desktop");
-            let zip_path = config_dir_path.join("archive.zip");
-
-            let mut zip_file = std::fs::File::create(&zip_path)?;
-            zip_file.write_all(&data)?;
-            let mut zip_file = std::fs::File::open(&zip_path)?;
-            let mut zip = ZipArchive::new(&mut zip_file)?;
-            zip.extract(config_dir_path)?;
-            Ok("".to_string())
+        let plugin_path = config_dir_path.join("plugins");
+        if plugin_path.exists() {
+            for entry in WalkDir::new(plugin_path) {
+                let entry = entry?;
+                let path = entry.path();
+                if !path.is_file() {
+                    continue;
+                }
+                let file_name = match path.strip_prefix(&config_dir_path)?.to_str() {
+                    Some(v) => v.to_string(),
+                    None => return Err(Error::Error("Strip Prefix Error".into())),
+                };
+                zip.start_file(file_name, options)?;
+                zip.write_all(&std::fs::read(path)?)?;
+            }
         }
-        _ => {
-            return Err(Error::Error(
-                format!("Local Operate Error: {}", operate).into(),
-            ));
-        }
+        zip.finish()?;
     }
+    Ok(buffer.into_inner())
+}
+
+/// Extract a backup zip over the app's config directory.
+pub fn restore_archive(data: &[u8]) -> Result<(), Error> {
+    let config_dir_path = match config_dir() {
+        Some(v) => v.join("com.pot-app.desktop"),
+        None => return Err(Error::Error("Get Config Dir Error".into())),
+    };
+    let mut zip = ZipArchive::new(std::io::Cursor::new(data))?;
+    zip.extract(config_dir_path)?;
+    Ok(())
 }

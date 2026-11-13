@@ -2,6 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod backup;
+mod gdrive;
 mod clipboard;
 mod cmd;
 mod config;
@@ -18,6 +19,7 @@ mod updater;
 mod window;
 
 use backup::*;
+use gdrive::*;
 use clipboard::*;
 use cmd::*;
 use config::*;
@@ -158,7 +160,8 @@ fn main() {
             local,
             install_plugin,
             font_list,
-            aliyun,
+            gdrive_login,
+            gdrive,
             sel_toolbar_capture,
             sel_toolbar_translate,
             sel_toolbar_paste,

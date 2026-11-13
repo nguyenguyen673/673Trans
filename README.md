@@ -14,8 +14,8 @@
 <p align="center">
   <a href="https://github.com/nguyenguyen673/673Trans/releases/latest"><img src="https://img.shields.io/badge/%E2%AC%87%20T%E1%BA%A3i%20673Trans%20(.exe)-Releases-bff03a?style=for-the-badge&labelColor=0b2a12" alt="Tải 673Trans"/></a>
 </p>
-<p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.3/673Trans-3.27.3.exe">Tải trực tiếp 673Trans-3.27.3.exe</a> &middot; <a href="https://github.com/nguyenguyen673/673Trans/releases">Tất cả bản phát hành</a></p>
-<p align="center">Windows 10/11 &middot; Chỉ cần 1 file <code>.exe</code>, Không cần cài thêm gì &middot; Phiên bản hiện tại: 3.27.3</p>
+<p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.4/673Trans-3.27.4.exe">Tải trực tiếp 673Trans-3.27.4.exe</a> &middot; <a href="https://github.com/nguyenguyen673/673Trans/releases">Tất cả bản phát hành</a></p>
+<p align="center">Windows 10/11 &middot; Chỉ cần 1 file <code>.exe</code>, Không cần cài thêm gì &middot; Phiên bản hiện tại: 3.27.4</p>
 
 <hr/>
 
@@ -188,7 +188,24 @@ async function translate(text, from, to, options) {
 
 </details>
 
+<details>
+<summary><b>Sao lưu lên Google Drive của bạn</b></summary>
+
+Vào **Sao lưu**, chọn **Google Drive**. App không có khóa dùng chung, bạn tạo khóa của riêng mình (làm một lần, miễn phí):
+
+1. Vào [Google Cloud Console](https://console.cloud.google.com/), tạo project, bật **Google Drive API**.
+2. **APIs & Services → Credentials → Create credentials → OAuth client ID**, loại **Desktop app**. Nếu được hỏi, cấu hình màn hình đồng ý (OAuth consent screen) ở chế độ Testing và thêm email của bạn vào **Test users**.
+3. Dán **Client ID** và **Client Secret** vào app, bấm **Đăng nhập Google**, đồng ý trên trình duyệt.
+4. Bấm **Sao lưu** hoặc **Khôi phục**.
+
+Bản sao lưu (cài đặt, lịch sử, plugin) nằm trong thư mục ẩn của app trên Drive. App chỉ có quyền `drive.appdata`, không thấy file khác của bạn. Khóa đăng nhập lưu trong `config.json` trên máy bạn.
+
+</details>
+
 ## Bảo mật
+
+<details>
+<summary><b>Bấm để xem</b></summary>
 
 - Khi bật **Tự cập nhật**, app chỉ tải từ release của repo này, tải đúng file của bản mới nhất và kiểm tra mã SHA-256 do GitHub công bố trước khi thay file.
 - API localhost chỉ nhận lệnh từ chương trình chạy trên máy bạn (trang web trong trình duyệt bị chặn). Muốn chặt hơn, thêm `"server_token": "mật-khẩu-của-bạn"` vào `config.json` rồi gửi kèm header `X-Token`.
@@ -196,7 +213,12 @@ async function translate(text, from, to, options) {
 - Chế độ **theo dõi clipboard** (tắt mặc định) chỉ dịch nội dung mới sao chép sau khi bật, bỏ qua nội dung rỗng hoặc quá dài.
 - Nội dung bạn dịch sẽ được gửi tới dịch vụ bạn chọn (Google, Bing, DeepSeek...). Với nội dung nhạy cảm, dùng các chức năng offline (từ điển Anh–Việt offline, OCR Tesseract).
 
+</details>
+
 ## Cài đặt và build
+
+<details>
+<summary><b>Bấm để xem</b></summary>
 
 Cần Node.js 18+, pnpm, Rust, và Visual Studio Build Tools (Desktop development with C++).
 
@@ -208,8 +230,16 @@ pnpm tauri build    # ra bản cài đặt
 
 Hướng dẫn chi tiết, chỗ sửa từng phần của giao diện và cách tự thêm hãng AI: xem [HUONG-DAN.md](HUONG-DAN.md).
 
+</details>
+
 ## Ghi công và giấy phép
+
+<details>
+<summary><b>Bấm để xem</b></summary>
 
 673Trans phát hành theo giấy phép [GPL-3.0](LICENSE).
 
 Dữ liệu từ điển Anh–Việt offline là của [Dự án Từ điển tiếng Việt miễn phí](https://www.informatik.uni-leipzig.de/~duc/Dict/) (Hồ Ngọc Đức); Wiktionary thuộc Wikimedia Foundation, nội dung theo CC BY-SA, dữ liệu trích qua [kaikki.org](https://kaikki.org).
+
+</details>
+

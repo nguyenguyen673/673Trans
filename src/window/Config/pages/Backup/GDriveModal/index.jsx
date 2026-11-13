@@ -5,10 +5,10 @@ import toast, { Toaster } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 
 import { useToastStyle } from '../../../../../hooks';
-import * as aliyun from '../utils/aliyun';
+import * as gdrive from '../utils/gdrive';
 
-export default function AliyunModal(props) {
-    const { isOpen, onOpenChange, accessToken, refreshToken } = props;
+export default function GDriveModal(props) {
+    const { isOpen, onOpenChange, clientId, clientSecret, refreshToken } = props;
     const [fileList, setFileList] = useState([]);
     const [loading, setLoading] = useState(false);
     const [downloading, setDownloading] = useState([]);
@@ -19,7 +19,7 @@ export default function AliyunModal(props) {
     useEffect(() => {
         if (isOpen) {
             setLoading(true);
-            aliyun.list(accessToken).then(
+            gdrive.list(clientId, clientSecret, refreshToken).then(
                 (v) => {
                     setFileList(v);
                     setDownloading(
@@ -38,7 +38,7 @@ export default function AliyunModal(props) {
     }, [isOpen]);
 
     const getBackup = async (name, onClose) => {
-        aliyun.get(accessToken, name).then(
+        gdrive.get(clientId, clientSecret, refreshToken, name).then(
             () => {
                 setDownloading(
                     downloading.map(() => {
@@ -112,7 +112,7 @@ export default function AliyunModal(props) {
                                                     color='danger'
                                                     variant='flat'
                                                     onPress={() => {
-                                                        aliyun.remove(accessToken, file).then(
+                                                        gdrive.remove(clientId, clientSecret, refreshToken, file).then(
                                                             () => {
                                                                 setFileList(
                                                                     fileList.filter((_, i) => {

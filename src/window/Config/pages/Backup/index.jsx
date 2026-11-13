@@ -11,37 +11,34 @@ import { warn } from 'tauri-plugin-log-api';
 import { Button } from '@nextui-org/react';
 import { Input } from '@nextui-org/react';
 import { Card } from '@nextui-org/react';
-import { Avatar, Tooltip } from '@nextui-org/react';
 import React, { useEffect, useState } from 'react';
 
 import { useConfig, useToastStyle } from '../../../../hooks';
 import { osType } from '../../../../utils/env';
 import * as webdav from './utils/webdav';
 import WebDavModal from './WebDavModal';
-import AliyunModal from './AliyunModal';
+import GDriveModal from './GDriveModal';
 import * as local from './utils/local';
-import * as aliyun from './utils/aliyun';
-
-let refreshTimer = null;
+import * as gdrive from './utils/gdrive';
 
 export default function Backup() {
     const [backupType, setBackupType] = useConfig('backup_type', 'webdav');
     const [davUserName, setDavUserName] = useConfig('webdav_username', '');
     const [davPassword, setDavPassword] = useConfig('webdav_password', '');
     const [davUrl, setDavUrl] = useConfig('webdav_url', '');
-    const [aliyunQrCodeUrl, setAliyunQrCodeUrl] = useState('');
-    const [aliyunUserInfo, setAliyunUserInfo] = useState(null);
-    const [aliyunAccessToken, setAliyunAccessToken] = useConfig('aliyun_access_token', '');
-    // const [aliyunRefreshToken, setAliyunRefreshToken] = useConfig('aliyun_refresh_token', '');
+    const [gdriveClientId, setGdriveClientId] = useConfig('gdrive_client_id', '');
+    const [gdriveClientSecret, setGdriveClientSecret] = useConfig('gdrive_client_secret', '');
+    const [gdriveRefreshToken, setGdriveRefreshToken] = useConfig('gdrive_refresh_token', '');
+    const [signingIn, setSigningIn] = useState(false);
     const {
         isOpen: isWebDavListOpen,
         onOpen: onWebDavListOpen,
         onOpenChange: onWebDavListOpenChange,
     } = useDisclosure();
     const {
-        isOpen: isAliyunListOpen,
-        onOpen: onAliyunListOpen,
-        onOpenChange: onAliyunListOpenChange,
+        isOpen: isGDriveListOpen,
+        onOpen: onGDriveListOpen,
+        onOpenChange: onGDriveListOpenChange,
     } = useDisclosure();
     const [uploading, setUploading] = useState(false);
     const toastStyle = useToastStyle();
@@ -62,13 +59,13 @@ export default function Backup() {
             case 'local':
                 result = local.backup(fileName);
                 break;
-            case 'aliyun':
-                if (aliyunAccessToken === '') {
-                    toast.error(t('config.backup.aliyun_login_first'), { style: toastStyle });
+            case 'gdrive':
+                if (!gdriveRefreshToken) {
+                    toast.error(t('config.backup.gdrive_login_first'), { style: toastStyle });
                     setUploading(false);
-                } else {
-                    result = aliyun.backup(aliyunAccessToken, fileName + '.zip');
+                    return;
                 }
+                result = gdrive.backup(gdriveClientId, gdriveClientSecret, gdriveRefreshToken, fileName + '.zip');
                 break;
             default:
                 warn('Unknown backup type');
@@ -101,81 +98,33 @@ export default function Backup() {
                     }
                 );
                 break;
-            case 'aliyun':
-                if (aliyunAccessToken === '') {
-                    toast.error(t('config.backup.aliyun_login_first'), { style: toastStyle });
+            case 'gdrive':
+                if (!gdriveRefreshToken) {
+                    toast.error(t('config.backup.gdrive_login_first'), { style: toastStyle });
                 } else {
-                    onAliyunListOpen();
+                    onGDriveListOpen();
                 }
-
                 break;
             default:
                 warn('Unknown backup type');
         }
     };
 
-    const pollingStatus = async (sid) => {
-        refreshTimer = setInterval(async () => {
-            try {
-                const { status, code } = await aliyun.status(sid);
-                switch (status) {
-                    case 'QRCodeExpired': {
-                        refreshQrCode();
-                        break;
-                    }
-                    case 'LoginSuccess': {
-                        clearInterval(refreshTimer);
-                        toast.success(t('config.backup.login_success'), { style: toastStyle });
-                        const token = await aliyun.accessToken(code);
-                        setAliyunAccessToken(token);
-                        await refreshUserInfo(token);
-                        break;
-                    }
-                }
-            } catch (e) {
-                toast.error(e.toString(), { style: toastStyle });
-                refreshQrCode();
-            }
-        }, 2000);
-    };
-
-    const refreshQrCode = async () => {
+    const onGDriveLogin = async () => {
+        setSigningIn(true);
         try {
-            const { url, sid } = await aliyun.qrcode();
-            setAliyunQrCodeUrl(url);
-            if (refreshTimer) {
-                clearInterval(refreshTimer);
-            }
-            pollingStatus(sid);
-        } catch (e) {
-            setAliyunQrCodeUrl('');
-            toast.error(e.toString(), { style: toastStyle });
-        }
-    };
-
-    const refreshUserInfo = async (token) => {
-        try {
-            const info = await aliyun.userInfo(token);
-            setAliyunQrCodeUrl('');
-            setAliyunUserInfo(info);
+            const token = await gdrive.login(gdriveClientId, gdriveClientSecret);
+            setGdriveRefreshToken(token);
+            toast.success(t('config.backup.login_success'), { style: toastStyle });
         } catch (e) {
             toast.error(e.toString(), { style: toastStyle });
-            setAliyunAccessToken('');
-            refreshQrCode();
         }
+        setSigningIn(false);
     };
 
     useEffect(() => {
-        if (backupType === null || backupType !== 'aliyun') return;
-        if (aliyunAccessToken === '') {
-            refreshQrCode();
-        } else {
-            refreshUserInfo(aliyunAccessToken);
-        }
-
-        return () => {
-            clearInterval(refreshTimer);
-        };
+        // Aliyun backup was removed; fall back to WebDav for anyone who had it selected
+        if (backupType === 'aliyun') setBackupType('webdav');
     }, [backupType]);
 
     return (
@@ -184,7 +133,7 @@ export default function Backup() {
             <CardBody>
                 <div className='config-item'>
                     <h3 className='my-auto'>{t('config.backup.type')}</h3>
-                    {backupType !== null && (
+                    {backupType !== null && backupType !== 'aliyun' && (
                         <Dropdown>
                             <DropdownTrigger>
                                 <Button variant='bordered'>{t(`config.backup.${backupType}`)}</Button>
@@ -196,7 +145,7 @@ export default function Backup() {
                                 }}
                             >
                                 <DropdownItem key='webdav'>{t('config.backup.webdav')}</DropdownItem>
-                                <DropdownItem key='aliyun'>{t('config.backup.aliyun')}</DropdownItem>
+                                <DropdownItem key='gdrive'>{t('config.backup.gdrive')}</DropdownItem>
                                 <DropdownItem key='local'>{t('config.backup.local')}</DropdownItem>
                             </DropdownMenu>
                         </Dropdown>
@@ -247,39 +196,62 @@ export default function Backup() {
                         )}
                     </div>
                 </div>
-                <div className={`flex justify-center ${backupType !== 'aliyun' ? 'hidden' : ''}`}>
-                    <img
-                        src={aliyunQrCodeUrl}
-                        className={`h-[200px] mb-2 ${aliyunQrCodeUrl === '' ? 'hidden' : ''}`}
-                    />
-                </div>
-                <div className={`config-item ${backupType !== 'aliyun' ? 'hidden' : ''}`}>
-                    {aliyunUserInfo !== null && (
-                        <>
-                            <h3 className='my-auto'>{t('config.backup.username')}</h3>
-
-                            <Tooltip
-                                content={t('config.backup.logout')}
-                                placement='bottom-end'
+                <div className={backupType !== 'gdrive' ? 'hidden' : ''}>
+                    <p className='text-xs text-default-500 mb-2'>{t('config.backup.gdrive_hint')}</p>
+                    <div className='config-item'>
+                        <h3 className='my-auto'>Client ID</h3>
+                        {gdriveClientId !== null && (
+                            <Input
+                                variant='bordered'
+                                value={gdriveClientId}
+                                label='Client ID'
+                                onValueChange={(v) => {
+                                    setGdriveClientId(v);
+                                }}
+                                className='max-w-[300px]'
+                            />
+                        )}
+                    </div>
+                    <div className='config-item'>
+                        <h3 className='my-auto'>Client Secret</h3>
+                        {gdriveClientSecret !== null && (
+                            <Input
+                                type='password'
+                                variant='bordered'
+                                value={gdriveClientSecret}
+                                label='Client Secret'
+                                onValueChange={(v) => {
+                                    setGdriveClientSecret(v);
+                                }}
+                                className='max-w-[300px]'
+                            />
+                        )}
+                    </div>
+                    <div className='config-item'>
+                        <h3 className='my-auto'>
+                            {gdriveRefreshToken ? t('config.backup.gdrive_logged_in') : t('config.backup.gdrive_not_logged_in')}
+                        </h3>
+                        <div className='flex gap-2'>
+                            <Button
+                                color='primary'
+                                variant='flat'
+                                isLoading={signingIn}
+                                onPress={onGDriveLogin}
                             >
+                                {t('config.backup.gdrive_login')}
+                            </Button>
+                            {gdriveRefreshToken && (
                                 <Button
                                     variant='light'
-                                    onClick={() => {
-                                        setAliyunAccessToken('');
-                                        // setAliyunRefreshToken('');
-                                        setAliyunUserInfo(null);
-                                        refreshQrCode();
+                                    onPress={() => {
+                                        setGdriveRefreshToken('');
                                     }}
                                 >
-                                    <Avatar
-                                        src={aliyunUserInfo.avatar}
-                                        size='sm'
-                                    />
-                                    <h3 className='my-auto'>{aliyunUserInfo.name}</h3>
+                                    {t('config.backup.logout')}
                                 </Button>
-                            </Tooltip>
-                        </>
-                    )}
+                            )}
+                        </div>
+                    </div>
                 </div>
                 <div className='flex justify-around'>
                     <Button
@@ -291,7 +263,7 @@ export default function Backup() {
                         {t('config.backup.backup')}
                     </Button>
                     <Button
-                        color='secondary'
+                        color='primary'
                         variant='flat'
                         onPress={onBackupListOpen}
                     >
@@ -306,11 +278,12 @@ export default function Backup() {
                 username={davUserName}
                 password={davPassword}
             />
-            <AliyunModal
-                isOpen={isAliyunListOpen}
-                onOpenChange={onAliyunListOpenChange}
-                accessToken={aliyunAccessToken}
-                // refreshToken={aliyunRefreshToken}
+            <GDriveModal
+                isOpen={isGDriveListOpen}
+                onOpenChange={onGDriveListOpenChange}
+                clientId={gdriveClientId}
+                clientSecret={gdriveClientSecret}
+                refreshToken={gdriveRefreshToken}
             />
         </Card>
     );
