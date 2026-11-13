@@ -127,6 +127,15 @@ export default function App() {
         }
         if (appFontSize !== null) {
             document.documentElement.style.fontSize = `${appFontSize}px`;
+            // the translate window sizes text with classes like text-[17px]; Tailwind only
+            // builds the sizes it saw at build time, so define the current one here
+            let tag = document.getElementById('font-size-rule');
+            if (!tag) {
+                tag = document.createElement('style');
+                tag.id = 'font-size-rule';
+                document.head.appendChild(tag);
+            }
+            tag.textContent = `.text-\\[${appFontSize}px\\]{font-size:${appFontSize}px}`;
         }
     }, [appFont, appFallbackFont, appFontSize]);
 

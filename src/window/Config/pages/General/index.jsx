@@ -9,7 +9,7 @@ import { CardBody } from '@nextui-org/react';
 import { Dropdown } from '@nextui-org/react';
 import { info } from 'tauri-plugin-log-api';
 import { Button } from '@nextui-org/react';
-import { Switch } from '@nextui-org/react';
+import { Switch, Slider } from '@nextui-org/react';
 import 'flag-icons/css/flag-icons.min.css';
 import { Input } from '@nextui-org/react';
 import { Card } from '@nextui-org/react';
@@ -439,27 +439,24 @@ export default function General() {
                     <div className='config-item'>
                         <h3 className='my-auto mx-0'>{t('config.general.font_size.title')}</h3>
                         {appFontSize !== null && (
-                            <Dropdown>
-                                <DropdownTrigger>
-                                    <Button variant='bordered'>{t(`config.general.font_size.${appFontSize}`)}</Button>
-                                </DropdownTrigger>
-                                <DropdownMenu
-                                    aria-label='window position'
-                                    className='max-h-[50vh] overflow-y-auto'
-                                    onAction={(key) => {
-                                        document.documentElement.style.fontSize = `${key}px`;
-                                        setAppFontSize(key);
+                            <div className='flex items-center gap-[12px] w-[260px]'>
+                                <Slider
+                                    aria-label='font size'
+                                    size='sm'
+                                    step={1}
+                                    minValue={10}
+                                    maxValue={32}
+                                    value={Number(appFontSize)}
+                                    onChange={(v) => {
+                                        const px = Array.isArray(v) ? v[0] : v;
+                                        document.documentElement.style.fontSize = `${px}px`;
+                                        setAppFontSize(px);
                                     }}
-                                >
-                                    <DropdownItem key={10}>{t(`config.general.font_size.10`)}</DropdownItem>
-                                    <DropdownItem key={12}>{t(`config.general.font_size.12`)}</DropdownItem>
-                                    <DropdownItem key={14}>{t(`config.general.font_size.14`)}</DropdownItem>
-                                    <DropdownItem key={16}>{t(`config.general.font_size.16`)}</DropdownItem>
-                                    <DropdownItem key={18}>{t(`config.general.font_size.18`)}</DropdownItem>
-                                    <DropdownItem key={20}>{t(`config.general.font_size.20`)}</DropdownItem>
-                                    <DropdownItem key={24}>{t(`config.general.font_size.24`)}</DropdownItem>
-                                </DropdownMenu>
-                            </Dropdown>
+                                />
+                                <span className='w-[42px] text-right text-default-500 text-[13px]'>
+                                    {appFontSize}px
+                                </span>
+                            </div>
                         )}
                     </div>
                     <div className={`config-item ${osType !== 'Windows_NT' && 'hidden'}`}>
