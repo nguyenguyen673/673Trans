@@ -202,6 +202,20 @@ Bản sao lưu (cài đặt, lịch sử, plugin) nằm trong thư mục ẩn c�
 
 </details>
 
+<details>
+<summary><b>Bản macOS (thử nghiệm)</b></summary>
+
+Bản macOS chưa được thử trên máy Mac thật. File `.dmg` được build trên GitHub (tab **Actions → Build macOS → Run workflow**, điền tag release để tự đính vào Release). Có hai bản: `aarch64` (Apple Silicon M1/M2/M3…) và `x64` (Intel).
+
+App chưa ký số của Apple, nên lần đầu mở:
+1. Kéo 673Trans vào Applications.
+2. Chuột phải vào app, chọn **Open**, hoặc chạy `xattr -cr /Applications/673Trans.app` trong Terminal.
+3. Cấp quyền **Accessibility** và **Screen Recording** trong System Settings → Privacy & Security để dùng thanh icon nổi, thay thế văn bản và OCR chụp màn hình.
+
+Trên macOS, tự cập nhật chỉ mở trang tải về trong trình duyệt, không tự thay file như Windows.
+
+</details>
+
 ## Bảo mật
 
 <details>

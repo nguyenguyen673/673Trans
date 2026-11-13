@@ -65,13 +65,22 @@ async fn latest_release(current: &str) -> Result<Option<UpdateInfo>, String> {
     if tag.is_empty() || !is_newer(&tag, current) {
         return Ok(None);
     }
+    let wanted: &[&str] = if cfg!(windows) {
+        &[".exe"]
+    } else if cfg!(target_arch = "aarch64") {
+        &["aarch64.dmg", "arm64.dmg", ".dmg"]
+    } else {
+        &["x64.dmg", "x86_64.dmg", ".dmg"]
+    };
     let asset = release["assets"]
         .as_array()
         .and_then(|list| {
-            list.iter()
-                .find(|a| a["name"].as_str().map_or(false, |n| n.to_lowercase().ends_with(".exe")))
+            wanted.iter().find_map(|suffix| {
+                list.iter()
+                    .find(|a| a["name"].as_str().map_or(false, |n| n.to_lowercase().ends_with(suffix)))
+            })
         })
-        .ok_or_else(|| "Bản phát hành mới không có file .exe".to_string())?;
+        .ok_or_else(|| "Bản phát hành mới chưa có file cho hệ điều hành này".to_string())?;
     Ok(Some(UpdateInfo {
         version: tag.trim_start_matches('v').to_string(),
         notes: release["body"].as_str().unwrap_or_default().to_string(),
@@ -135,6 +144,11 @@ pub async fn install_github_update(app_handle: tauri::AppHandle, url: String) ->
         .ok_or_else(|| "Không có bản mới".to_string())?;
     if info.url != url {
         return Err("Địa chỉ tải không khớp với bản phát hành mới nhất".to_string());
+    }
+    // Only Windows swaps its own exe. On macOS the .dmg is downloaded by the browser.
+    if !cfg!(windows) {
+        tauri::api::shell::open(&app_handle.shell_scope(), info.url, None).map_err(|e| e.to_string())?;
+        return Ok(());
     }
     let exe = std::env::current_exe().map_err(|e| e.to_string())?;
     let new_path = exe.with_extension("exe.new");
