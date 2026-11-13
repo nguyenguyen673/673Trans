@@ -446,7 +446,10 @@
             "loading": "Đang tra…",
             "not_found": "Không tìm thấy \"{{word}}\" trong từ điển.",
             "no_data": "Chưa có dữ liệu từ điển.",
-            "pick_file": "Chọn file…"
+            "pick_file": "Chọn file…",
+            "ai_title": "Giải thích bằng AI",
+            "ai_retry": "Làm lại",
+            "ai_no_service": "Chưa có dịch vụ AI nào trong danh sách dịch (OpenAI, Claude, Gemini, DeepSeek, Ollama…)."
         }
     }
 }

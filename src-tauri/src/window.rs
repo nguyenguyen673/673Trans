@@ -475,7 +475,7 @@ pub fn dict_window(text: String) {
     window.set_skip_taskbar(true).unwrap();
     let monitor = window.current_monitor().unwrap().unwrap();
     let dpi = monitor.scale_factor();
-    let (w, h) = (400.0 * dpi, 340.0 * dpi);
+    let (w, h) = (400.0 * dpi, 440.0 * dpi);
     window.set_size(tauri::PhysicalSize::new(w, h)).unwrap();
     let mp = monitor.position();
     let ms = monitor.size();

@@ -178,3 +178,32 @@
     text-decoration: underline;
     cursor: pointer;
 }
+
+.dict-ai {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: hsl(var(--nextui-default-100));
+}
+
+.dict-ai-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: hsl(var(--nextui-primary));
+}
+
+.dict-ai-head .dict-link {
+    margin-left: auto;
+    font-weight: 400;
+    font-size: 12px;
+}
+
+.dict-ai-text {
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}

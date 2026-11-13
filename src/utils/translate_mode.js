@@ -4,15 +4,18 @@ import { atom } from 'jotai';
 export const translateModeAtom = atom('translate');
 
 // Services that are driven by a prompt (LLMs). Others can only translate.
-const LLM_SERVICES = ['openai', 'openai_compatible', 'deepseek', 'chatglm', 'geminipro', 'ollama', 'claude'];
+export const LLM_SERVICES = ['openai', 'openai_compatible', 'deepseek', 'chatglm', 'geminipro', 'ollama', 'claude'];
 
 const SYSTEM = {
     polish: 'You are a professional editor. Polish the text: fix grammar, spelling and punctuation, improve clarity and fluency, keep the original language, meaning, tone and line breaks. Output only the polished text: no quotes, no notes, no explanations.',
     summarize:
         'You are a professional summarizer. Summarize the text concisely in $to, keeping the key points, names and numbers. Use short sentences or a few bullet points. Output only the summary: no quotes, no notes, no explanations.',
 };
+SYSTEM.explain =
+    'You are an English-Vietnamese dictionary assistant. Explain the given English word or phrase in Vietnamese: the main meaning for each common part of speech, a short usage or nuance note if useful, and two short English example sentences each followed by its Vietnamese translation. Be concise. Plain text only: no markdown, no headings, no asterisks.';
 const USER = {
     polish: 'Polish this text:\n"""\n$text\n"""',
+    explain: 'Explain the word/phrase:\n"""\n$text\n"""',
     summarize: 'Summarize into $to:\n"""\n$text\n"""',
 };
 

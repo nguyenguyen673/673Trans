@@ -13,6 +13,10 @@ import { getServiceName } from '../../utils/service_instance';
 import * as dictionaryServices from '../../services/dictionary';
 import { synthesize, playAudio, stopAudio } from '../SelToolbar';
 import { useConfig } from '../../hooks';
+import { store } from '../../utils/store';
+import * as translateServices from '../../services/translate';
+import { applyMode, LLM_SERVICES } from '../../utils/translate_mode';
+import { LuSparkles } from 'react-icons/lu';
 import './style.css';
 
 let blurTimeout = null;
@@ -32,10 +36,37 @@ export default function Dict() {
     const [prons, setProns] = useState([]);
     const [playing, setPlaying] = useState('');
     const [speakError, setSpeakError] = useState('');
+    const [ai, setAi] = useState({ text: '', loading: false, error: '', name: '' });
+    const aiId = useRef(0);
     const [speaking, setSpeaking] = useState(false);
     const [speakLoading, setSpeakLoading] = useState(false);
     const listRef = useRef(null);
     listRef.current = serviceList;
+
+    // AI explanation with the first AI service of the translate list
+    const explain = async (text) => {
+        const id = ++aiId.current;
+        setAi({ text: '', loading: true, error: '', name: '' });
+        try {
+            const list = (await store.get('translate_service_list')) ?? [];
+            const key = list.find((k) => LLM_SERVICES.includes(getServiceName(k)));
+            if (!key) throw new Error(t('dict.ai_no_service'));
+            const name = getServiceName(key);
+            const service = translateServices[name];
+            const L = service.Language ?? {};
+            const config = applyMode(name, (await store.get(key)) ?? {}, 'explain');
+            const result = await service.translate(text, L.en ?? 'English', L.vi ?? 'Vietnamese', {
+                config: { ...config, stream: config.stream ?? true },
+                detect: 'en',
+                setResult: (v) => {
+                    if (aiId.current === id) setAi((a) => ({ ...a, text: String(v), loading: true }));
+                },
+            });
+            if (aiId.current === id) setAi({ text: String(result ?? '').trim(), loading: false, error: '', name });
+        } catch (e) {
+            if (aiId.current === id) setAi({ text: '', loading: false, error: String(e?.message ?? e), name: '' });
+        }
+    };
 
     const run = async (text) => {
         const clean = (text ?? '').trim();
@@ -44,6 +75,7 @@ export default function Dict() {
         setState(null);
         setProns([]);
         stopAudio();
+        explain(clean);
         appWindow.show();
         appWindow.setFocus();
         const key = (listRef.current ?? ['ev_offline'])[0];
@@ -215,6 +247,27 @@ export default function Dict() {
                             </div>
                         </div>
                     ))}
+                {(ai.loading || ai.text || ai.error) && (
+                    <div className='dict-ai'>
+                        <div className='dict-ai-head'>
+                            <LuSparkles /> {t('dict.ai_title')}
+                            {ai.loading && <LuLoader2 className='dict-spin' />}
+                            {!ai.loading && (
+                                <button
+                                    className='dict-link'
+                                    onClick={() => explain(word)}
+                                >
+                                    {t('dict.ai_retry')}
+                                </button>
+                            )}
+                        </div>
+                        {ai.error ? (
+                            <div className='dict-error'>{ai.error}</div>
+                        ) : (
+                            <div className='dict-ai-text'>{ai.text}</div>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );

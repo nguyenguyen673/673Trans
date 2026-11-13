@@ -661,7 +661,10 @@
             "loading": "Looking up…",
             "not_found": "\"{{word}}\" was not found in the dictionary.",
             "no_data": "No dictionary data yet.",
-            "pick_file": "Pick file…"
+            "pick_file": "Pick file…",
+            "ai_title": "AI explanation",
+            "ai_retry": "Retry",
+            "ai_no_service": "No AI service in the translate list (OpenAI, Claude, Gemini, DeepSeek, Ollama…)."
         }
     }
 }
