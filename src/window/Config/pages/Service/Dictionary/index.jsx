@@ -11,6 +11,7 @@ import ServiceItem from './ServiceItem';
 import SelectModal from './SelectModal';
 import ConfigModal from './ConfigModal';
 import DictPreview from './DictPreview';
+import { Switch } from '@nextui-org/react';
 
 export default function Dictionary(props) {
     const pluginList = {};
@@ -21,9 +22,11 @@ export default function Dictionary(props) {
     const [dictionaryServiceInstanceList, setDictionaryServiceInstanceList] = useConfig('dictionary_service_list', [
         'ev_offline',
         'wiktionary',
+        'ai_dict',
     ]);
 
     const { t } = useTranslation();
+    const [usTts, setUsTts] = useConfig('dict_us_tts', false);
     const toastStyle = useToastStyle();
 
     const reorder = (list, startIndex, endIndex) => {
@@ -65,6 +68,16 @@ export default function Dictionary(props) {
                 } overflow-y-auto p-3 flex justify-between`}
             >
                 <DictPreview />
+                <div className='config-item mb-[10px]'>
+                    <div className='config-label'>
+                        <h3>{t('config.service.dict_us_tts')}</h3>
+                        <p className='config-desc'>{t('config.service.dict_us_tts_desc')}</p>
+                    </div>
+                    <Switch
+                        isSelected={usTts === true}
+                        onValueChange={setUsTts}
+                    />
+                </div>
                 <DragDropContext onDragEnd={onDragEnd}>
                     <Droppable
                         droppableId='droppable'

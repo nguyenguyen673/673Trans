@@ -158,6 +158,22 @@ export function stopAudio() {
     }
 }
 
+function loudnessGain(buffer) {
+    const ch = buffer.getChannelData(0);
+    let sum = 0;
+    let peak = 0;
+    for (let i = 0; i < ch.length; i++) {
+        const v = Math.abs(ch[i]);
+        sum += v * v;
+        if (v > peak) peak = v;
+    }
+    const rms = Math.sqrt(sum / Math.max(1, ch.length));
+    if (!rms || !peak) return 1;
+    const wanted = 0.14 / rms; // target loudness
+    const safe = 0.97 / peak; // never clip
+    return Math.max(1, Math.min(wanted, safe, 6));
+}
+
 // Resolves once playback has started; `onEnded` fires when it finishes or is stopped
 export async function playAudio(data, onEnded) {
     if (!audioContext) {
@@ -169,9 +185,14 @@ export async function playAudio(data, onEnded) {
     const buffer = await audioContext.decodeAudioData(new Uint8Array(data).buffer);
     const source = audioContext.createBufferSource();
     source.buffer = buffer;
-    source.connect(audioContext.destination);
+    // Quiet recordings (some US clips) are lifted towards a common loudness, without clipping
+    const gain = audioContext.createGain();
+    gain.gain.value = loudnessGain(buffer);
+    source.connect(gain);
+    gain.connect(audioContext.destination);
     source.onended = () => {
         source.disconnect();
+        gain.disconnect();
         if (audioSource === source) audioSource = null;
         onEnded();
     };

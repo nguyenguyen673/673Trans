@@ -226,7 +226,9 @@
                 "service_name": "Service name",
                 "auto_on": "Translates automatically. Click to translate only when its card is opened.",
                 "auto_off": "Translates only when you open its card in the translation window.",
-                "dictionary": "Dictionary"
+                "dictionary": "Dictionary",
+                "dict_us_tts": "US voice: read with TTS",
+                "dict_us_tts_desc": "Turn on if the US recording is too quiet or unclear: the US button will use your TTS service instead of the recording."
             },
             "history": {
                 "label": "History",
@@ -635,6 +637,12 @@
                 "wiktionary": {
                     "title": "Wiktionary (Cambridge style)",
                     "desc": "Online lookup per word: UK/US IPA, recorded audio, English definitions and example sentences. No key needed."
+                },
+                "ai_dict": {
+                    "title": "AI dictionary",
+                    "service": "AI service",
+                    "service_desc": "Uses an AI of your translate list (DeepSeek, Claude, Gemini…) to write the entry.",
+                    "auto": "Automatic (first AI)"
                 }
             }
         },

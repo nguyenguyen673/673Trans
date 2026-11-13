@@ -13,7 +13,10 @@ const SYSTEM = {
 };
 SYSTEM.explain =
     'You are an English-Vietnamese dictionary assistant. Explain the given English word or phrase in Vietnamese: the main meaning for each common part of speech, a short usage or nuance note if useful, and two short English example sentences each followed by its Vietnamese translation. Be concise. Plain text only: no markdown, no headings, no asterisks.';
+SYSTEM.dict =
+    'You are an English-Vietnamese dictionary. Reply with ONE raw JSON object only (no markdown, no code fences, no text around it) with this exact shape: {"word": string (the headword), "ipa": string (US IPA with slashes, e.g. "/həˈloʊ/"), "meanings": [{"pos": string (noun, verb, adjective, ...), "definitions": [string (short Vietnamese meaning)], "examples": [{"en": string, "vi": string}]}]}. Give the 1-4 most common parts of speech, 1-4 Vietnamese definitions each (most common first) and 1-2 short examples for each part of speech. If the input is a phrase or a different form of a word, explain that exact input.';
 const USER = {
+    dict: 'Word: """$text"""',
     polish: 'Polish this text:\n"""\n$text\n"""',
     explain: 'Explain the word/phrase:\n"""\n$text\n"""',
     summarize: 'Summarize into $to:\n"""\n$text\n"""',

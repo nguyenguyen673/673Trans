@@ -31,7 +31,7 @@ void listen('tauri://focus', () => clearTimeout(blurTimeout));
 
 export default function Dict() {
     const { t } = useTranslation();
-    const [serviceList] = useEnabledList('dictionary_service_list', ['ev_offline', 'wiktionary']);
+    const [serviceList] = useEnabledList('dictionary_service_list', ['ev_offline', 'wiktionary', 'ai_dict']);
     const [word, setWord] = useState('');
     // null = loading | { entry } | { missing } | { noData } | { error }
     const [state, setState] = useState(null);
@@ -97,7 +97,7 @@ export default function Dict() {
         setCurrent(key);
         const service = dictionaryServices[getServiceName(key ?? 'ev_offline')];
         try {
-            const entry = await service.lookup(clean);
+            const entry = await service.lookup(clean, (await store.get(key)) ?? {});
             setState(entry ? { entry } : { missing: true });
             if (!entry) {
                 // typos: suggest similar words from the offline dictionary when it is installed
@@ -112,7 +112,11 @@ export default function Dict() {
                 service.pronunciations(entry.word || clean).then((p) => setProns(p.filter((x) => x.label === 'US')));
             }
         } catch (e) {
-            setState(e?.message === 'NO_DATA' ? { noData: true } : { error: String(e?.message ?? e) });
+            setState(
+                e?.message === 'NO_DATA'
+                    ? { noData: true }
+                    : { error: e?.message === 'NO_AI' ? t('dict.ai_no_service') : String(e?.message ?? e) }
+            );
         }
     };
 
@@ -172,7 +176,8 @@ export default function Dict() {
         setSpeakError('');
         const done = () => setPlaying('');
         // 1) recorded audio from the web, 2) fall back to the configured TTS service
-        if (p.audio) {
+        const useTts = p.label === 'US' && (await store.get('dict_us_tts')) === true;
+        if (p.audio && !useTts) {
             try {
                 const data = await dictionaryServices.ev_offline.fetchAudio(p.audio);
                 await playAudio(data, done);

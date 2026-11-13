@@ -278,7 +278,9 @@
                 "service_name": "Tên dịch vụ",
                 "auto_on": "Đang tự dịch. Bấm để chỉ dịch khi mở thẻ của dịch vụ này.",
                 "auto_off": "Chỉ dịch khi bạn mở thẻ của dịch vụ này trong cửa sổ dịch.",
-                "dictionary": "Từ điển"
+                "dictionary": "Từ điển",
+                "dict_us_tts": "Giọng US: đọc bằng TTS",
+                "dict_us_tts_desc": "Bật nếu bản ghi âm US nhỏ hoặc khó nghe: nút US sẽ đọc bằng dịch vụ TTS của bạn thay vì file ghi âm."
             },
             "history": {
                 "label": "Lịch sử",
@@ -420,6 +422,12 @@
                 "wiktionary": {
                     "title": "Wiktionary (kiểu Cambridge)",
                     "desc": "Tra online từng từ: IPA UK/US, giọng đọc thật, định nghĩa tiếng Anh và câu ví dụ. Không cần key."
+                },
+                "ai_dict": {
+                    "title": "Từ điển AI",
+                    "service": "Dịch vụ AI",
+                    "service_desc": "Dùng AI trong danh sách dịch (DeepSeek, Claude, Gemini…) để viết mục từ điển.",
+                    "auto": "Tự chọn (AI đầu tiên)"
                 }
             }
         },
