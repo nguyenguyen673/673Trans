@@ -73,6 +73,7 @@ export async function pronunciations(word) {
             method: 'GET',
             timeout: 5,
             responseType: ResponseType.JSON,
+            headers: { 'User-Agent': '673Trans/3.13 (personal translator app)' },
         });
         if (res.ok && Array.isArray(res.data)) {
             const seen = new Set();
@@ -111,7 +112,13 @@ export async function pronunciations(word) {
 }
 
 export async function fetchAudio(url) {
-    const res = await fetch(url, { method: 'GET', timeout: 10, responseType: ResponseType.Binary });
+    // Wikimedia refuses requests without a User-Agent (HTTP 403)
+    const res = await fetch(url, {
+        method: 'GET',
+        timeout: 10,
+        responseType: ResponseType.Binary,
+        headers: { 'User-Agent': '673Trans/3.13 (personal translator app)' },
+    });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return res.data;
 }

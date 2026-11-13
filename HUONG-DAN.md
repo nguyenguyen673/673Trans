@@ -30,7 +30,7 @@ Chưa làm: chọn chữ bằng Shift + mũi tên chưa bật thanh.
 
 ## Số phiên bản
 
-Mỗi bản build có số riêng, xem ở tooltip của icon khay hệ thống hoặc trang Giới thiệu (bản này: 3.13.1). Đổi số ở `version` trong `src-tauri/tauri.conf.json`.
+Mỗi bản build có số riêng, xem ở tooltip của icon khay hệ thống hoặc trang Giới thiệu (bản này: 3.13.2). Đổi số ở `version` trong `src-tauri/tauri.conf.json`.
 
 ## Code nằm ở đâu
 

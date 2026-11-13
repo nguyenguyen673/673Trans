@@ -668,7 +668,8 @@
             "pick_file": "Pick file…",
             "ai_title": "AI explanation",
             "ai_retry": "Retry",
-            "ai_no_service": "No AI service in the translate list (OpenAI, Claude, Gemini, DeepSeek, Ollama…)."
+            "ai_no_service": "No AI service in the translate list (OpenAI, Claude, Gemini, DeepSeek, Ollama…).",
+            "audio_fallback": "Could not load the recorded audio; reading with TTS instead (UK/US will sound the same)."
         }
     }
 }

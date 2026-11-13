@@ -171,6 +171,7 @@ export default function Dict() {
                 return;
             } catch (e) {
                 console.error('dict audio failed', e);
+                setSpeakError(t('dict.audio_fallback'));
             }
         }
         try {

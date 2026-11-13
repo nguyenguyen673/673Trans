@@ -17,7 +17,12 @@ function candidates(word) {
 async function fetchEntries(w) {
     if (cache.has(w)) return cache.get(w);
     const url = `https://kaikki.org/dictionary/English/meaning/${w[0]}/${w.slice(0, 2)}/${encodeURIComponent(w)}.jsonl`;
-    const res = await fetch(url, { method: 'GET', timeout: 15, responseType: ResponseType.Text });
+    const res = await fetch(url, {
+        method: 'GET',
+        timeout: 15,
+        responseType: ResponseType.Text,
+        headers: { 'User-Agent': '673Trans/3.13 (personal translator app)' },
+    });
     let entries = [];
     if (res.ok) {
         entries = String(res.data)
