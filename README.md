@@ -2,7 +2,7 @@
 
 # 673Trans
 
-> Trình dịch chọn-là-dịch cho Windows: giao diện tiếng Việt gọn hiện đại, dịch bằng AI (DeepSeek, Claude, GPT, Gemini), từ điển Anh–Việt có sẵn, OCR và giọng đọc AI, thanh icon nổi khi bôi đen chữ ở bất kỳ app nào.
+>Trình dịch chọn-là-dịch cho Windows: giao diện tiếng Anh/Việt gọn hiện đại, Sử dụng nhiều dịch mặc định như Google, Bing và các dịch vụ tích hợp bằng AI (DeepSeek, Claude, GPT, Gemini...), Có sẵn từ điển Anh–Việt, voice US/UL, OCR và giọng đọc AI, thanh icon nổi khi bôi đen chữ ở bất kỳ app nào có khả năng dịch, viết lại, chữa chính tả, đọc, tra từ điển, bookmark...
 
 ![License](https://img.shields.io/badge/license-GPL--3.0-blue)
 ![React](https://img.shields.io/badge/-React-61dafb?logo=react&logoColor=white)
