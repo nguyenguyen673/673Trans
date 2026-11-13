@@ -159,7 +159,7 @@ Invoke-RestMethod http://127.0.0.1:60828/selection_translate
 
 ### Tự tạo plugin cho bản thân
 
-673Trans dùng chung định dạng plugin với Pot, nên plugin của Pot cài được luôn. Có 4 loại: **dịch**, **OCR**, **giọng đọc** và **sổ từ vựng**. Cài bằng nút **Thêm plugin** trong Cài đặt → Dịch vụ (chọn file `.potext`).
+Plugin mở rộng được 4 loại dịch vụ: **dịch**, **OCR**, **giọng đọc** và **sổ từ vựng**. Cài bằng nút **Thêm plugin** trong Cài đặt → Dịch vụ (chọn file `.potext`).
 
 Một plugin là một thư mục (nén thành `.potext`) gồm:
 
@@ -178,7 +178,7 @@ async function translate(text, from, to, options) {
 }
 ```
 
-`utils` còn có `run` để chạy một chương trình có sẵn trên máy (ví dụ mô hình dịch chạy cục bộ), `CryptoJS`, `Database` và đường dẫn thư mục plugin. Plugin nằm ở `%APPDATA%\com.pot-app.desktop\plugins\<loại>\<tên>`, sửa `main.js` rồi mở lại cửa sổ là thấy kết quả. Mẫu để bắt đầu: [pot-app-translate-plugin-template](https://github.com/pot-app/pot-app-translate-plugin-template).
+`utils` còn có `run` để chạy một chương trình có sẵn trên máy (ví dụ mô hình dịch chạy cục bộ), `CryptoJS`, `Database` và đường dẫn thư mục plugin. Plugin nằm ở `%APPDATA%\com.pot-app.desktop\plugins\<loại>\<tên>`, sửa `main.js` rồi mở lại cửa sổ là thấy kết quả.
 
 ## Cài đặt và build
 
