@@ -1,8 +1,7 @@
 import { Code, Card, CardBody, Button, Progress, Skeleton } from '@nextui-org/react';
-import { checkUpdate, installUpdate } from '@tauri-apps/api/updater';
+import { invoke } from '@tauri-apps/api/tauri';
 import React, { useEffect, useState } from 'react';
 import { appWindow } from '@tauri-apps/api/window';
-import { relaunch } from '@tauri-apps/api/process';
 import toast, { Toaster } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { listen } from '@tauri-apps/api/event';
@@ -11,8 +10,6 @@ import ReactMarkdown from 'react-markdown';
 import { useConfig, useToastStyle } from '../../hooks';
 import { osType } from '../../utils/env';
 
-let unlisten = 0;
-let eventId = 0;
 
 export default function Updater() {
     const [transparent] = useConfig('transparent', true);
@@ -22,14 +19,19 @@ export default function Updater() {
     const { t } = useTranslation();
     const toastStyle = useToastStyle();
 
+    const [info, setInfo] = useState(null);
+    const [installing, setInstalling] = useState(false);
+
     useEffect(() => {
         if (appWindow.label === 'updater') {
             appWindow.show();
         }
-        checkUpdate().then(
+        // Latest release of the 673Trans GitHub repo
+        invoke('check_github_update').then(
             (update) => {
-                if (update.shouldUpdate) {
-                    setBody(update.manifest.body);
+                if (update) {
+                    setInfo(update);
+                    setBody(`## ${update.version}\n\n${update.notes || ''}`);
                 } else {
                     setBody(t('updater.latest'));
                 }
@@ -39,19 +41,14 @@ export default function Updater() {
                 toast.error(e.toString(), { style: toastStyle });
             }
         );
-        if (unlisten === 0) {
-            unlisten = listen('tauri://update-download-progress', (e) => {
-                if (eventId === 0) {
-                    eventId = e.id;
-                }
-                if (e.id === eventId) {
-                    setTotal(e.payload.contentLength);
-                    setDownloaded((a) => {
-                        return a + e.payload.chunkLength;
-                    });
-                }
-            });
-        }
+        const unlisten = listen('update_progress', (e) => {
+            const [done, all] = e.payload;
+            setDownloaded(done);
+            setTotal(all);
+        });
+        return () => {
+            unlisten.then((f) => f());
+        };
     }, []);
 
     return (
@@ -132,7 +129,7 @@ export default function Updater() {
                     )}
                 </CardBody>
             </Card>
-            {downloaded !== 0 && (
+            {installing && total > 0 && (
                 <Progress
                     aria-label='Downloading...'
                     label={t('updater.progress')}
@@ -152,23 +149,20 @@ export default function Updater() {
             <div className='grid gap-4 grid-cols-2 h-[50px] my-[10px] mx-[80px]'>
                 <Button
                     variant='flat'
-                    isLoading={downloaded !== 0}
-                    isDisabled={downloaded !== 0}
+                    isLoading={installing}
+                    isDisabled={installing || !info}
                     color='primary'
                     onPress={() => {
-                        installUpdate().then(
-                            () => {
-                                toast.success(t('updater.installed'), { style: toastStyle, duration: 10000 });
-                                relaunch();
-                            },
-                            (e) => {
-                                toast.error(e.toString(), { style: toastStyle });
-                            }
-                        );
+                        setInstalling(true);
+                        // The app restarts itself when the new version is in place
+                        invoke('install_github_update', { url: info.url }).catch((e) => {
+                            setInstalling(false);
+                            toast.error(e.toString(), { style: toastStyle });
+                        });
                     }}
                 >
-                    {downloaded !== 0
-                        ? downloaded > total
+                    {installing
+                        ? downloaded >= total && total > 0
                             ? t('updater.installing')
                             : t('updater.downloading')
                         : t('updater.update')}

@@ -109,8 +109,8 @@ fn main() {
                 }
                 None => {}
             }
-            // Personal fork: upstream is archived, so the automatic update check is off.
-            // To turn it back on: updater::check_update(app.handle());
+            // Update check against this fork's GitHub releases (Config > General > check_update)
+            updater::check_update(app.handle());
             // Floating toolbar shown after selecting text anywhere
             init_selection_toolbar();
             if let Some(engine) = get("translate_detect_engine") {
@@ -147,6 +147,8 @@ fn main() {
             register_language_pair_hotkey,
             update_tray,
             updater_window,
+            updater::check_github_update,
+            updater::install_github_update,
             screenshot,
             lang_detect,
             webdav,
