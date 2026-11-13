@@ -28,7 +28,7 @@ Có sẵn DeepSeek, Claude, GPT, Gemini và "Tương thích OpenAI" (OpenRouter,
 
 <table>
 <tr>
-<td width="65%" align="center"><b>Dịch thường (Gemini)</b><br/><img src="asset/ui-translate-gemini.png" width="560"/></td>
+<td width="65%" align="center"><b>Dịch thường</b><br/><img src="asset/ui-translate-multi.png" width="560"/></td>
 <td valign="middle">
 
 **Dịch văn bản trộn nhiều ngôn ngữ**<br/>
@@ -37,7 +37,7 @@ Chọn một đoạn lẫn tiếng Anh + tiếng Nhật, app tự phát hiện v
 </td>
 </tr>
 <tr>
-<td width="65%" align="center"><b>Viết lại, chính tả (DeepSeek)</b><br/><img src="asset/ui-mode-rewrite-v4.png" width="560"/></td>
+<td width="65%" align="center"><b>Viết lại, chính tả</b><br/><img src="asset/ui-mode-rewrite-v4.png" width="560"/></td>
 <td valign="middle">
 
 
