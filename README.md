@@ -62,11 +62,11 @@ Công tắc nguồn cho từng dịch vụ: tắt thì chỉ dịch khi bạn m�
 
 ### Từ điển
 
-<img src="asset/ui-dict.png" align="right" width="300"/>
-
 Tô một từ, bấm icon quyển sách hoặc dùng phím tắt.
 
 <p align="center"><img src="asset/ui-dict-select.png" width="880"/></p>
+
+<img src="asset/ui-dict.png" align="right" width="300"/>
 
 - Popup kiểu Cambridge hiện cạnh con trỏ, có phiên âm IPA và nút loa phát giọng **UK** và **US** (ảnh minh hoạ: Wiktionary).
 - 3 từ điển, đổi bằng menu: **Anh–Việt offline** (103k từ, **đã nhúng sẵn trong exe**, tra ngược Việt → Anh, gợi ý từ gần giống), **Wiktionary** (giọng ghi âm thật, định nghĩa, câu ví dụ, lưu đệm), **Từ điển AI** (chọn hãng DeepSeek, OpenAI, Claude, Gemini hoặc tương thích OpenAI, nhập khoá API riêng).
@@ -90,9 +90,16 @@ Dịch, OCR và giọng nói đều có sẵn các hãng AI (DeepSeek, Claude, G
 - Có sẵn và bật sẵn: OCR của Windows (System) và **Tesseract** (dữ liệu tiếng Anh, Việt, Trung đã nhúng trong exe, chạy offline). OCR bằng AI: DeepSeek, Gemini, GPT, Claude, tương thích OpenAI.
 - Giọng đọc: ElevenLabs, OpenAI TTS, Gemini TTS, và **Local TTS**: giọng Edge neural **có sẵn trong exe** (cần mạng, không cần cài gì); ai có server riêng thì dùng thêm Piper offline và kho audio người thật.
 
-### Phím tắt
+### Phím tắt và cài đặt dịch
 
-<img src="asset/ui-hotkeys-v2.png" width="620"/>
+<table>
+<tr>
+<td align="center"><b>Phím tắt</b><br/><img src="asset/ui-hotkeys-v2.png" width="440"/></td>
+<td align="center"><b>Cài đặt dịch</b><br/><img src="asset/ui-translate-settings.png" width="440"/></td>
+</tr>
+</table>
+
+- Cài đặt dịch: ngôn ngữ nguồn, đích và đích dự phòng, công cụ phát hiện ngôn ngữ, tự động sao chép, dịch cộng dồn, dịch khi đang gõ; có ô **Xem trước** kết quả dịch ngay trong cài đặt.
 
 - Bật/tắt tất cả, bật/tắt thanh trợ lý, dịch và chép, dịch và thay thế, đọc to vùng chọn, OCR và chép, dịch ảnh và chép, đổi cặp ngôn ngữ đích, tra từ điển, tra từ gõ tay.
 - Nút icon gọn: bấm để gán phím, ✕ để huỷ, thùng rác để xoá; rê chuột để xem chú thích.
