@@ -31,6 +31,7 @@ export default function Dict() {
     const [state, setState] = useState(null);
     const [prons, setProns] = useState([]);
     const [playing, setPlaying] = useState('');
+    const [speakError, setSpeakError] = useState('');
     const [speaking, setSpeaking] = useState(false);
     const [speakLoading, setSpeakLoading] = useState(false);
     const listRef = useRef(null);
@@ -90,14 +91,29 @@ export default function Dict() {
         const id = p.label || 'x';
         if (playing === id) {
             stopAudio();
+            setPlaying('');
             return;
         }
+        stopAudio();
         setPlaying(id);
+        setSpeakError('');
+        const done = () => setPlaying('');
+        // 1) recorded audio from the web, 2) fall back to the configured TTS service
+        if (p.audio) {
+            try {
+                const data = await dictionaryServices.ev_offline.fetchAudio(p.audio);
+                await playAudio(data, done);
+                return;
+            } catch (e) {
+                console.error('dict audio failed', e);
+            }
+        }
         try {
-            const data = p.audio ? await dictionaryServices.ev_offline.fetchAudio(p.audio) : await synthesize(word);
-            await playAudio(data, () => setPlaying(''));
+            const data = await synthesize(word);
+            await playAudio(data, done);
         } catch (e) {
             setPlaying('');
+            setSpeakError(String(e?.message ?? e));
         }
     };
 
@@ -156,6 +172,7 @@ export default function Dict() {
                     </div>
                 )}
 
+                {speakError && <div className='dict-note dict-error'>{speakError}</div>}
                 {state === null && <div className='dict-note'>{t('dict.loading')}</div>}
                 {state?.missing && <div className='dict-note'>{t('dict.not_found', { word })}</div>}
                 {state?.error && <div className='dict-note dict-error'>{state.error}</div>}
