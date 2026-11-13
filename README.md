@@ -49,6 +49,7 @@
 
 <img src="asset/f-services.png" width="400"/>
 
+- Có sẵn và bật sẵn: OCR của Windows (System) và **Tesseract** (dữ liệu tiếng Anh, Việt, Trung đã nhúng trong exe, chạy offline).
 - OCR bằng AI: DeepSeek, Gemini, GPT, Claude, tương thích OpenAI.
 - Giọng đọc: ElevenLabs, OpenAI TTS, Gemini TTS, và **Local TTS**: giọng Edge neural **có sẵn trong exe** (cần mạng, không cần cài gì); ai có server riêng thì dùng thêm Piper offline và kho audio người thật.
 

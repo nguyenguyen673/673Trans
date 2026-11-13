@@ -37,7 +37,7 @@ import { useConfig } from '../../hooks';
 import './style.css';
 
 const DEFAULT_TRANSLATE_SERVICES = ['google', 'bing'];
-const DEFAULT_TTS_SERVICES = ['lingva_tts'];
+const DEFAULT_TTS_SERVICES = ['local_tts', 'lingva_tts'];
 export const DEFAULT_ACTIONS = ['translate', 'replace', 'speak'];
 
 async function readPluginInfo(pluginType, pluginName) {

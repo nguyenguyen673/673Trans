@@ -63,7 +63,7 @@ export default function TargetArea(props) {
 
     const [appFontSize] = useConfig('app_font_size', 16);
     const [collectionServiceList] = useEnabledList('collection_service_list', []);
-    const [ttsServiceList] = useEnabledList('tts_service_list', ['lingva_tts']);
+    const [ttsServiceList] = useEnabledList('tts_service_list', ['local_tts', 'lingva_tts']);
     const [translateSecondLanguage] = useConfig('translate_second_language', 'en');
     const [historyDisable] = useConfig('history_disable', false);
     const [isLoading, setIsLoading] = useState(false);

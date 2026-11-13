@@ -19,6 +19,10 @@ Bản Pot riêng của Nguyen, fork từ [pot-app/pot-desktop](https://github.co
 
 Mọi thứ khác giữ nguyên. Bản này dùng chung cấu hình và plugin với Pot gốc (`%APPDATA%\com.pot-app.desktop`), nên plugin TTS, từ điển, OCR đã cài vẫn chạy. Vì vậy **không mở được cùng lúc với Pot gốc**: thoát Pot gốc ở khay hệ thống trước.
 
+## Dịch vụ bật sẵn khi cài mới
+
+Dịch: Google, Bing. OCR: System (OCR của Windows), Tesseract (dữ liệu eng, vie, chi_sim, chi_tra nằm trong `public/tessdata`, các ngôn ngữ khác tải lần đầu). Giọng đọc: Local TTS (Edge có sẵn), Lingva TTS. Từ điển: Anh–Việt offline, Wiktionary, Từ điển AI (cần khoá). Mặc định nằm ở các `useConfig('..._service_list', [...])`.
+
 ## Thanh icon khi chọn chữ
 
 Kéo chuột tô chữ, nhấp đúp một từ, hoặc bấm Ctrl+A trong ô nhập: thanh hiện cạnh con trỏ (với Ctrl+A là cạnh dấu nháy nếu Windows biết vị trí). Thanh tự ẩn sau 6 giây, hoặc khi click chỗ khác, cuộn chuột.
@@ -33,7 +37,7 @@ Chưa làm: chọn chữ bằng Shift + mũi tên chưa bật thanh.
 
 ## Số phiên bản
 
-Mỗi bản build có số riêng, xem ở tooltip của icon khay hệ thống hoặc trang Giới thiệu (bản này: 3.23.0). Đổi số ở `version` trong `src-tauri/tauri.conf.json`.
+Mỗi bản build có số riêng, xem ở tooltip của icon khay hệ thống hoặc trang Giới thiệu (bản này: 3.24.0). Đổi số ở `version` trong `src-tauri/tauri.conf.json`.
 
 ## Code nằm ở đâu
 
