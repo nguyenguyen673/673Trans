@@ -28,11 +28,18 @@
 
 Có sẵn DeepSeek, Claude, GPT, Gemini và "Tương thích OpenAI" (OpenRouter, Qwen, Kimi, SiliconFlow, LM Studio…). Ngay dưới ô nhập của cửa sổ dịch có 3 nút chế độ; bấm một nút để AI xử lý đoạn đang chọn, bấm lại để quay về dịch thường. Ba chế độ chỉ chạy với dịch vụ AI (Google, Bing… sẽ báo không hỗ trợ).
 
-| Chế độ | Làm gì | Ví dụ |
-|---|---|---|
-| **Trau chuốt** | Viết lại cho tự nhiên, mượt và chuyên nghiệp hơn, giữ nguyên ý và ngôn ngữ của bạn. Hợp để chỉnh email, bài đăng, mô tả. | <img src="asset/app-mode-polish.png" width="300"/> |
-| **Viết lại, chính tả** | Sửa lỗi chính tả, ngữ pháp, dấu câu và cách dùng từ, giữ nguyên giọng văn và độ dài; ít can thiệp hơn Trau chuốt. | <img src="asset/app-mode-rewrite.png" width="300"/> |
-| **Tóm tắt** | Rút gọn đoạn dài thành vài ý chính, ngắn gọn và dễ đọc. | <img src="asset/app-mode-summarize.png" width="300"/> |
+
+**Trau chuốt**: viết lại cho tự nhiên, mượt và chuyên nghiệp hơn, giữ nguyên ý và ngôn ngữ của bạn. Hợp để chỉnh email, bài đăng, mô tả.
+
+<img src="asset/app-mode-polish.png" width="640"/>
+
+**Viết lại, chính tả**: sửa lỗi chính tả, ngữ pháp, dấu câu và cách dùng từ, giữ nguyên giọng văn và độ dài; ít can thiệp hơn Trau chuốt.
+
+<img src="asset/app-mode-rewrite.png" width="640"/>
+
+**Tóm tắt**: rút gọn đoạn dài thành vài ý chính, ngắn gọn và dễ đọc.
+
+<img src="asset/app-mode-summarize.png" width="640"/>
 
 Công tắc nguồn cho từng dịch vụ: tắt thì chỉ dịch khi bạn mở thẻ của nó.
 
@@ -51,7 +58,11 @@ Tô một từ, bấm icon quyển sách hoặc dùng phím tắt.
 
 ### Dịch vụ, OCR và giọng đọc
 
-<img src="asset/app-services.png" width="440"/> <img src="asset/app-dict-services.png" width="440"/>
+Dịch, OCR và giọng nói đều có sẵn các hãng AI (DeepSeek, Claude, GPT/OpenAI, Gemini, tương thích OpenAI), bật/tắt và sắp xếp thứ tự bằng kéo thả:
+
+<img src="asset/app-services-translate.png" width="560"/>
+
+<img src="asset/app-services-ocr.png" width="400"/> <img src="asset/app-services-tts.png" width="400"/>
 
 - Công tắc bật/tắt cho mọi dịch vụ (dịch, OCR, giọng nói, từ điển, sổ từ vựng) mà không cần xoá. Mặc định bật Google và Bing.
 - Có sẵn và bật sẵn: OCR của Windows (System) và **Tesseract** (dữ liệu tiếng Anh, Việt, Trung đã nhúng trong exe, chạy offline). OCR bằng AI: DeepSeek, Gemini, GPT, Claude, tương thích OpenAI.
