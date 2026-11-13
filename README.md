@@ -66,6 +66,8 @@ Công tắc nguồn cho từng dịch vụ: tắt thì chỉ dịch khi bạn m�
 
 Tô một từ, bấm icon quyển sách hoặc dùng phím tắt.
 
+<p align="center"><img src="asset/ui-dict-select.png" width="880"/></p>
+
 - Popup kiểu Cambridge hiện cạnh con trỏ, có phiên âm IPA và nút loa phát giọng **UK** và **US** (ảnh minh hoạ: Wiktionary).
 - 3 từ điển, đổi bằng menu: **Anh–Việt offline** (103k từ, **đã nhúng sẵn trong exe**, tra ngược Việt → Anh, gợi ý từ gần giống), **Wiktionary** (giọng ghi âm thật, định nghĩa, câu ví dụ, lưu đệm), **Từ điển AI** (chọn hãng DeepSeek, OpenAI, Claude, Gemini hoặc tương thích OpenAI, nhập khoá API riêng).
 - ⭐ lưu từ vào sổ từ vựng, 🕘 lịch sử tra từ, ô gõ từ (có phím tắt riêng), nút "Giải thích bằng AI" chạy khi bấm.
@@ -77,7 +79,12 @@ Tô một từ, bấm icon quyển sách hoặc dùng phím tắt.
 
 Dịch, OCR và giọng nói đều có sẵn các hãng AI (DeepSeek, Claude, GPT/OpenAI, Gemini, tương thích OpenAI), bật/tắt và sắp xếp thứ tự bằng kéo thả:
 
-<img src="asset/ui-services-v2.png" width="560"/>
+<table>
+<tr>
+<td align="center"><b>Dịch</b><br/><img src="asset/ui-services-v2.png" width="440"/></td>
+<td align="center"><b>OCR</b><br/><img src="asset/ui-services-ocr-v2.png" width="440"/></td>
+</tr>
+</table>
 
 - Công tắc bật/tắt cho mọi dịch vụ (dịch, OCR, giọng nói, từ điển, sổ từ vựng) mà không cần xoá. Mặc định bật Google và Bing.
 - Có sẵn và bật sẵn: OCR của Windows (System) và **Tesseract** (dữ liệu tiếng Anh, Việt, Trung đã nhúng trong exe, chạy offline). OCR bằng AI: DeepSeek, Gemini, GPT, Claude, tương thích OpenAI.
