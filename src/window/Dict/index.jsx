@@ -22,10 +22,20 @@ import { LuSparkles } from 'react-icons/lu';
 import './style.css';
 
 let blurTimeout = null;
+// When the popup was last (re)opened. Clicking the toolbar button or the source app taking
+// focus back right after a lookup also blurs the popup: ignore blurs in that short window,
+// and cancel a hide that was queued by an earlier blur.
+let openedAt = 0;
 void listen('tauri://blur', () => {
     if (appWindow.label !== 'dict') return;
     clearTimeout(blurTimeout);
-    blurTimeout = setTimeout(() => appWindow.hide(), 150);
+    if (Date.now() - openedAt < 900) {
+        appWindow.setFocus();
+        return;
+    }
+    blurTimeout = setTimeout(() => {
+        if (Date.now() - openedAt >= 900) appWindow.hide();
+    }, 150);
 });
 void listen('tauri://focus', () => clearTimeout(blurTimeout));
 
@@ -89,8 +99,12 @@ export default function Dict() {
         stopAudio();
         aiId.current++;
         setAi({ text: '', loading: false, error: '', name: '' });
+        openedAt = Date.now();
+        clearTimeout(blurTimeout);
         appWindow.show();
         appWindow.setFocus();
+        // the source app may take the focus back a moment later
+        setTimeout(() => appWindow.setFocus(), 250);
         const list = listRef.current ?? ['ev_offline'];
         const key = keyOverride ?? (list.includes(curRef.current) ? curRef.current : list[0]);
         curRef.current = key;
