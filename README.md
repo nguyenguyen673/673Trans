@@ -1,4 +1,4 @@
-<img width="120px" src="public/icon.svg" align="left"/>
+<img width="120px" src="public/icon.png" align="left"/>
 
 # 673Trans
 
