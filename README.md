@@ -21,21 +21,7 @@
 
 ## Tính năng
 
-### Thanh icon nổi khi chọn chữ
-
-<img src="asset/ui-toolbar-v2.png" align="right" width="520"/>
-
-- Hiện cạnh con trỏ khi bôi đen chữ, nhấp đúp một từ, hoặc bấm Ctrl+A trong ô nhập, ở bất kỳ app nào.
-- 7 nút bật/tắt được: Dịch, Dịch và thay thế (dán bản dịch đè lên đoạn đang chọn), Dịch và sao chép, Đọc to, Tra từ điển, Gõ từ, Sao chép.
-- Kéo thả đổi thứ tự nút; ngang/dọc; chỉ icon, chỉ chữ hoặc cả hai; độ lệch; danh sách app không hiện thanh; có ô **Xem trước** ngay trong cài đặt.
-
-<br clear="right"/>
-
-**Dịch và thay thế**: bôi đen một câu, bấm nút thay thế, bản dịch được dán đè đúng chỗ đang chọn, không cần copy-paste.
-
-<p align="center"><img src="asset/ui-replace-v2.png" width="880"/></p>
-
-### Dịch bằng AI: Trau chuốt, Viết lại / chính tả, Tóm tắt
+### Nhiều dịch vụ dịch (AI, local), Trau chuốt, Viết lại / chính tả, Tóm tắt
 
 Có sẵn DeepSeek, Claude, GPT, Gemini và "Tương thích OpenAI" (OpenRouter, Qwen, Kimi, SiliconFlow, LM Studio…). Ngay dưới ô nhập của cửa sổ dịch có 3 nút chế độ; bấm một nút để AI xử lý đoạn đang chọn, bấm lại để quay về dịch thường. Ba chế độ chỉ chạy với dịch vụ AI (Google, Bing… sẽ báo không hỗ trợ).
 
@@ -72,6 +58,20 @@ Tự viết lời dặn cho AI (Prompt hệ thống và Prompt người dùng) t
 </table>
 
 Công tắc nguồn cho từng dịch vụ: tắt thì chỉ dịch khi bạn mở thẻ của nó.
+
+### Thanh icon nổi khi chọn chữ
+
+<img src="asset/ui-toolbar-v2.png" align="right" width="520"/>
+
+- Hiện cạnh con trỏ khi bôi đen chữ, nhấp đúp một từ, hoặc bấm Ctrl+A trong ô nhập, ở bất kỳ app nào.
+- 7 nút bật/tắt được: Dịch, Dịch và thay thế (dán bản dịch đè lên đoạn đang chọn), Dịch và sao chép, Đọc to, Tra từ điển, Gõ từ, Sao chép.
+- Kéo thả đổi thứ tự nút; ngang/dọc; chỉ icon, chỉ chữ hoặc cả hai; độ lệch; danh sách app không hiện thanh; có ô **Xem trước** ngay trong cài đặt.
+
+<br clear="right"/>
+
+**Dịch và thay thế**: bôi đen một câu, bấm nút thay thế, bản dịch được dán đè đúng chỗ đang chọn, không cần copy-paste.
+
+<p align="center"><img src="asset/ui-replace-v2.png" width="880"/></p>
 
 ### Từ điển
 
