@@ -30,17 +30,6 @@ export default function SelectPluginModal(props) {
                     <>
                         <ModalHeader>{t('config.service.add_service')}</ModalHeader>
                         <ModalBody>
-                            {Object.keys(pluginList).length === 0 && (
-                                <Button
-                                    fullWidth
-                                    variant='flat'
-                                    onPress={() => {
-                                        openInBrowser('http://pot-app.com/plugin.html');
-                                    }}
-                                >
-                                    <div className='w-full'>{t('config.service.view_plugin_list')}</div>
-                                </Button>
-                            )}
 
                             {Object.keys(pluginList).map((x) => {
                                 return (

@@ -85,8 +85,6 @@ pub fn check_service_available() -> Result<(), Error> {
         "claude",
         "deepseek",
         "deepl",
-        "ecdict",
-        "lingva",
         "geminipro",
         "niutrans",
         "ollama",
@@ -100,7 +98,7 @@ pub fn check_service_available() -> Result<(), Error> {
         "youdao",
     ];
     let builtin_tts_list: Vec<&str> =
-        vec!["lingva_tts", "local_tts", "openai_tts", "elevenlabs_tts", "gemini_tts"];
+        vec!["local_tts", "openai_tts", "elevenlabs_tts", "gemini_tts"];
     let builtin_collection_list: Vec<&str> = vec!["anki", "eudic"];
 
     let plugin_recognize_list: Vec<String> = get_plugin_list("recognize").unwrap_or_default();

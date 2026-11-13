@@ -74,7 +74,7 @@ export default function Translate() {
     const [rememberWindowSize] = useConfig('translate_remember_window_size', false);
     const [translateServiceInstanceList, setTranslateServiceInstanceList] = useConfig('translate_service_list', ['google', 'bing']);
     const [recognizeServiceInstanceList] = useConfig('recognize_service_list', ['system', 'tesseract']);
-    const [ttsServiceInstanceList] = useConfig('tts_service_list', ['local_tts', 'lingva_tts']);
+    const [ttsServiceInstanceList] = useConfig('tts_service_list', ['local_tts']);
     const [collectionServiceInstanceList] = useConfig('collection_service_list', []);
     const [hideLanguageConfig] = useConfig('translate_hide_language', false);
     // The language bar is only hidden for selected text / screenshots, never for typed text

@@ -19,7 +19,7 @@ export default function About() {
             />
             <div className='content-center'>
                 <h1 className='font-semibold text-2xl text-center tracking-tight'>673Trans</h1>
-                <p className='text-center text-xs text-default-500'>Cảm hứng từ Pot app GPL-3.0. Nâng cấp và tích hợp phát triển thêm bởi NGUYENGUYEN</p>
+                <p className='text-center text-xs text-default-500'>Phát hành theo giấy phép GPL-3.0. Phát triển bởi NGUYENGUYEN</p>
                 <p className='text-center text-sm text-gray-500 mb-[5px]'>{appVersion}</p>
                 <Divider />
                 <div className='flex justify-center gap-[40px]'>

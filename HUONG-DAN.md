@@ -1,11 +1,11 @@
 # 673Trans
 
-Bản Pot riêng của Nguyen, fork từ [pot-app/pot-desktop](https://github.com/pot-app/pot-desktop) bản 3.0.7 (repo gốc đã archive 9/2026). Giấy phép GPL-3.0 như bản gốc.
+673Trans: trình dịch chọn-là-dịch cho Windows của Nguyen. Giấy phép GPL-3.0.
 
 ## Tính năng riêng của 673Trans
 
 1. **Thanh icon khi chọn chữ** ở bất kỳ app nào (kéo chuột, nhấp đúp, hoặc Ctrl+A trong ô nhập). Có 7 nút bật/tắt và kéo đổi thứ tự được: Dịch · Dịch và thay thế · Dịch và sao chép · Đọc to · Tra từ điển · Gõ từ · Sao chép.
-2. **Tên mới 673Trans** (file chạy, tooltip ở khay, trang About). Icon vẫn là icon Pot.
+2. **Tên mới 673Trans** (file chạy, tooltip ở khay, trang About).
 3. **Giao diện cài đặt mới**: font Inter (có sẵn trong app, hỗ trợ tiếng Việt), bảng màu mới, sidebar và các dòng cài đặt gọn hơn.
 4. **Giao diện tiếng Việt** (Cài đặt chung → Ngôn ngữ ứng dụng) và **màu chủ đạo** chọn được.
 5. **Trình dịch AI có sẵn**: DeepSeek, Claude, GPT (OpenAI), Gemini, và "Tương thích OpenAI" cho mọi hãng khác (OpenRouter, Qwen, Kimi, SiliconFlow, LM Studio…: tự nhập địa chỉ API và tên mô hình). Thêm ở Dịch vụ → Thêm dịch vụ có sẵn, cần khóa API của từng hãng. Tên mô hình tự nhập được.
@@ -17,7 +17,7 @@ Bản Pot riêng của Nguyen, fork từ [pot-app/pot-desktop](https://github.co
 11. **Trau chuốt / Viết lại, chính tả / Tóm tắt** ngay trong cửa sổ dịch (chỉ với dịch vụ AI).
 12. **Công tắc bật/tắt** cho từng dịch vụ (dịch, OCR, giọng nói, từ điển, sổ từ vựng) mà không phải xoá. Cửa sổ cài đặt và popup từ điển nhớ kích thước.
 
-Mọi thứ khác giữ nguyên. Bản này dùng chung cấu hình và plugin với Pot gốc (`%APPDATA%\com.pot-app.desktop`), nên plugin TTS, từ điển, OCR đã cài vẫn chạy. Vì vậy **không mở được cùng lúc với Pot gốc**: thoát Pot gốc ở khay hệ thống trước.
+Mọi thứ khác giữ nguyên. Cấu hình và plugin nằm ở `%APPDATA%\com.pot-app.desktop` (tên thư mục giữ nguyên để không mất cài đặt cũ), nên plugin TTS, từ điển, OCR đã cài vẫn chạy.
 
 ## Dịch vụ bật sẵn khi cài mới
 
@@ -37,7 +37,7 @@ Chưa làm: chọn chữ bằng Shift + mũi tên chưa bật thanh.
 
 ## Số phiên bản
 
-Mỗi bản build có số riêng, xem ở tooltip của icon khay hệ thống hoặc trang Giới thiệu (bản này: 3.27.2). Đổi số ở `version` trong `src-tauri/tauri.conf.json`.
+Mỗi bản build có số riêng, xem ở tooltip của icon khay hệ thống hoặc trang Giới thiệu (bản này: 3.27.3). Đổi số ở `version` trong `src-tauri/tauri.conf.json`.
 
 ## Code nằm ở đâu
 

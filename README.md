@@ -14,8 +14,8 @@
 <p align="center">
   <a href="https://github.com/nguyenguyen673/673Trans/releases/latest"><img src="https://img.shields.io/badge/%E2%AC%87%20T%E1%BA%A3i%20673Trans%20(.exe)-Releases-bff03a?style=for-the-badge&labelColor=0b2a12" alt="Tải 673Trans"/></a>
 </p>
-<p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.2/673Trans-3.27.2.exe">Tải trực tiếp 673Trans-3.27.2.exe</a> &middot; <a href="https://github.com/nguyenguyen673/673Trans/releases">Tất cả bản phát hành</a></p>
-<p align="center">Windows 10/11 &middot; Chỉ cần 1 file <code>.exe</code>, Không cần cài thêm gì &middot; Phiên bản hiện tại: 3.27.2</p>
+<p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.3/673Trans-3.27.3.exe">Tải trực tiếp 673Trans-3.27.3.exe</a> &middot; <a href="https://github.com/nguyenguyen673/673Trans/releases">Tất cả bản phát hành</a></p>
+<p align="center">Windows 10/11 &middot; Chỉ cần 1 file <code>.exe</code>, Không cần cài thêm gì &middot; Phiên bản hiện tại: 3.27.3</p>
 
 <hr/>
 
@@ -210,6 +210,6 @@ Hướng dẫn chi tiết, chỗ sửa từng phần của giao diện và cách
 
 ## Ghi công và giấy phép
 
-673Trans cảm hứng từ app [Pot](https://github.com/pot-app/pot-desktop) (dự án gốc đã ngừng cập nhật từ 2024), Dùng chung giấy phép [GPL-3.0](LICENSE).
+673Trans phát hành theo giấy phép [GPL-3.0](LICENSE).
 
 Dữ liệu từ điển Anh–Việt offline là của [Dự án Từ điển tiếng Việt miễn phí](https://www.informatik.uni-leipzig.de/~duc/Dict/) (Hồ Ngọc Đức); Wiktionary thuộc Wikimedia Foundation, nội dung theo CC BY-SA, dữ liệu trích qua [kaikki.org](https://kaikki.org).

@@ -23,7 +23,7 @@ export default function Tts(props) {
     const { isOpen: isConfigOpen, onOpen: onConfigOpen, onOpenChange: onConfigOpenChange } = useDisclosure();
     const [currentConfigKey, setCurrentConfigKey] = useState('local_tts');
     // now it's service instance list
-    const [ttsServiceInstanceList, setTtsServiceInstanceList] = useConfig('tts_service_list', ['local_tts', 'lingva_tts']);
+    const [ttsServiceInstanceList, setTtsServiceInstanceList] = useConfig('tts_service_list', ['local_tts']);
 
     const { t } = useTranslation();
     const toastStyle = useToastStyle();

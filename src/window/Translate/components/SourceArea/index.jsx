@@ -41,7 +41,7 @@ export default function SourceArea(props) {
     const [deleteNewline] = useConfig('translate_delete_newline', false);
     const [recognizeLanguage] = useConfig('recognize_language', 'auto');
     const [recognizeServiceList] = useEnabledList('recognize_service_list', ['system', 'tesseract']);
-    const [ttsServiceList] = useEnabledList('tts_service_list', ['local_tts', 'lingva_tts']);
+    const [ttsServiceList] = useEnabledList('tts_service_list', ['local_tts']);
     const [hideWindow] = useConfig('translate_hide_window', false);
     const [hideSource] = useConfig('translate_hide_source', false);
     const [ttsPluginInfo, setTtsPluginInfo] = useState();
