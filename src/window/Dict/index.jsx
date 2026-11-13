@@ -98,7 +98,7 @@ export default function Dict() {
             setState(entry ? { entry } : { missing: true });
             if (entry?.pron) setProns(entry.pron);
             else if (entry && service.pronunciations) {
-                service.pronunciations(entry.word || clean).then((p) => setProns(p));
+                service.pronunciations(entry.word || clean).then((p) => setProns(p.filter((x) => x.label === 'US')));
             }
         } catch (e) {
             setState(e?.message === 'NO_DATA' ? { noData: true } : { error: String(e?.message ?? e) });

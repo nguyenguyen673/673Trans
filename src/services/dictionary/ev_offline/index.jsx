@@ -115,7 +115,7 @@ export async function fetchAudio(url) {
     // Wikimedia refuses requests without a User-Agent (HTTP 403)
     const res = await fetch(url, {
         method: 'GET',
-        timeout: 10,
+        timeout: 4,
         responseType: ResponseType.Binary,
         headers: { 'User-Agent': '673Trans/3.13 (personal translator app)' },
     });
