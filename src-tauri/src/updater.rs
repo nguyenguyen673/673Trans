@@ -44,12 +44,17 @@ async fn latest_release(current: &str) -> Result<Option<UpdateInfo>, String> {
         .timeout(std::time::Duration::from_secs(20))
         .build()
         .map_err(|e| e.to_string())?;
-    let release: serde_json::Value = client
+    let response = client
         .get(format!("https://api.github.com/repos/{}/releases/latest", REPO))
         .header("Accept", "application/vnd.github+json")
         .send()
         .await
-        .map_err(|e| e.to_string())?
+        .map_err(|e| format!("Không kết nối được GitHub: {}", e))?;
+    // 404 = the repo has no published release yet: nothing to update to
+    if response.status() == reqwest::StatusCode::NOT_FOUND {
+        return Ok(None);
+    }
+    let release: serde_json::Value = response
         .error_for_status()
         .map_err(|e| e.to_string())?
         .json()
