@@ -42,8 +42,18 @@ Có sẵn DeepSeek, Claude, GPT, Gemini và "Tương thích OpenAI" (OpenRouter,
 
 <table>
 <tr>
-<td width="65%" align="center"><img src="asset/ui-mode-rewrite-v2.png" width="560"/></td>
+<td width="65%" align="center"><b>Dịch thường (Gemini)</b><br/><img src="asset/ui-translate-gemini.png" width="560"/></td>
 <td valign="middle">
+
+**Dịch văn bản trộn nhiều ngôn ngữ**<br/>
+Chọn một đoạn lẫn tiếng Anh + tiếng Nhật, app tự phát hiện và dịch sang ngôn ngữ đích (ở đây là Tiếng Việt) bằng dịch vụ bạn chọn, ví dụ Gemini.
+
+</td>
+</tr>
+<tr>
+<td width="65%" align="center"><b>Viết lại, chính tả (DeepSeek)</b><br/><img src="asset/ui-mode-rewrite-v4.png" width="560"/></td>
+<td valign="middle">
+
 
 **Trau chuốt**<br/>
 Viết lại cho tự nhiên, mượt, chuyên nghiệp; giữ nguyên ý và ngôn ngữ. Hợp để chỉnh email, bài đăng.
