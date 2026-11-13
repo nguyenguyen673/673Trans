@@ -43,7 +43,7 @@ Công tắc nguồn cho từng dịch vụ: tắt thì chỉ dịch khi bạn m�
 
 Tô một từ, bấm icon quyển sách hoặc dùng phím tắt.
 
-- Popup kiểu Cambridge hiện cạnh con trỏ, có IPA UK/US và giọng đọc.
+- Popup kiểu Cambridge hiện cạnh con trỏ, có phiên âm IPA và nút loa phát giọng **UK** và **US** (ảnh minh hoạ: Wiktionary).
 - 3 từ điển, đổi bằng menu: **Anh–Việt offline** (103k từ, **đã nhúng sẵn trong exe**, tra ngược Việt → Anh, gợi ý từ gần giống), **Wiktionary** (giọng ghi âm thật, định nghĩa, câu ví dụ, lưu đệm), **Từ điển AI** (chọn hãng DeepSeek, OpenAI, Claude, Gemini hoặc tương thích OpenAI, nhập khoá API riêng).
 - ⭐ lưu từ vào sổ từ vựng, 🕘 lịch sử tra từ, ô gõ từ (có phím tắt riêng), nút "Giải thích bằng AI" chạy khi bấm.
 - Nhớ kích thước popup; tuỳ chọn đọc giọng US bằng TTS.
