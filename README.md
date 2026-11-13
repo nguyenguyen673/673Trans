@@ -42,7 +42,7 @@ Có sẵn DeepSeek, Claude, GPT, Gemini và "Tương thích OpenAI" (OpenRouter,
 
 <table>
 <tr>
-<td width="65%" align="center"><img src="asset/ui-mode-rewrite.png" width="560"/></td>
+<td width="65%" align="center"><img src="asset/ui-mode-rewrite-v2.png" width="560"/></td>
 <td valign="middle">
 
 **Trau chuốt**<br/>
