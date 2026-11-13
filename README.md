@@ -36,11 +36,23 @@
 Có sẵn DeepSeek, Claude, GPT, Gemini và "Tương thích OpenAI" (OpenRouter, Qwen, Kimi, SiliconFlow, LM Studio…). Ngay dưới ô nhập của cửa sổ dịch có 3 nút chế độ; bấm một nút để AI xử lý đoạn đang chọn, bấm lại để quay về dịch thường. Ba chế độ chỉ chạy với dịch vụ AI (Google, Bing… sẽ báo không hỗ trợ).
 
 
-- **Trau chuốt**: viết lại cho tự nhiên, mượt và chuyên nghiệp hơn, giữ nguyên ý và ngôn ngữ của bạn. Hợp để chỉnh email, bài đăng, mô tả.
-- **Viết lại, chính tả**: sửa lỗi chính tả, ngữ pháp, dấu câu và cách dùng từ, giữ nguyên giọng văn và độ dài; ít can thiệp hơn Trau chuốt (ảnh bên dưới).
-- **Tóm tắt**: rút gọn đoạn dài thành vài ý chính, ngắn gọn và dễ đọc.
+<table>
+<tr>
+<td width="48%" align="center"><img src="asset/ui-mode-rewrite.png" width="380"/></td>
+<td valign="middle">
 
-<img src="asset/ui-mode-rewrite.png" width="640"/>
+**Trau chuốt**<br/>
+Viết lại cho tự nhiên, mượt, chuyên nghiệp; giữ nguyên ý và ngôn ngữ. Hợp để chỉnh email, bài đăng.
+
+**Viết lại, chính tả** (ảnh bên)<br/>
+Sửa lỗi chính tả, ngữ pháp, dấu câu; giữ giọng văn và độ dài, ít can thiệp hơn Trau chuốt.
+
+**Tóm tắt**<br/>
+Rút gọn đoạn dài thành vài ý chính, ngắn gọn dễ đọc.
+
+</td>
+</tr>
+</table>
 
 Công tắc nguồn cho từng dịch vụ: tắt thì chỉ dịch khi bạn mở thẻ của nó.
 
