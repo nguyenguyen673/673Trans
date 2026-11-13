@@ -7,10 +7,11 @@ import { getServiceName, getServiceSouceType, ServiceSourceType } from './servic
 import * as builtinRecognizeServices from '../services/recognize';
 import { invoke_plugin } from './invoke_plugin';
 import { store } from './store';
+import { filterEnabled } from '../hooks/useEnabledList';
 
 export async function recognizeScreenshot() {
     const base64 = await invoke('get_base64');
-    const list = (await store.get('recognize_service_list')) ?? ['system', 'tesseract'];
+    const list = await filterEnabled((await store.get('recognize_service_list')) ?? ['system', 'tesseract']);
     const language = (await store.get('recognize_language')) ?? 'auto';
     const deleteNewline = (await store.get('translate_delete_newline')) ?? false;
     const instanceKey = list[0];

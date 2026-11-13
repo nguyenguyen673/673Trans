@@ -11,7 +11,7 @@ import { atom, useAtom } from 'jotai';
 import WindowControl from '../../components/WindowControl';
 import { store } from '../../utils/store';
 import { osType } from '../../utils/env';
-import { useConfig } from '../../hooks';
+import { useConfig, useEnabledList } from '../../hooks';
 import ControlArea from './ControlArea';
 import ImageArea from './ImageArea';
 import TextArea from './TextArea';
@@ -54,7 +54,7 @@ export default function Recognize() {
     const [pluginList, setPluginList] = useAtom(pluginListAtom);
     const [closeOnBlur] = useConfig('recognize_close_on_blur', false);
     const [pined, setPined] = useState(false);
-    const [serviceInstanceList] = useConfig('recognize_service_list', ['system', 'tesseract']);
+    const [serviceInstanceList] = useEnabledList('recognize_service_list', ['system', 'tesseract']);
     const [serviceInstanceConfigMap, setServiceInstanceConfigMap] = useState(null);
 
     const loadPluginList = async () => {

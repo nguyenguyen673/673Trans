@@ -468,11 +468,11 @@ pub fn dict_window(text: String) {
         Mouse::Error => Position { x: 0, y: 0 },
     };
     let (window, exists) = build_window("dict", "Dict");
-    if exists {
-        window.emit("dict_text", text).unwrap();
-        return;
+    // The popup is hidden (not closed) when dismissed, so the dictionary stays loaded
+    // in its page and the next lookup is instant: move it, then let the page show it.
+    if !exists {
+        window.set_skip_taskbar(true).unwrap();
     }
-    window.set_skip_taskbar(true).unwrap();
     let monitor = window.current_monitor().unwrap().unwrap();
     let dpi = monitor.scale_factor();
     // size the user last gave the popup (logical px, saved by the frontend)
@@ -501,6 +501,9 @@ pub fn dict_window(text: String) {
     window
         .set_position(tauri::PhysicalPosition::new(x.max(mp.x as f64), y))
         .unwrap();
+    if exists {
+        window.emit("dict_text", text).unwrap();
+    }
 }
 
 /// Hotkey: look up the selected text in the dictionary.

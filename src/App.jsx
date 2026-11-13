@@ -59,7 +59,8 @@ export default function App() {
                     e.preventDefault();
                 }
                 if (e.key === 'Escape') {
-                    await appWindow.close();
+                    // the dictionary popup is only hidden, so it stays loaded for the next lookup
+                    await (appWindow.label === 'dict' ? appWindow.hide() : appWindow.close());
                 }
             });
         } else {
@@ -72,7 +73,8 @@ export default function App() {
                     e.preventDefault();
                 }
                 if (e.key === 'Escape') {
-                    await appWindow.close();
+                    // the dictionary popup is only hidden, so it stays loaded for the next lookup
+                    await (appWindow.label === 'dict' ? appWindow.hide() : appWindow.close());
                 }
             });
         }

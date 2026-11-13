@@ -71,8 +71,15 @@ function useFormSaveButton() {
 }
 
 export default function ConfigModal(props) {
-    const { serviceInstanceKey, pluginList, isOpen, onOpenChange, updateServiceInstanceList, isAdding, onSwitchService } =
-        props;
+    const {
+        serviceInstanceKey,
+        pluginList,
+        isOpen,
+        onOpenChange,
+        updateServiceInstanceList,
+        isAdding,
+        onSwitchService,
+    } = props;
 
     const pluginServiceFlag = whetherPluginService(serviceInstanceKey);
     const serviceName = getServiceName(serviceInstanceKey);

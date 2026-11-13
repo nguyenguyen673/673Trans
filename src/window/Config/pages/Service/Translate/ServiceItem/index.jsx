@@ -8,15 +8,21 @@ import React from 'react';
 
 import * as builtinServices from '../../../../../../services/translate';
 import { useConfig } from '../../../../../../hooks';
-import { INSTANCE_NAME_CONFIG_KEY, ServiceSourceType, getDisplayInstanceName, getServiceName, getServiceSouceType } from '../../../../../../utils/service_instance';
+import {
+    INSTANCE_NAME_CONFIG_KEY,
+    ServiceSourceType,
+    getDisplayInstanceName,
+    getServiceName,
+    getServiceSouceType,
+} from '../../../../../../utils/service_instance';
 
 export default function ServiceItem(props) {
     const { serviceInstanceKey, pluginList, deleteServiceInstance, setCurrentConfigKey, onConfigOpen, ...drag } = props;
     const { t } = useTranslation();
     const [serviceInstanceConfig, setServiceInstanceConfig] = useConfig(serviceInstanceKey, {});
 
-    const serviceSourceType = getServiceSouceType(serviceInstanceKey)
-    const serviceName = getServiceName(serviceInstanceKey)
+    const serviceSourceType = getServiceSouceType(serviceInstanceKey);
+    const serviceName = getServiceName(serviceInstanceKey);
 
     return serviceSourceType === ServiceSourceType.PLUGIN && !(serviceName in pluginList) ? (
         <></>
@@ -40,7 +46,11 @@ export default function ServiceItem(props) {
                                 draggable={false}
                             />
                             <Spacer x={2} />
-                            <h2 className='my-auto'>{getDisplayInstanceName(serviceInstanceConfig[INSTANCE_NAME_CONFIG_KEY], () => t(`services.translate.${serviceName}.title`))}</h2>
+                            <h2 className='my-auto'>
+                                {getDisplayInstanceName(serviceInstanceConfig[INSTANCE_NAME_CONFIG_KEY], () =>
+                                    t(`services.translate.${serviceName}.title`)
+                                )}
+                            </h2>
                         </>
                     )}
                     {serviceSourceType === ServiceSourceType.PLUGIN && (
@@ -51,7 +61,12 @@ export default function ServiceItem(props) {
                                 draggable={false}
                             />
                             <Spacer x={2} />
-                            <h2 className='my-auto'>{getDisplayInstanceName(serviceInstanceConfig[INSTANCE_NAME_CONFIG_KEY], () => pluginList[serviceName].display) +  `[${t('common.plugin')}]`}</h2>
+                            <h2 className='my-auto'>
+                                {getDisplayInstanceName(
+                                    serviceInstanceConfig[INSTANCE_NAME_CONFIG_KEY],
+                                    () => pluginList[serviceName].display
+                                ) + `[${t('common.plugin')}]`}
+                            </h2>
                         </>
                     )}
                 </div>
@@ -59,7 +74,7 @@ export default function ServiceItem(props) {
                     {/* Power button: on = translate automatically, off = only when its card is opened */}
                     <Tooltip
                         content={
-                            (serviceInstanceConfig['auto'] ?? true)
+                            serviceInstanceConfig['auto'] ?? true
                                 ? t('config.service.auto_on')
                                 : t('config.service.auto_off')
                         }
@@ -68,8 +83,8 @@ export default function ServiceItem(props) {
                         <Button
                             isIconOnly
                             size='sm'
-                            variant={(serviceInstanceConfig['auto'] ?? true) ? 'flat' : 'light'}
-                            color={(serviceInstanceConfig['auto'] ?? true) ? 'primary' : 'default'}
+                            variant={serviceInstanceConfig['auto'] ?? true ? 'flat' : 'light'}
+                            color={serviceInstanceConfig['auto'] ?? true ? 'primary' : 'default'}
                             isDisabled={!(serviceInstanceConfig['enable'] ?? true)}
                             onPress={() => {
                                 setServiceInstanceConfig({

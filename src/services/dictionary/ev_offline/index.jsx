@@ -47,9 +47,113 @@ function candidateKeys(word) {
     return [...new Set(c)];
 }
 
-// Returns { word, phonetic, meanings } or null when the word is not in the dictionary
+const VIET = /[àáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵđ]/i;
+const strip = (s) =>
+    s
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/g, 'd')
+        .toLowerCase();
+
+// Vietnamese -> English: an index of every short Vietnamese gloss, built once per session
+let reverseIndex = null;
+function buildReverse(dict) {
+    if (reverseIndex) return reverseIndex;
+    const idx = new Map();
+    for (const [word, entry] of Object.entries(dict)) {
+        if (word.includes(' ') && word.length > 24) continue;
+        for (const m of entry.meanings ?? []) {
+            for (const def of m.definitions ?? []) {
+                const gloss = def.replace(/\([^)]*\)/g, ' ');
+                for (const part of gloss.split(/[,;]/)) {
+                    const term = strip(part)
+                        .replace(/[^a-z0-9 ]/g, ' ')
+                        .replace(/\s+/g, ' ')
+                        .trim();
+                    if (!term || term.length > 40) continue;
+                    let arr = idx.get(term);
+                    if (!arr) idx.set(term, (arr = []));
+                    if (arr.length < 40 && !arr.some((x) => x.word === word)) arr.push({ word, gloss: def });
+                }
+            }
+        }
+    }
+    reverseIndex = idx;
+    return idx;
+}
+
+function reverseLookup(dict, text) {
+    const q = strip(text)
+        .replace(/[^a-z0-9 ]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    if (!q) return null;
+    const idx = buildReverse(dict);
+    const found = [];
+    const seen = new Set();
+    const add = (list, score) => {
+        for (const x of list) {
+            if (seen.has(x.word)) continue;
+            seen.add(x.word);
+            found.push({ ...x, score: score - x.word.length / 100 });
+        }
+    };
+    if (idx.has(q)) add(idx.get(q), 3);
+    if (found.length < 12) {
+        for (const [term, list] of idx) {
+            if (term.startsWith(q + ' ') || term.endsWith(' ' + q) || term.includes(' ' + q + ' ')) {
+                add(list, 1);
+                if (found.length >= 40) break;
+            }
+        }
+    }
+    if (!found.length) return null;
+    found.sort((a, b) => b.score - a.score);
+    return { word: text.trim(), reverse: found.slice(0, 15).map(({ word, gloss }) => ({ word, gloss })) };
+}
+
+// Similar words for a missing word (typos): same first letter, edit distance <= 2, or same prefix
+function distance(a, b, max) {
+    if (Math.abs(a.length - b.length) > max) return max + 1;
+    let prev = Array.from({ length: b.length + 1 }, (_, i) => i);
+    for (let i = 1; i <= a.length; i++) {
+        const cur = [i];
+        let min = i;
+        for (let j = 1; j <= b.length; j++) {
+            cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+            if (cur[j] < min) min = cur[j];
+        }
+        if (min > max) return max + 1;
+        prev = cur;
+    }
+    return prev[b.length];
+}
+
+export async function suggest(text) {
+    const dict = await load();
+    const w = text.trim().toLowerCase();
+    if (!w || VIET.test(w) || w.length < 2) return [];
+    const max = w.length > 5 ? 2 : 1;
+    const common = (k) => {
+        let i = 0;
+        while (i < k.length && i < w.length && k[i] === w[i]) i++;
+        return i;
+    };
+    const out = [];
+    for (const key of Object.keys(dict)) {
+        if (key[0] !== w[0] || key.includes(' ')) continue;
+        const d = distance(w, key, max);
+        if (d <= max && key !== w) out.push({ key, d, c: common(key) });
+    }
+    out.sort((a, b) => a.d - b.d || b.c - a.c || Math.abs(a.key.length - w.length) - Math.abs(b.key.length - w.length));
+    return out.slice(0, 8).map((x) => x.key);
+}
+
+// Returns { word, phonetic, meanings } (English word), { word, reverse: [{ word, gloss }] }
+// (Vietnamese word), or null when nothing is found
 export async function lookup(text) {
     const dict = await load();
+    if (VIET.test(text)) return reverseLookup(dict, text);
     for (const key of candidateKeys(text)) {
         if (dict[key]) {
             const e = dict[key];
@@ -58,7 +162,8 @@ export async function lookup(text) {
             return { ...e, word: e.word || key, phonetic };
         }
     }
-    return null;
+    // not English: maybe a Vietnamese word typed without accents
+    return text.trim().includes(' ') ? null : reverseLookup(dict, text);
 }
 
 // Real IPA (UK / US) and recorded audio from the free dictionaryapi.dev (no key needed).

@@ -320,7 +320,8 @@
                 "offset_y_desc": "Move the bar up or down from the mouse pointer; positive moves down.",
                 "position": "Layout and position",
                 "drag": "Drag to reorder"
-            }
+            },
+            "preview": "Preview"
         },
         "updater": {
             "title": "Check Update",
@@ -670,7 +671,8 @@
             "ai_title": "AI explanation",
             "ai_retry": "Retry",
             "ai_no_service": "No AI service in the translate list (OpenAI, Claude, Gemini, DeepSeek, Ollama…).",
-            "audio_fallback": "Could not load the recorded audio; reading with TTS instead (UK/US will sound the same)."
+            "audio_fallback": "Could not load the recorded audio; reading with TTS instead (UK/US will sound the same).",
+            "similar": "Did you mean:"
         }
     }
 }

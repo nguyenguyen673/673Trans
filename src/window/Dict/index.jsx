@@ -13,7 +13,8 @@ import { invoke } from '@tauri-apps/api';
 import { getServiceName } from '../../utils/service_instance';
 import * as dictionaryServices from '../../services/dictionary';
 import { synthesize, playAudio, stopAudio } from '../SelToolbar';
-import { useConfig } from '../../hooks';
+import { useEnabledList } from '../../hooks';
+import { filterEnabled } from '../../hooks/useEnabledList';
 import { store } from '../../utils/store';
 import * as translateServices from '../../services/translate';
 import { applyMode, LLM_SERVICES } from '../../utils/translate_mode';
@@ -24,19 +25,20 @@ let blurTimeout = null;
 void listen('tauri://blur', () => {
     if (appWindow.label !== 'dict') return;
     clearTimeout(blurTimeout);
-    blurTimeout = setTimeout(() => appWindow.close(), 150);
+    blurTimeout = setTimeout(() => appWindow.hide(), 150);
 });
 void listen('tauri://focus', () => clearTimeout(blurTimeout));
 
 export default function Dict() {
     const { t } = useTranslation();
-    const [serviceList] = useConfig('dictionary_service_list', ['ev_offline', 'wiktionary']);
+    const [serviceList] = useEnabledList('dictionary_service_list', ['ev_offline', 'wiktionary']);
     const [word, setWord] = useState('');
     // null = loading | { entry } | { missing } | { noData } | { error }
     const [state, setState] = useState(null);
     const [prons, setProns] = useState([]);
     const [playing, setPlaying] = useState('');
     const [speakError, setSpeakError] = useState('');
+    const [similar, setSimilar] = useState([]);
     const [ai, setAi] = useState({ text: '', loading: false, error: '', name: '' });
     const aiId = useRef(0);
     const [speaking, setSpeaking] = useState(false);
@@ -51,7 +53,7 @@ export default function Dict() {
         const id = ++aiId.current;
         setAi({ text: '', loading: true, error: '', name: '' });
         try {
-            const list = (await store.get('translate_service_list')) ?? [];
+            const list = await filterEnabled((await store.get('translate_service_list')) ?? []);
             const key = list.find((k) => LLM_SERVICES.includes(getServiceName(k)));
             if (!key) throw new Error(t('dict.ai_no_service'));
             const name = getServiceName(key);
@@ -83,6 +85,7 @@ export default function Dict() {
         setWord(clean);
         setState(null);
         setProns([]);
+        setSimilar([]);
         stopAudio();
         aiId.current++;
         setAi({ text: '', loading: false, error: '', name: '' });
@@ -96,7 +99,15 @@ export default function Dict() {
         try {
             const entry = await service.lookup(clean);
             setState(entry ? { entry } : { missing: true });
-            if (entry?.pron) setProns(entry.pron);
+            if (!entry) {
+                // typos: suggest similar words from the offline dictionary when it is installed
+                dictionaryServices.ev_offline
+                    .suggest(clean)
+                    .then((w) => setSimilar(w.filter((x) => x !== clean.toLowerCase())))
+                    .catch(() => {});
+            }
+            if (entry?.reverse) setProns([]);
+            else if (entry?.pron) setProns(entry.pron);
             else if (entry && service.pronunciations) {
                 service.pronunciations(entry.word || clean).then((p) => setProns(p.filter((x) => x.label === 'US')));
             }
@@ -128,11 +139,8 @@ export default function Dict() {
         if (serviceList === null) return;
         invoke('get_dict_text').then((x) => run(x));
         const unlisten = listen('dict_text', (e) => run(e.payload));
-        const onKey = (e) => e.key === 'Escape' && appWindow.close();
-        window.addEventListener('keydown', onKey);
         return () => {
             unlisten.then((f) => f());
-            window.removeEventListener('keydown', onKey);
         };
     }, [serviceList === null]);
 
@@ -229,7 +237,7 @@ export default function Dict() {
             </Dropdown>
             <button
                 className='dict-close'
-                onClick={() => appWindow.close()}
+                onClick={() => appWindow.hide()}
                 title={t('common.cancel')}
             >
                 <LuX />
@@ -238,7 +246,7 @@ export default function Dict() {
                 <div className='dict-head'>
                     <span className='dict-word'>{entry?.word ?? word}</span>
                 </div>
-                {entry && (
+                {entry && !entry.reverse && (
                     <div className='dict-prons'>
                         {(prons.length ? prons : [{ label: '', ipa: '', audio: '' }]).map((p, i) => (
                             <span
@@ -262,7 +270,25 @@ export default function Dict() {
 
                 {speakError && <div className='dict-note dict-error'>{speakError}</div>}
                 {state === null && <div className='dict-note'>{t('dict.loading')}</div>}
-                {state?.missing && <div className='dict-note'>{t('dict.not_found', { word })}</div>}
+                {state?.missing && (
+                    <div className='dict-note'>
+                        {t('dict.not_found', { word })}
+                        {similar.length > 0 && (
+                            <div className='dict-similar'>
+                                <span>{t('dict.similar')}</span>
+                                {similar.map((w) => (
+                                    <button
+                                        key={w}
+                                        className='dict-chip'
+                                        onClick={() => run(w, undefined, true)}
+                                    >
+                                        {w}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
                 {state?.error && <div className='dict-note dict-error'>{state.error}</div>}
                 {state?.noData && (
                     <div className='dict-note'>
@@ -276,6 +302,20 @@ export default function Dict() {
                     </div>
                 )}
 
+                {entry?.reverse && (
+                    <div className='dict-reverse'>
+                        {entry.reverse.map((r) => (
+                            <button
+                                key={r.word}
+                                className='dict-rev'
+                                onClick={() => run(r.word, undefined, true)}
+                            >
+                                <b>{r.word}</b>
+                                <span>{r.gloss}</span>
+                            </button>
+                        ))}
+                    </div>
+                )}
                 {entry &&
                     (entry.meanings ?? []).map((m, i) => (
                         <div
@@ -319,7 +359,7 @@ export default function Dict() {
                             </div>
                         </div>
                     ))}
-                {entry && !ai.loading && !ai.text && !ai.error && (
+                {entry && !entry.reverse && !ai.loading && !ai.text && !ai.error && (
                     <button
                         className='dict-ai-btn'
                         onClick={() => explain(word)}

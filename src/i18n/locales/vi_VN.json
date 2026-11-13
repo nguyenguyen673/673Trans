@@ -320,7 +320,8 @@
                 "qq_group": "Nhóm QQ",
                 "telegram": "Telegram",
                 "discussion": "Github Discussion"
-            }
+            },
+            "preview": "Xem trước"
         },
         "updater": {
             "title": "Kiểm tra cập nhật",
@@ -455,7 +456,8 @@
             "ai_title": "Giải thích bằng AI",
             "ai_retry": "Làm lại",
             "ai_no_service": "Chưa có dịch vụ AI nào trong danh sách dịch (OpenAI, Claude, Gemini, DeepSeek, Ollama…).",
-            "audio_fallback": "Không tải được giọng thật, đang đọc bằng TTS (giọng UK/US sẽ giống nhau)."
+            "audio_fallback": "Không tải được giọng thật, đang đọc bằng TTS (giọng UK/US sẽ giống nhau).",
+            "similar": "Có phải:"
         }
     }
 }

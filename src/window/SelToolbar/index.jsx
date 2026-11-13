@@ -30,6 +30,7 @@ import * as builtinTranslateServices from '../../services/translate';
 import * as builtinTtsServices from '../../services/tts';
 import { invoke_plugin } from '../../utils/invoke_plugin';
 import detect from '../../utils/lang_detect';
+import { filterEnabled } from '../../hooks/useEnabledList';
 import { store } from '../../utils/store';
 import { useConfig } from '../../hooks';
 import './style.css';
@@ -127,7 +128,7 @@ async function translateForPaste(text) {
 
 // Text to speech with the first TTS service (same as the speak button in the translate window)
 export async function synthesize(text) {
-    const serviceList = (await store.get('tts_service_list')) ?? DEFAULT_TTS_SERVICES;
+    const serviceList = await filterEnabled((await store.get('tts_service_list')) ?? DEFAULT_TTS_SERVICES);
     const instanceKey = serviceList[0];
     if (!instanceKey) throw new Error('No TTS service configured');
     const serviceName = getServiceName(instanceKey);

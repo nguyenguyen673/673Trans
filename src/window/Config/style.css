@@ -482,3 +482,60 @@
     border-radius: 10px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
 }
+
+/* ---------- Popup previews ---------- */
+.popup-preview,
+.dict-preview {
+    margin-bottom: 14px;
+}
+
+.popup-preview-window {
+    width: 340px;
+    padding: 8px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+}
+
+.popup-preview-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 2px;
+    font-size: 15px;
+}
+
+.popup-preview-card {
+    padding: 8px 10px;
+    border-radius: 10px;
+}
+
+.popup-preview-card b {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 12px;
+    color: hsl(var(--nextui-default-500));
+}
+
+.popup-preview-lang {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.dict-preview .dict-root {
+    position: relative;
+    width: 400px;
+    max-width: 100%;
+    height: auto;
+}
+
+.dict-preview .dict-scroll {
+    height: auto;
+    overflow: visible;
+}
+
+.dict-preview .dict-ai-btn {
+    cursor: default;
+}

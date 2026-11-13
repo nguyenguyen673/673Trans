@@ -2,6 +2,7 @@
 // UK / US IPA with recorded audio, English definitions and example sentences.
 // Online, one small request per word, no key needed.
 import { fetch, ResponseType } from '@tauri-apps/api/http';
+import { BaseDirectory, createDir, exists, readTextFile, writeTextFile } from '@tauri-apps/api/fs';
 
 const cache = new Map();
 
@@ -87,7 +88,39 @@ function buildMeanings(entries) {
     return [...byPos.entries()].map(([partOfSpeech, senses]) => ({ partOfSpeech, senses: senses.slice(0, 8) }));
 }
 
+// Parsed results are kept on disk (dict/wiktionary/<word>.json): instant and offline next time
+const CACHE_DIR = 'dict/wiktionary';
+const cachePath = (w) => `${CACHE_DIR}/${w.replace(/[^a-z0-9_-]/g, (c) => '%' + c.charCodeAt(0).toString(16))}.json`;
+
+async function readCache(w) {
+    try {
+        const p = cachePath(w);
+        if (await exists(p, { dir: BaseDirectory.AppConfig })) {
+            return JSON.parse(await readTextFile(p, { dir: BaseDirectory.AppConfig }));
+        }
+    } catch {}
+    return null;
+}
+
+async function writeCache(w, value) {
+    try {
+        await createDir(CACHE_DIR, { dir: BaseDirectory.AppConfig, recursive: true });
+        await writeTextFile(cachePath(w), JSON.stringify(value), { dir: BaseDirectory.AppConfig });
+    } catch {}
+}
+
 export async function lookup(text) {
+    const w0 = candidates(text)[0];
+    if (w0) {
+        const hit = await readCache(w0);
+        if (hit) return hit;
+    }
+    const result = await lookupOnline(text);
+    if (result && w0) writeCache(w0, result);
+    return result;
+}
+
+async function lookupOnline(text) {
     for (const w of candidates(text)) {
         if (!w) continue;
         let entries = await fetchEntries(w);

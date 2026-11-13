@@ -1,5 +1,5 @@
 import { RxDragHandleHorizontal } from 'react-icons/rx';
-import { Spacer, Button } from '@nextui-org/react';
+import { Spacer, Button, Switch } from '@nextui-org/react';
 import { MdDeleteOutline } from 'react-icons/md';
 import { useTranslation } from 'react-i18next';
 import { BiSolidEdit } from 'react-icons/bi';
@@ -68,6 +68,13 @@ export default function ServiceItem(props) {
                     )}
                 </div>
                 <div className='flex'>
+                    <Switch
+                        size='sm'
+                        isSelected={serviceInstanceConfig['enable'] ?? true}
+                        onValueChange={(v) => {
+                            setServiceInstanceConfig({ ...serviceInstanceConfig, enable: v });
+                        }}
+                    />
                     <Button
                         isIconOnly
                         size='sm'
