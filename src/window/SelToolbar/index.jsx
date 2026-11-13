@@ -8,7 +8,16 @@
 import { sendNotification } from '@tauri-apps/api/notification';
 import { BaseDirectory, readTextFile } from '@tauri-apps/api/fs';
 import React, { useEffect, useRef, useState } from 'react';
-import { LuLanguages, LuReplace, LuVolume2, LuSquare, LuCopy, LuClipboardCopy, LuCheck } from 'react-icons/lu';
+import {
+    LuLanguages,
+    LuReplace,
+    LuVolume2,
+    LuSquare,
+    LuCopy,
+    LuClipboardCopy,
+    LuCheck,
+    LuBookOpen,
+} from 'react-icons/lu';
 import { writeText } from '@tauri-apps/api/clipboard';
 import { useTranslation } from 'react-i18next';
 import { listen } from '@tauri-apps/api/event';
@@ -117,7 +126,7 @@ async function translateForPaste(text) {
 }
 
 // Text to speech with the first TTS service (same as the speak button in the translate window)
-async function synthesize(text) {
+export async function synthesize(text) {
     const serviceList = (await store.get('tts_service_list')) ?? DEFAULT_TTS_SERVICES;
     const instanceKey = serviceList[0];
     if (!instanceKey) throw new Error('No TTS service configured');
@@ -140,7 +149,7 @@ async function synthesize(text) {
 let audioContext = null;
 let audioSource = null;
 
-function stopAudio() {
+export function stopAudio() {
     if (audioSource) {
         try {
             audioSource.stop();
@@ -149,7 +158,7 @@ function stopAudio() {
 }
 
 // Resolves once playback has started; `onEnded` fires when it finishes or is stopped
-async function playAudio(data, onEnded) {
+export async function playAudio(data, onEnded) {
     if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
     }
@@ -259,6 +268,16 @@ export default function SelToolbar() {
             await flashDone('translate_copy');
         });
 
+    // Open the dictionary popup for the selected word
+    const onDictionary = async () => {
+        if (busy) return;
+        try {
+            await invoke('sel_toolbar_dictionary');
+        } catch (e) {
+            fail('dictionary', e);
+        }
+    };
+
     // Copy the selected text as is
     const onCopy = async () => {
         if (busy) return;
@@ -309,6 +328,7 @@ export default function SelToolbar() {
             onClick: onVoice,
             active: speaking,
         },
+        dictionary: { title: t('config.toolbar.action.dictionary'), icon: <LuBookOpen />, onClick: onDictionary },
         copy: { title: t('translate.copy'), icon: <LuCopy />, onClick: onCopy },
     };
     hotkeyRef.current = async (action) => {

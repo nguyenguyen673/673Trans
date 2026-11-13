@@ -1,5 +1,5 @@
 // Settings for the selection toolbar (src/window/SelToolbar + src-tauri/src/sel_toolbar.rs)
-import { LuLanguages, LuReplace, LuVolume2, LuCopy, LuClipboardCopy } from 'react-icons/lu';
+import { LuLanguages, LuReplace, LuVolume2, LuCopy, LuClipboardCopy, LuBookOpen } from 'react-icons/lu';
 import { Switch, Input, Slider, Tabs, Tab } from '@nextui-org/react';
 import { useTranslation } from 'react-i18next';
 import React from 'react';
@@ -8,12 +8,13 @@ import { Section, Row } from '../../components/Setting';
 import { useConfig } from '../../../../hooks/useConfig';
 
 // All buttons the bar can show, in the order they appear on the bar
-const ACTION_IDS = ['translate', 'replace', 'translate_copy', 'speak', 'copy'];
+const ACTION_IDS = ['translate', 'replace', 'translate_copy', 'speak', 'dictionary', 'copy'];
 const ACTION_ICONS = {
     translate: LuLanguages,
     replace: LuReplace,
     translate_copy: LuClipboardCopy,
     speak: LuVolume2,
+    dictionary: LuBookOpen,
     copy: LuCopy,
 };
 const DEFAULT_ACTIONS = ['translate', 'replace', 'speak'];

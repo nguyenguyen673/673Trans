@@ -447,3 +447,56 @@ pub fn updater_window() {
     window.set_size(tauri::LogicalSize::new(600, 400)).unwrap();
     window.center().unwrap();
 }
+
+// ---------------------------------------------------------------------------
+// Dictionary popup (look up the selected word, see src/window/Dict)
+// ---------------------------------------------------------------------------
+static DICT_TEXT: once_cell::sync::Lazy<std::sync::Mutex<String>> =
+    once_cell::sync::Lazy::new(|| std::sync::Mutex::new(String::new()));
+
+#[tauri::command]
+pub fn get_dict_text() -> String {
+    DICT_TEXT.lock().unwrap().clone()
+}
+
+/// Open the dictionary popup next to the mouse for `text`.
+pub fn dict_window(text: String) {
+    use mouse_position::mouse_position::{Mouse, Position};
+    *DICT_TEXT.lock().unwrap() = text.clone();
+    let mouse = match Mouse::get_mouse_position() {
+        Mouse::Position { x, y } => Position { x, y },
+        Mouse::Error => Position { x: 0, y: 0 },
+    };
+    let (window, exists) = build_window("dict", "Dict");
+    if exists {
+        window.emit("dict_text", text).unwrap();
+        return;
+    }
+    window.set_skip_taskbar(true).unwrap();
+    let monitor = window.current_monitor().unwrap().unwrap();
+    let dpi = monitor.scale_factor();
+    let (w, h) = (400.0 * dpi, 340.0 * dpi);
+    window.set_size(tauri::PhysicalSize::new(w, h)).unwrap();
+    let mp = monitor.position();
+    let ms = monitor.size();
+    let mut x = mouse.x as f64 + 6.0 * dpi;
+    let mut y = mouse.y as f64 + 18.0 * dpi;
+    if x + w > mp.x as f64 + ms.width as f64 {
+        x = mp.x as f64 + ms.width as f64 - w;
+    }
+    if y + h > mp.y as f64 + ms.height as f64 {
+        // no room below: show above the cursor
+        y = (mouse.y as f64 - h - 18.0 * dpi).max(mp.y as f64);
+    }
+    window
+        .set_position(tauri::PhysicalPosition::new(x.max(mp.x as f64), y))
+        .unwrap();
+}
+
+/// Hotkey: look up the selected text in the dictionary.
+pub fn selection_dictionary() {
+    let text = selection::get_text();
+    if !text.trim().is_empty() {
+        dict_window(text);
+    }
+}

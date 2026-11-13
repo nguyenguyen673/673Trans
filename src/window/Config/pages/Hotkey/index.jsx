@@ -378,6 +378,10 @@ export default function Hotkey() {
                     name='hotkey_selection_speak'
                     label={h('selection_speak')}
                 />
+                <HotkeyRow
+                    name='hotkey_selection_dictionary'
+                    label={h('selection_dictionary')}
+                />
             </Section>
             <Section title={h('group_screenshot')}>
                 <HotkeyRow

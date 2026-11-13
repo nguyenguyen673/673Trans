@@ -184,7 +184,9 @@
                     "speak": "Đọc to",
                     "speak_desc": "Đọc đoạn đang chọn bằng dịch vụ giọng nói đầu tiên. Bấm lần nữa để dừng.",
                     "copy": "Sao chép",
-                    "copy_desc": "Chép đoạn đang chọn."
+                    "copy_desc": "Chép đoạn đang chọn.",
+                    "dictionary": "Tra từ điển",
+                    "dictionary_desc": "Tra từ đang chọn trong từ điển Anh–Việt, hiện popup nhỏ cạnh con trỏ."
                 },
                 "apps": "Bộ lọc ứng dụng",
                 "blacklist": "Ẩn trong các ứng dụng",
@@ -194,7 +196,8 @@
                     "replace": "Thay thế",
                     "translate_copy": "Dịch & chép",
                     "speak": "Đọc",
-                    "copy": "Chép"
+                    "copy": "Chép",
+                    "dictionary": "Từ điển"
                 },
                 "layout": "Hướng bố trí",
                 "layout_horizontal": "Ngang",
@@ -249,7 +252,8 @@
                 "status_failed": "Thất bại",
                 "press_keys": "Nhấn tổ hợp phím…",
                 "record": "Ghi phím tắt",
-                "clear": "Xóa phím tắt"
+                "clear": "Xóa phím tắt",
+                "selection_dictionary": "Tra từ điển vùng chọn"
             },
             "service": {
                 "label": "Dịch vụ",
@@ -272,7 +276,8 @@
                 "builtin_service": "Dịch vụ tích hợp sẵn",
                 "service_name": "Tên dịch vụ",
                 "auto_on": "Đang tự dịch. Bấm để chỉ dịch khi mở thẻ của dịch vụ này.",
-                "auto_off": "Chỉ dịch khi bạn mở thẻ của dịch vụ này trong cửa sổ dịch."
+                "auto_off": "Chỉ dịch khi bạn mở thẻ của dịch vụ này trong cửa sổ dịch.",
+                "dictionary": "Từ điển"
             },
             "history": {
                 "label": "Lịch sử",
@@ -399,6 +404,17 @@
                 "local_tts": {
                     "title": "Local TTS (Edge + Piper)"
                 }
+            },
+            "dictionary": {
+                "ev_offline": {
+                    "title": "Từ điển Anh–Việt (offline)",
+                    "data": "Dữ liệu từ điển",
+                    "data_desc": "Chưa có dữ liệu. Chọn file dict-data.json (hoặc file plugin .mplugin chứa nó).",
+                    "data_ok": "Đã có dữ liệu. Chọn lại nếu muốn thay.",
+                    "pick": "Chọn file…",
+                    "imported": "Đã nhập dữ liệu từ điển",
+                    "no_data": "Chưa có dữ liệu từ điển. Bấm \"Chọn file…\" để nhập."
+                }
             }
         },
         "translate": {
@@ -422,6 +438,12 @@
             "copy_text": "Sao chép",
             "delete_newline": "Xóa ngắt dòng",
             "delete_space": "Xóa khoảng trắng"
+        },
+        "dict": {
+            "loading": "Đang tra…",
+            "not_found": "Không tìm thấy \"{{word}}\" trong từ điển.",
+            "no_data": "Chưa có dữ liệu từ điển.",
+            "pick_file": "Chọn file…"
         }
     }
 }

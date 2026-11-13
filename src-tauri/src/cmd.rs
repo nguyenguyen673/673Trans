@@ -54,7 +54,6 @@ pub fn get_base64(app_handle: tauri::AppHandle) -> String {
     use base64::{engine::general_purpose, Engine as _};
     use dirs::cache_dir;
     use std::fs::File;
-    use std::io::Read;
     let mut app_cache_dir_path = cache_dir().expect("Get Cache Dir Failed");
     app_cache_dir_path.push(&app_handle.config().tauri.bundle.identifier);
     app_cache_dir_path.push("pot_screenshot_cut.png");
@@ -264,4 +263,37 @@ pub fn local_tts_start(dir: String) -> Result<(), String> {
         cmd.creation_flags(0x08000000 | 0x00000008);
     }
     cmd.spawn().map(|_| ()).map_err(|e| e.to_string())
+}
+
+// Copy a dictionary data file (dict-data.json, or a .mplugin / .zip that contains it)
+// into the app config folder: <config>/<app id>/dict/dict-data.json
+#[tauri::command]
+pub fn dict_import(src: String) -> Result<String, String> {
+    let target_dir = dirs::config_dir()
+        .ok_or("no config dir")?
+        .join(APP.get().unwrap().config().tauri.bundle.identifier.clone())
+        .join("dict");
+    std::fs::create_dir_all(&target_dir).map_err(|e| e.to_string())?;
+    let target = target_dir.join("dict-data.json");
+    let lower = src.to_lowercase();
+    if lower.ends_with(".mplugin") || lower.ends_with(".zip") {
+        let file = std::fs::File::open(&src).map_err(|e| e.to_string())?;
+        let mut zip = zip::ZipArchive::new(file).map_err(|e| e.to_string())?;
+        let mut found = None;
+        for i in 0..zip.len() {
+            let name = zip.by_index(i).map_err(|e| e.to_string())?.name().to_string();
+            if name.ends_with("dict-data.json") {
+                found = Some(i);
+                break;
+            }
+        }
+        let i = found.ok_or("Không thấy dict-data.json trong file này")?;
+        let mut entry = zip.by_index(i).map_err(|e| e.to_string())?;
+        let mut buf = Vec::new();
+        entry.read_to_end(&mut buf).map_err(|e| e.to_string())?;
+        std::fs::write(&target, buf).map_err(|e| e.to_string())?;
+    } else {
+        std::fs::copy(&src, &target).map_err(|e| e.to_string())?;
+    }
+    Ok(target.to_string_lossy().to_string())
 }

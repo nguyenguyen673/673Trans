@@ -793,6 +793,16 @@ pub fn sel_toolbar_translate() {
     imp::focus_translate_window();
 }
 
+/// Dictionary button: look the selected word up in the dictionary popup.
+#[tauri::command(async)]
+pub fn sel_toolbar_dictionary() {
+    let text = imp::capture(true);
+    if text.trim().is_empty() {
+        return;
+    }
+    crate::window::dict_window(text);
+}
+
 /// Button 2 (second half): replace the selection with `text` via Ctrl+V.
 #[tauri::command(async)]
 pub fn sel_toolbar_paste(text: String) -> Result<(), String> {

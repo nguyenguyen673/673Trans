@@ -201,7 +201,8 @@
                 "status_failed": "Failed",
                 "press_keys": "Press the keys…",
                 "record": "Record hotkey",
-                "clear": "Clear hotkey"
+                "clear": "Clear hotkey",
+                "selection_dictionary": "Look up selection in dictionary"
             },
             "service": {
                 "label": "Service",
@@ -224,7 +225,8 @@
                 "builtin_service": "Built-in service",
                 "service_name": "Service name",
                 "auto_on": "Translates automatically. Click to translate only when its card is opened.",
-                "auto_off": "Translates only when you open its card in the translation window."
+                "auto_off": "Translates only when you open its card in the translation window.",
+                "dictionary": "Dictionary"
             },
             "history": {
                 "label": "History",
@@ -290,7 +292,9 @@
                     "speak": "Read aloud",
                     "speak_desc": "Read the selection with the first TTS service. Click again to stop.",
                     "copy": "Copy",
-                    "copy_desc": "Copy the selected text."
+                    "copy_desc": "Copy the selected text.",
+                    "dictionary": "Dictionary",
+                    "dictionary_desc": "Look the selected word up in the English–Vietnamese dictionary in a small popup next to the pointer."
                 },
                 "apps": "App filter",
                 "blacklist": "Hide in these apps",
@@ -300,7 +304,8 @@
                     "replace": "Replace",
                     "translate_copy": "Trans+copy",
                     "speak": "Speak",
-                    "copy": "Copy"
+                    "copy": "Copy",
+                    "dictionary": "Dictionary"
                 },
                 "layout": "Layout",
                 "layout_horizontal": "Horizontal",
@@ -614,6 +619,17 @@
                 "voice": "Voice",
                 "ocr_prompt_description": "What the model is told to do with the screenshot.",
                 "vision_model_hint": "Must be a model that accepts images."
+            },
+            "dictionary": {
+                "ev_offline": {
+                    "title": "English–Vietnamese dictionary (offline)",
+                    "data": "Dictionary data",
+                    "data_desc": "No data yet. Pick dict-data.json (or the .mplugin plugin file that contains it).",
+                    "data_ok": "Data is installed. Pick a file again to replace it.",
+                    "pick": "Pick file…",
+                    "imported": "Dictionary data imported",
+                    "no_data": "No dictionary data yet. Click \"Pick file…\" to import it."
+                }
             }
         },
         "translate": {
@@ -637,6 +653,12 @@
             "copy_text": "Copy",
             "delete_newline": "Delete Newline",
             "delete_space": "Delete Space"
+        },
+        "dict": {
+            "loading": "Looking up…",
+            "not_found": "\"{{word}}\" was not found in the dictionary.",
+            "no_data": "No dictionary data yet.",
+            "pick_file": "Pick file…"
         }
     }
 }

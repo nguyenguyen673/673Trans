@@ -159,7 +159,10 @@ fn main() {
             sel_toolbar_paste,
             sel_toolbar_hide,
             sel_toolbar_sticky,
-            sel_toolbar_busy
+            sel_toolbar_busy,
+            sel_toolbar_dictionary,
+            window::get_dict_text,
+            dict_import
         ])
         .on_system_tray_event(tray_event_handler)
         .build(tauri::generate_context!())
