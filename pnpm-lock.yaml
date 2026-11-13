@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@fontsource-variable/inter':
+        specifier: ^5.2.8
+        version: 5.3.0
       '@nextui-org/react':
         specifier: ^2.4.8
         version: 2.4.8(@types/react@18.3.12)(framer-motion@11.11.10(@emotion/is-prop-valid@0.8.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwindcss@3.4.14)
@@ -85,19 +88,19 @@ importers:
         version: 2.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       tauri-plugin-autostart-api:
         specifier: github:tauri-apps/tauri-plugin-autostart#v1
-        version: https://codeload.github.com/tauri-apps/tauri-plugin-autostart/tar.gz/6e4666fe3462f0534e90ed6bc075394dff1a1bde
+        version: git+https://git@github.com:tauri-apps/tauri-plugin-autostart.git#4424517fbfb76ff3eaddebaec6482a56b480a514
       tauri-plugin-fs-watch-api:
         specifier: github:tauri-apps/tauri-plugin-fs-watch#v1
-        version: https://codeload.github.com/tauri-apps/tauri-plugin-fs-watch/tar.gz/b595fef18f0b861b212c09dbfda86a0f4f2acda6
+        version: git+https://git@github.com:tauri-apps/tauri-plugin-fs-watch.git#9c5d1703c22f069e3dcbc3ec14eced34a1054261
       tauri-plugin-log-api:
         specifier: github:tauri-apps/tauri-plugin-log#v1
-        version: https://codeload.github.com/tauri-apps/tauri-plugin-log/tar.gz/cc86b2d9878d6ec02c9f25bd48292621a4bc2a6f
+        version: git+https://git@github.com:tauri-apps/tauri-plugin-log.git#f76f6c56a5f63e9192c5e05fafbd114b9c455ee6
       tauri-plugin-sql-api:
         specifier: github:tauri-apps/tauri-plugin-sql#v1
-        version: https://codeload.github.com/tauri-apps/tauri-plugin-sql/tar.gz/10c441d2e90e5df0e414c40ba81f597b6c38b164
+        version: git+https://git@github.com:tauri-apps/tauri-plugin-sql.git#7fc861c33ee68831cc6bd2830a577f4fdb102f79
       tauri-plugin-store-api:
         specifier: github:tauri-apps/tauri-plugin-store#v1
-        version: https://codeload.github.com/tauri-apps/tauri-plugin-store/tar.gz/0b7079b8c55bf25f6d9d9e8c57812d03b48a9788
+        version: git+https://git@github.com:tauri-apps/tauri-plugin-store.git#15a2fa051c402785fcfc470242f48c5707f03fbd
       tesseract.js:
         specifier: ^5.1.1
         version: 5.1.1
@@ -369,6 +372,9 @@ packages:
     engines: {node: '>=12'}
     cpu: [x64]
     os: [win32]
+
+  '@fontsource-variable/inter@5.3.0':
+    resolution: {integrity: sha512-OupL48va4JNofb97w6NYeF9S7W/kHNKM0Er8Dem5nqi4jeOLrVJDoE8tZEpnMJmtkvNbB1EIPPwHcdkF6b1oUA==}
 
   '@formatjs/ecma402-abstract@2.2.1':
     resolution: {integrity: sha512-O4ywpkdJybrjFc9zyL8qK5aklleIAi5O4nYhBVJaOFtCkNrnU+lKFeJOFC48zpsZQmR8Aok2V79hGpHnzbmFpg==}
@@ -2711,24 +2717,24 @@ packages:
     engines: {node: '>=14.0.0'}
     hasBin: true
 
-  tauri-plugin-autostart-api@https://codeload.github.com/tauri-apps/tauri-plugin-autostart/tar.gz/6e4666fe3462f0534e90ed6bc075394dff1a1bde:
-    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-autostart/tar.gz/6e4666fe3462f0534e90ed6bc075394dff1a1bde}
+  tauri-plugin-autostart-api@git+https://git@github.com:tauri-apps/tauri-plugin-autostart.git#4424517fbfb76ff3eaddebaec6482a56b480a514:
+    resolution: {commit: 4424517fbfb76ff3eaddebaec6482a56b480a514, repo: git@github.com:tauri-apps/tauri-plugin-autostart.git, type: git}
     version: 0.0.0
 
-  tauri-plugin-fs-watch-api@https://codeload.github.com/tauri-apps/tauri-plugin-fs-watch/tar.gz/b595fef18f0b861b212c09dbfda86a0f4f2acda6:
-    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-fs-watch/tar.gz/b595fef18f0b861b212c09dbfda86a0f4f2acda6}
+  tauri-plugin-fs-watch-api@git+https://git@github.com:tauri-apps/tauri-plugin-fs-watch.git#9c5d1703c22f069e3dcbc3ec14eced34a1054261:
+    resolution: {commit: 9c5d1703c22f069e3dcbc3ec14eced34a1054261, repo: git@github.com:tauri-apps/tauri-plugin-fs-watch.git, type: git}
     version: 0.0.0
 
-  tauri-plugin-log-api@https://codeload.github.com/tauri-apps/tauri-plugin-log/tar.gz/cc86b2d9878d6ec02c9f25bd48292621a4bc2a6f:
-    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-log/tar.gz/cc86b2d9878d6ec02c9f25bd48292621a4bc2a6f}
+  tauri-plugin-log-api@git+https://git@github.com:tauri-apps/tauri-plugin-log.git#f76f6c56a5f63e9192c5e05fafbd114b9c455ee6:
+    resolution: {commit: f76f6c56a5f63e9192c5e05fafbd114b9c455ee6, repo: git@github.com:tauri-apps/tauri-plugin-log.git, type: git}
     version: 0.0.0
 
-  tauri-plugin-sql-api@https://codeload.github.com/tauri-apps/tauri-plugin-sql/tar.gz/10c441d2e90e5df0e414c40ba81f597b6c38b164:
-    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-sql/tar.gz/10c441d2e90e5df0e414c40ba81f597b6c38b164}
+  tauri-plugin-sql-api@git+https://git@github.com:tauri-apps/tauri-plugin-sql.git#7fc861c33ee68831cc6bd2830a577f4fdb102f79:
+    resolution: {commit: 7fc861c33ee68831cc6bd2830a577f4fdb102f79, repo: git@github.com:tauri-apps/tauri-plugin-sql.git, type: git}
     version: 0.0.0
 
-  tauri-plugin-store-api@https://codeload.github.com/tauri-apps/tauri-plugin-store/tar.gz/0b7079b8c55bf25f6d9d9e8c57812d03b48a9788:
-    resolution: {tarball: https://codeload.github.com/tauri-apps/tauri-plugin-store/tar.gz/0b7079b8c55bf25f6d9d9e8c57812d03b48a9788}
+  tauri-plugin-store-api@git+https://git@github.com:tauri-apps/tauri-plugin-store.git#15a2fa051c402785fcfc470242f48c5707f03fbd:
+    resolution: {commit: 15a2fa051c402785fcfc470242f48c5707f03fbd, repo: git@github.com:tauri-apps/tauri-plugin-store.git, type: git}
     version: 0.0.0
 
   tesseract.js-core@5.1.1:
@@ -3133,6 +3139,8 @@ snapshots:
 
   '@esbuild/win32-x64@0.21.5':
     optional: true
+
+  '@fontsource-variable/inter@5.3.0': {}
 
   '@formatjs/ecma402-abstract@2.2.1':
     dependencies:
@@ -6456,23 +6464,23 @@ snapshots:
     transitivePeerDependencies:
       - ts-node
 
-  tauri-plugin-autostart-api@https://codeload.github.com/tauri-apps/tauri-plugin-autostart/tar.gz/6e4666fe3462f0534e90ed6bc075394dff1a1bde:
+  tauri-plugin-autostart-api@git+https://git@github.com:tauri-apps/tauri-plugin-autostart.git#4424517fbfb76ff3eaddebaec6482a56b480a514:
     dependencies:
       '@tauri-apps/api': 1.6.0
 
-  tauri-plugin-fs-watch-api@https://codeload.github.com/tauri-apps/tauri-plugin-fs-watch/tar.gz/b595fef18f0b861b212c09dbfda86a0f4f2acda6:
+  tauri-plugin-fs-watch-api@git+https://git@github.com:tauri-apps/tauri-plugin-fs-watch.git#9c5d1703c22f069e3dcbc3ec14eced34a1054261:
     dependencies:
       '@tauri-apps/api': 1.6.0
 
-  tauri-plugin-log-api@https://codeload.github.com/tauri-apps/tauri-plugin-log/tar.gz/cc86b2d9878d6ec02c9f25bd48292621a4bc2a6f:
+  tauri-plugin-log-api@git+https://git@github.com:tauri-apps/tauri-plugin-log.git#f76f6c56a5f63e9192c5e05fafbd114b9c455ee6:
     dependencies:
       '@tauri-apps/api': 1.6.0
 
-  tauri-plugin-sql-api@https://codeload.github.com/tauri-apps/tauri-plugin-sql/tar.gz/10c441d2e90e5df0e414c40ba81f597b6c38b164:
+  tauri-plugin-sql-api@git+https://git@github.com:tauri-apps/tauri-plugin-sql.git#7fc861c33ee68831cc6bd2830a577f4fdb102f79:
     dependencies:
       '@tauri-apps/api': 1.6.0
 
-  tauri-plugin-store-api@https://codeload.github.com/tauri-apps/tauri-plugin-store/tar.gz/0b7079b8c55bf25f6d9d9e8c57812d03b48a9788:
+  tauri-plugin-store-api@git+https://git@github.com:tauri-apps/tauri-plugin-store.git#15a2fa051c402785fcfc470242f48c5707f03fbd:
     dependencies:
       '@tauri-apps/api': 1.6.0
 
