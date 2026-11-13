@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 import React, { useEffect, useRef, useState } from 'react';
 import { invoke } from '@tauri-apps/api';
 
-import { getServiceName } from '../../utils/service_instance';
+import { getServiceName, getDisplayInstanceName, INSTANCE_NAME_CONFIG_KEY } from '../../utils/service_instance';
 import * as dictionaryServices from '../../services/dictionary';
 import { synthesize, playAudio, stopAudio } from '../SelToolbar';
 import { useEnabledList } from '../../hooks';
@@ -83,10 +83,23 @@ export default function Dict() {
         }
     };
 
+    // instance names as set in Config > Services > Dictionary (e.g. "DeepSeek")
+    const [names, setNames] = useState({});
+    useEffect(() => {
+        if (!serviceList) return;
+        (async () => {
+            const out = {};
+            for (const k of serviceList) {
+                const cfg = (await store.get(k)) ?? {};
+                out[k] = cfg[INSTANCE_NAME_CONFIG_KEY];
+            }
+            setNames(out);
+        })();
+    }, [JSON.stringify(serviceList)]);
     const menuTitle = (key) => {
         if (!key) return '';
         const name = getServiceName(key);
-        return t(`services.dictionary.${name}.title`);
+        return getDisplayInstanceName(names[key], () => t(`services.dictionary.${name}.title`));
     };
 
     const run = async (text, keyOverride, skipAi) => {

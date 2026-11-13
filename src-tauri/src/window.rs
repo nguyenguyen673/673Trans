@@ -114,12 +114,26 @@ fn build_window(label: &str, title: &str) -> (Window, bool) {
 }
 
 pub fn config_window() {
-    let (window, _exists) = build_window("config", "Config");
+    let (window, exists) = build_window("config", "Config");
     window
         .set_min_size(Some(tauri::LogicalSize::new(800, 400)))
         .unwrap();
-    window.set_size(tauri::LogicalSize::new(800, 600)).unwrap();
-    window.center().unwrap();
+    if !exists {
+        // size the user last gave this window (logical px, saved by the frontend)
+        let saved = |k: &str, d: f64, min: f64| {
+            crate::config::get(k)
+                .and_then(|v| v.as_f64())
+                .unwrap_or(d)
+                .max(min)
+        };
+        window
+            .set_size(tauri::LogicalSize::new(
+                saved("config_window_w", 1060.0, 800.0),
+                saved("config_window_h", 760.0, 400.0),
+            ))
+            .unwrap();
+        window.center().unwrap();
+    }
 }
 
 // Where a translate window opens: "center" | "mouse" | "pre_state" (last position).

@@ -7,6 +7,7 @@ import WindowControl from '../../components/WindowControl';
 import SideBar from './components/SideBar';
 import { osType } from '../../utils/env';
 import { useConfig } from '../../hooks';
+import { store } from '../../utils/store';
 import routes from './routes';
 import './style.css';
 
@@ -20,6 +21,26 @@ export default function Config() {
         if (appWindow.label === 'config') {
             appWindow.show();
         }
+    }, []);
+
+    // remember the size you give this window
+    useEffect(() => {
+        let timer = null;
+        const unlisten = appWindow.onResized(({ payload }) => {
+            clearTimeout(timer);
+            timer = setTimeout(async () => {
+                if (await appWindow.isMaximized()) return;
+                const factor = await appWindow.scaleFactor();
+                const size = payload.toLogical(factor);
+                await store.set('config_window_w', Math.round(size.width));
+                await store.set('config_window_h', Math.round(size.height));
+                await store.save();
+            }, 500);
+        });
+        return () => {
+            clearTimeout(timer);
+            unlisten.then((f) => f());
+        };
     }, []);
 
     return (

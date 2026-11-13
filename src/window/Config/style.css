@@ -539,3 +539,28 @@
 .dict-preview .dict-ai-btn {
     cursor: default;
 }
+
+.preview-box {
+    margin-bottom: 12px;
+}
+
+.preview-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 2px;
+    border: none;
+    background: transparent;
+    color: hsl(var(--nextui-default-500));
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.preview-toggle:hover {
+    color: hsl(var(--nextui-foreground));
+}
+
+.preview-body {
+    margin-top: 6px;
+}

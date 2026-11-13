@@ -2,6 +2,7 @@
 import { LuLanguages, LuReplace, LuVolume2, LuCopy, LuClipboardCopy, LuBookOpen } from 'react-icons/lu';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { LuGripVertical } from 'react-icons/lu';
+import PreviewBox from '../../PreviewBox';
 import { Switch, Input, Slider, Tabs, Tab } from '@nextui-org/react';
 import { useTranslation } from 'react-i18next';
 import React from 'react';
@@ -60,35 +61,36 @@ export default function Toolbar() {
         <>
             {actions !== null && (
                 <>
-                    <h4 className='config-section-title'>{t('config.toolbar.preview')}</h4>
-                    <div className='toolbar-preview'>
-                        <div className='toolbar-preview-stage'>
-                            <span className='toolbar-preview-text'>Hello 673Trans</span>
-                            <div
-                                className={`toolbar-preview-bar bg-content1 border-1 border-default-200 ${
-                                    layout === 'vertical' ? 'is-vertical' : ''
-                                }`}
-                                style={{
-                                    transform: `translate(${(offsetX ?? 0) - 40}px, ${(offsetY ?? 12) - 12}px)`,
-                                }}
-                            >
-                                {actions
-                                    .filter((id) => ACTION_IDS.includes(id))
-                                    .map((id) => {
-                                        const Icon = ACTION_ICONS[id];
-                                        return (
-                                            <span
-                                                key={id}
-                                                title={t(`config.toolbar.action.${id}`)}
-                                            >
-                                                {display !== 'text' && <Icon />}
-                                                {display !== 'icon' && <em>{t(`config.toolbar.short.${id}`)}</em>}
-                                            </span>
-                                        );
-                                    })}
+                    <PreviewBox title={t('config.toolbar.preview')}>
+                        <div className='toolbar-preview'>
+                            <div className='toolbar-preview-stage'>
+                                <span className='toolbar-preview-text'>Hello 673Trans</span>
+                                <div
+                                    className={`toolbar-preview-bar bg-content1 border-1 border-default-200 ${
+                                        layout === 'vertical' ? 'is-vertical' : ''
+                                    }`}
+                                    style={{
+                                        transform: `translate(${(offsetX ?? 0) - 40}px, ${(offsetY ?? 12) - 12}px)`,
+                                    }}
+                                >
+                                    {actions
+                                        .filter((id) => ACTION_IDS.includes(id))
+                                        .map((id) => {
+                                            const Icon = ACTION_ICONS[id];
+                                            return (
+                                                <span
+                                                    key={id}
+                                                    title={t(`config.toolbar.action.${id}`)}
+                                                >
+                                                    {display !== 'text' && <Icon />}
+                                                    {display !== 'icon' && <em>{t(`config.toolbar.short.${id}`)}</em>}
+                                                </span>
+                                            );
+                                        })}
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </PreviewBox>
                 </>
             )}
 
