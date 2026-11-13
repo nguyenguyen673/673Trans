@@ -29,6 +29,8 @@ export default function Dict() {
     const [word, setWord] = useState('');
     // null = loading | { entry } | { missing } | { noData } | { error }
     const [state, setState] = useState(null);
+    const [prons, setProns] = useState([]);
+    const [playing, setPlaying] = useState('');
     const [speaking, setSpeaking] = useState(false);
     const [speakLoading, setSpeakLoading] = useState(false);
     const listRef = useRef(null);
@@ -39,6 +41,7 @@ export default function Dict() {
         if (!clean) return;
         setWord(clean);
         setState(null);
+        setProns([]);
         stopAudio();
         appWindow.show();
         appWindow.setFocus();
@@ -47,6 +50,9 @@ export default function Dict() {
         try {
             const entry = await service.lookup(clean);
             setState(entry ? { entry } : { missing: true });
+            if (entry && service.pronunciations) {
+                service.pronunciations(entry.word || clean).then((p) => setProns(p));
+            }
         } catch (e) {
             setState(e?.message === 'NO_DATA' ? { noData: true } : { error: String(e?.message ?? e) });
         }
@@ -78,6 +84,21 @@ export default function Dict() {
             setState({ error: String(e?.message ?? e) });
         }
         setSpeakLoading(false);
+    };
+
+    const playPron = async (p) => {
+        const id = p.label || 'x';
+        if (playing === id) {
+            stopAudio();
+            return;
+        }
+        setPlaying(id);
+        try {
+            const data = p.audio ? await dictionaryServices.ev_offline.fetchAudio(p.audio) : await synthesize(word);
+            await playAudio(data, () => setPlaying(''));
+        } catch (e) {
+            setPlaying('');
+        }
     };
 
     const pickData = async () => {
@@ -112,15 +133,28 @@ export default function Dict() {
             <div className='dict-scroll'>
                 <div className='dict-head'>
                     <span className='dict-word'>{entry?.word ?? word}</span>
-                    {entry?.phonetic && <span className='dict-phonetic'>/{entry.phonetic}/</span>}
-                    <button
-                        className={`dict-speak ${speaking ? 'is-active' : ''}`}
-                        onClick={speak}
-                        title={speaking ? t('translate.stop') : t('translate.speak')}
-                    >
-                        {speakLoading ? <LuLoader2 className='dict-spin' /> : speaking ? <LuSquare /> : <LuVolume2 />}
-                    </button>
                 </div>
+                {entry && (
+                    <div className='dict-prons'>
+                        {(prons.length ? prons : [{ label: '', ipa: '', audio: '' }]).map((p, i) => (
+                            <span
+                                className='dict-pron'
+                                key={i}
+                            >
+                                {p.label && <b className='dict-accent'>{p.label}</b>}
+                                {(p.ipa || (!prons.length && entry.phonetic)) && (
+                                    <span className='dict-ipa'>{p.ipa ? p.ipa : `/${entry.phonetic}/`}</span>
+                                )}
+                                <button
+                                    className={`dict-speak ${playing === (p.label || 'x') ? 'is-active' : ''}`}
+                                    onClick={() => playPron(p)}
+                                >
+                                    {playing === (p.label || 'x') ? <LuSquare /> : <LuVolume2 />}
+                                </button>
+                            </span>
+                        ))}
+                    </div>
+                )}
 
                 {state === null && <div className='dict-note'>{t('dict.loading')}</div>}
                 {state?.missing && <div className='dict-note'>{t('dict.not_found', { word })}</div>}

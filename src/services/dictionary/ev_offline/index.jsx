@@ -2,6 +2,7 @@
 // Data: dict/dict-data.json in the app config folder (Config > Services > Dictionary > edit > pick file).
 // Format: { "word": { word, phonetic, meanings: [{ partOfSpeech, definitions: [], examples: [{ en, vi }] }] } }
 import { BaseDirectory, exists, readTextFile } from '@tauri-apps/api/fs';
+import { fetch, ResponseType } from '@tauri-apps/api/http';
 
 export const DATA_FILE = 'dict/dict-data.json';
 
@@ -58,6 +59,61 @@ export async function lookup(text) {
         }
     }
     return null;
+}
+
+// Real IPA (UK / US) and recorded audio from the free dictionaryapi.dev (no key needed).
+// Optional: returns [] when offline or when the word is unknown there.
+const pronCache = new Map();
+export async function pronunciations(word) {
+    const key = word.trim().toLowerCase();
+    if (pronCache.has(key)) return pronCache.get(key);
+    let result = [];
+    try {
+        const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(key)}`, {
+            method: 'GET',
+            timeout: 5,
+            responseType: ResponseType.JSON,
+        });
+        if (res.ok && Array.isArray(res.data)) {
+            const seen = new Set();
+            for (const entry of res.data) {
+                for (const p of entry.phonetics ?? []) {
+                    const audio = p.audio || '';
+                    const label = /-uk\./.test(audio)
+                        ? 'UK'
+                        : /-us\./.test(audio)
+                          ? 'US'
+                          : /-au\./.test(audio)
+                            ? 'AU'
+                            : '';
+                    const ipa = p.text || '';
+                    if (!ipa && !audio) continue;
+                    const k = `${label}|${ipa}|${audio}`;
+                    if (seen.has(k)) continue;
+                    seen.add(k);
+                    result.push({ label, ipa, audio });
+                }
+            }
+            // keep one entry per accent; prefer ones with both IPA and audio
+            const best = {};
+            for (const r of result) {
+                const g = r.label || 'other';
+                const score = (r.ipa ? 1 : 0) + (r.audio ? 1 : 0);
+                if (!best[g] || score > best[g].score) best[g] = { ...r, score };
+            }
+            result = ['UK', 'US', 'AU', 'other'].filter((g) => best[g]).map((g) => best[g]);
+            // the unlabeled one is only useful if there is nothing else
+            if (result.length > 1) result = result.filter((r) => r.label);
+        }
+    } catch {}
+    pronCache.set(key, result);
+    return result;
+}
+
+export async function fetchAudio(url) {
+    const res = await fetch(url, { method: 'GET', timeout: 10, responseType: ResponseType.Binary });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.data;
 }
 
 export * from './Config';
