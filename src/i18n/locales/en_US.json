@@ -318,7 +318,8 @@
                 "offset_x_desc": "Move the bar left or right of the mouse pointer; positive moves right.",
                 "offset_y": "Vertical offset",
                 "offset_y_desc": "Move the bar up or down from the mouse pointer; positive moves down.",
-                "position": "Layout and position"
+                "position": "Layout and position",
+                "drag": "Drag to reorder"
             }
         },
         "updater": {

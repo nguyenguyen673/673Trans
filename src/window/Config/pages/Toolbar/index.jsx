@@ -1,5 +1,7 @@
 // Settings for the selection toolbar (src/window/SelToolbar + src-tauri/src/sel_toolbar.rs)
 import { LuLanguages, LuReplace, LuVolume2, LuCopy, LuClipboardCopy, LuBookOpen } from 'react-icons/lu';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { LuGripVertical } from 'react-icons/lu';
 import { Switch, Input, Slider, Tabs, Tab } from '@nextui-org/react';
 import { useTranslation } from 'react-i18next';
 import React from 'react';
@@ -32,10 +34,26 @@ export default function Toolbar() {
     const [offsetX, setOffsetX] = useConfig('selection_toolbar_offset_x', 0);
     const [offsetY, setOffsetY] = useConfig('selection_toolbar_offset_y', 12);
 
+    const [savedOrder, setSavedOrder] = useConfig('selection_toolbar_order', ACTION_IDS);
+    // every action in the user's order (new actions are appended)
+    const order = [
+        ...(savedOrder ?? ACTION_IDS).filter((x) => ACTION_IDS.includes(x)),
+        ...ACTION_IDS.filter((x) => !(savedOrder ?? []).includes(x)),
+    ];
+
     const toggleAction = (id, on) => {
-        const next = ACTION_IDS.filter((x) => (x === id ? on : actions.includes(x)));
+        const next = order.filter((x) => (x === id ? on : actions.includes(x)));
         // Keep at least one button
         if (next.length > 0) setActions(next);
+    };
+
+    const onDragEnd = (result) => {
+        if (!result.destination || result.destination.index === result.source.index) return;
+        const next = Array.from(order);
+        const [moved] = next.splice(result.source.index, 1);
+        next.splice(result.destination.index, 0, moved);
+        setSavedOrder(next);
+        setActions(next.filter((x) => actions.includes(x)));
     };
 
     return (
@@ -54,18 +72,20 @@ export default function Toolbar() {
                                     transform: `translate(${(offsetX ?? 0) - 40}px, ${(offsetY ?? 12) - 12}px)`,
                                 }}
                             >
-                                {ACTION_IDS.filter((id) => actions.includes(id)).map((id) => {
-                                    const Icon = ACTION_ICONS[id];
-                                    return (
-                                        <span
-                                            key={id}
-                                            title={t(`config.toolbar.action.${id}`)}
-                                        >
-                                            {display !== 'text' && <Icon />}
-                                            {display !== 'icon' && <em>{t(`config.toolbar.short.${id}`)}</em>}
-                                        </span>
-                                    );
-                                })}
+                                {actions
+                                    .filter((id) => ACTION_IDS.includes(id))
+                                    .map((id) => {
+                                        const Icon = ACTION_ICONS[id];
+                                        return (
+                                            <span
+                                                key={id}
+                                                title={t(`config.toolbar.action.${id}`)}
+                                            >
+                                                {display !== 'text' && <Icon />}
+                                                {display !== 'icon' && <em>{t(`config.toolbar.short.${id}`)}</em>}
+                                            </span>
+                                        );
+                                    })}
                             </div>
                         </div>
                     </div>
@@ -200,27 +220,60 @@ export default function Toolbar() {
             </Section>
 
             <Section title={t('config.toolbar.actions')}>
-                {actions !== null &&
-                    ACTION_IDS.map((id) => {
-                        const Icon = ACTION_ICONS[id];
-                        return (
-                            <Row
-                                key={id}
-                                label={
-                                    <span className='flex items-center gap-[10px]'>
-                                        <Icon className='text-[16px] text-default-500' />
-                                        {t(`config.toolbar.action.${id}`)}
-                                    </span>
-                                }
-                                desc={t(`config.toolbar.action.${id}_desc`)}
-                            >
-                                <Switch
-                                    isSelected={actions.includes(id)}
-                                    onValueChange={(v) => toggleAction(id, v)}
-                                />
-                            </Row>
-                        );
-                    })}
+                {actions !== null && (
+                    <DragDropContext onDragEnd={onDragEnd}>
+                        <Droppable droppableId='toolbar-actions'>
+                            {(dropProvided) => (
+                                <div
+                                    ref={dropProvided.innerRef}
+                                    {...dropProvided.droppableProps}
+                                >
+                                    {order.map((id, index) => {
+                                        const Icon = ACTION_ICONS[id];
+                                        return (
+                                            <Draggable
+                                                key={id}
+                                                draggableId={id}
+                                                index={index}
+                                            >
+                                                {(provided, snapshot) => (
+                                                    <div
+                                                        ref={provided.innerRef}
+                                                        {...provided.draggableProps}
+                                                        className={snapshot.isDragging ? 'toolbar-row-dragging' : ''}
+                                                    >
+                                                        <Row
+                                                            label={
+                                                                <span className='flex items-center gap-[10px]'>
+                                                                    <span
+                                                                        {...provided.dragHandleProps}
+                                                                        className='toolbar-grip'
+                                                                        title={t('config.toolbar.drag')}
+                                                                    >
+                                                                        <LuGripVertical />
+                                                                    </span>
+                                                                    <Icon className='text-[16px] text-default-500' />
+                                                                    {t(`config.toolbar.action.${id}`)}
+                                                                </span>
+                                                            }
+                                                            desc={t(`config.toolbar.action.${id}_desc`)}
+                                                        >
+                                                            <Switch
+                                                                isSelected={actions.includes(id)}
+                                                                onValueChange={(v) => toggleAction(id, v)}
+                                                            />
+                                                        </Row>
+                                                    </div>
+                                                )}
+                                            </Draggable>
+                                        );
+                                    })}
+                                    {dropProvided.placeholder}
+                                </div>
+                            )}
+                        </Droppable>
+                    </DragDropContext>
+                )}
             </Section>
 
             <Section title={t('config.toolbar.apps')}>

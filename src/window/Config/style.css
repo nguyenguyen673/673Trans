@@ -464,3 +464,21 @@
     width: 17px;
     height: 17px;
 }
+
+.toolbar-grip {
+    display: flex;
+    align-items: center;
+    cursor: grab;
+    color: hsl(var(--nextui-default-400));
+    font-size: 18px;
+}
+
+.toolbar-grip:hover {
+    color: hsl(var(--nextui-default-700));
+}
+
+.toolbar-row-dragging {
+    background: hsl(var(--nextui-content2));
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}

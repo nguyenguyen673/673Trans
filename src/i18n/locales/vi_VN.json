@@ -210,7 +210,8 @@
                 "offset_x_desc": "Dời thanh sang trái hoặc phải so với con trỏ chuột; giá trị dương dời sang phải.",
                 "offset_y": "Độ lệch dọc",
                 "offset_y_desc": "Dời thanh lên hoặc xuống so với con trỏ chuột; giá trị dương dời xuống.",
-                "position": "Bố trí và vị trí"
+                "position": "Bố trí và vị trí",
+                "drag": "Kéo để đổi thứ tự nút"
             },
             "recognize": {
                 "label": "Cài đặt OCR",
