@@ -414,6 +414,10 @@
                     "pick": "Chọn file…",
                     "imported": "Đã nhập dữ liệu từ điển",
                     "no_data": "Chưa có dữ liệu từ điển. Bấm \"Chọn file…\" để nhập."
+                },
+                "wiktionary": {
+                    "title": "Wiktionary (kiểu Cambridge)",
+                    "desc": "Tra online từng từ: IPA UK/US, giọng đọc thật, định nghĩa tiếng Anh và câu ví dụ. Không cần key."
                 }
             }
         },

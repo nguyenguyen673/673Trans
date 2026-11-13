@@ -629,6 +629,10 @@
                     "pick": "Pick file…",
                     "imported": "Dictionary data imported",
                     "no_data": "No dictionary data yet. Click \"Pick file…\" to import it."
+                },
+                "wiktionary": {
+                    "title": "Wiktionary (Cambridge style)",
+                    "desc": "Online lookup per word: UK/US IPA, recorded audio, English definitions and example sentences. No key needed."
                 }
             }
         },

@@ -207,3 +207,36 @@
     line-height: 1.5;
     white-space: pre-wrap;
 }
+
+.dict-menu {
+    position: absolute;
+    top: 6px;
+    right: 38px;
+    z-index: 2;
+    max-width: 190px;
+    height: 24px;
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    border: none;
+    border-radius: 6px;
+    background: hsl(var(--nextui-default-100));
+    color: hsl(var(--nextui-default-700));
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.dict-menu span {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.dict-drag {
+    right: 230px;
+}
+
+.dict-sense {
+    margin-bottom: 6px;
+}

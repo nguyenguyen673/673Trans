@@ -19,6 +19,7 @@ export default function Dictionary(props) {
     // now it's service instance list
     const [dictionaryServiceInstanceList, setDictionaryServiceInstanceList] = useConfig('dictionary_service_list', [
         'ev_offline',
+        'wiktionary',
     ]);
 
     const { t } = useTranslation();

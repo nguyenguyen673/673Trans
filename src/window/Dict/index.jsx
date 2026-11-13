@@ -4,7 +4,8 @@
 import { open as openDialog } from '@tauri-apps/api/dialog';
 import { appWindow } from '@tauri-apps/api/window';
 import { listen } from '@tauri-apps/api/event';
-import { LuVolume2, LuSquare, LuX, LuLoader2 } from 'react-icons/lu';
+import { LuVolume2, LuSquare, LuX, LuLoader2, LuBookOpen, LuChevronDown } from 'react-icons/lu';
+import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@nextui-org/react';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useRef, useState } from 'react';
 import { invoke } from '@tauri-apps/api';
@@ -29,7 +30,7 @@ void listen('tauri://focus', () => clearTimeout(blurTimeout));
 
 export default function Dict() {
     const { t } = useTranslation();
-    const [serviceList] = useConfig('dictionary_service_list', ['ev_offline']);
+    const [serviceList] = useConfig('dictionary_service_list', ['ev_offline', 'wiktionary']);
     const [word, setWord] = useState('');
     // null = loading | { entry } | { missing } | { noData } | { error }
     const [state, setState] = useState(null);
@@ -41,6 +42,8 @@ export default function Dict() {
     const [speaking, setSpeaking] = useState(false);
     const [speakLoading, setSpeakLoading] = useState(false);
     const listRef = useRef(null);
+    const curRef = useRef(null);
+    const [current, setCurrent] = useState(null);
     listRef.current = serviceList;
 
     // AI explanation with the first AI service of the translate list
@@ -68,22 +71,32 @@ export default function Dict() {
         }
     };
 
-    const run = async (text) => {
+    const menuTitle = (key) => {
+        if (!key) return '';
+        const name = getServiceName(key);
+        return t(`services.dictionary.${name}.title`);
+    };
+
+    const run = async (text, keyOverride, skipAi) => {
         const clean = (text ?? '').trim();
         if (!clean) return;
         setWord(clean);
         setState(null);
         setProns([]);
         stopAudio();
-        explain(clean);
+        if (!skipAi) explain(clean);
         appWindow.show();
         appWindow.setFocus();
-        const key = (listRef.current ?? ['ev_offline'])[0];
+        const list = listRef.current ?? ['ev_offline'];
+        const key = keyOverride ?? (list.includes(curRef.current) ? curRef.current : list[0]);
+        curRef.current = key;
+        setCurrent(key);
         const service = dictionaryServices[getServiceName(key ?? 'ev_offline')];
         try {
             const entry = await service.lookup(clean);
             setState(entry ? { entry } : { missing: true });
-            if (entry && service.pronunciations) {
+            if (entry?.pron) setProns(entry.pron);
+            else if (entry && service.pronunciations) {
                 service.pronunciations(entry.word || clean).then((p) => setProns(p));
             }
         } catch (e) {
@@ -93,7 +106,7 @@ export default function Dict() {
 
     useEffect(() => {
         if (serviceList === null) return;
-        invoke('get_dict_text').then(run);
+        invoke('get_dict_text').then((x) => run(x));
         const unlisten = listen('dict_text', (e) => run(e.payload));
         const onKey = (e) => e.key === 'Escape' && appWindow.close();
         window.addEventListener('keydown', onKey);
@@ -171,6 +184,28 @@ export default function Dict() {
                 className='dict-drag'
                 data-tauri-drag-region='true'
             />
+            <Dropdown>
+                <DropdownTrigger>
+                    <button className='dict-menu'>
+                        <LuBookOpen />
+                        <span>{menuTitle(current ?? (serviceList ?? [])[0])}</span>
+                        <LuChevronDown />
+                    </button>
+                </DropdownTrigger>
+                <DropdownMenu
+                    aria-label='dictionary'
+                    selectionMode='single'
+                    selectedKeys={new Set([current ?? (serviceList ?? [])[0]])}
+                    onAction={(key) => {
+                        setCurrent(key);
+                        run(word, key, true);
+                    }}
+                >
+                    {(serviceList ?? []).map((k) => (
+                        <DropdownItem key={k}>{menuTitle(k)}</DropdownItem>
+                    ))}
+                </DropdownMenu>
+            </Dropdown>
             <button
                 className='dict-close'
                 onClick={() => appWindow.close()}
@@ -228,6 +263,22 @@ export default function Dict() {
                         >
                             <div className='dict-pos'>{m.partOfSpeech}</div>
                             <div className='dict-body'>
+                                {(m.senses ?? []).map((sn, j) => (
+                                    <div
+                                        className='dict-sense'
+                                        key={`s${j}`}
+                                    >
+                                        <p className={j === 0 ? 'dict-def is-main' : 'dict-def'}>{sn.gloss}</p>
+                                        {sn.examples.map((ex, k) => (
+                                            <p
+                                                className='dict-example'
+                                                key={k}
+                                            >
+                                                {ex}
+                                            </p>
+                                        ))}
+                                    </div>
+                                ))}
                                 {(m.definitions ?? []).map((d, j) => (
                                     <p
                                         className={j === 0 ? 'dict-def is-main' : 'dict-def'}
