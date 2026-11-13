@@ -54,6 +54,9 @@ Sửa lỗi chính tả, ngữ pháp, dấu câu; giữ giọng văn và độ d
 **Tóm tắt**<br/>
 Rút gọn đoạn dài thành vài ý chính, ngắn gọn dễ đọc.
 
+**Phong cách của riêng bạn**<br/>
+Tự viết lời dặn cho AI (Prompt hệ thống và Prompt người dùng) trong cài đặt từng dịch vụ AI, ví dụ "dịch thân mật như người bản xứ", "giữ nguyên thuật ngữ game", "xưng hô lịch sự". Dùng `$text`, `$from`, `$to` để chèn văn bản và ngôn ngữ. Áp dụng cho dịch thường.
+
 </td>
 </tr>
 </table>
