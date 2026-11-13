@@ -132,6 +132,54 @@ Khi mở app, tự kiểm tra bản mới trên [Releases](https://github.com/ng
 
 Chỉ cần file `.exe` để chạy (Windows 10/11 có WebView2). Wiktionary và các dịch vụ AI cần internet; dịch vụ AI cần khoá API của bạn.
 
+## Nâng cao
+
+### Gọi 673Trans từ app khác (localhost)
+
+App mở sẵn một máy chủ nội bộ tại `http://127.0.0.1:60828` (chỉ máy bạn truy cập được; đổi cổng ở Cài đặt chung). Script, AutoHotkey, Stream Deck hay bất kỳ app nào gửi được yêu cầu HTTP đều điều khiển được app:
+
+| Địa chỉ | Việc làm |
+|---|---|
+| `POST /translate` (nội dung gửi = văn bản) | Mở cửa sổ dịch với đoạn văn bản đó |
+| `/selection_translate` | Dịch vùng đang chọn ở app đang dùng |
+| `/input_translate` | Mở cửa sổ dịch để gõ |
+| `/ocr_recognize` | Chụp màn hình và nhận dạng chữ |
+| `/ocr_translate` | Chụp màn hình, nhận dạng và dịch |
+| `/config` | Mở cửa sổ cài đặt |
+
+Thêm `?screenshot=false` vào hai địa chỉ OCR để dùng lại ảnh chụp trước thay vì chụp mới.
+
+```powershell
+# PowerShell: dịch một đoạn văn bản
+Invoke-RestMethod -Method Post -Uri http://127.0.0.1:60828/translate -Body "Hello world"
+
+# dịch vùng đang chọn (gắn vào phím tắt của AutoHotkey, Stream Deck...)
+Invoke-RestMethod http://127.0.0.1:60828/selection_translate
+```
+
+### Tự tạo plugin cho bản thân
+
+673Trans dùng chung định dạng plugin với Pot, nên plugin của Pot cài được luôn. Có 4 loại: **dịch**, **OCR**, **giọng đọc** và **sổ từ vựng**. Cài bằng nút **Thêm plugin** trong Cài đặt → Dịch vụ (chọn file `.potext`).
+
+Một plugin là một thư mục (nén thành `.potext`) gồm:
+
+- `info.json`: `id` (bắt đầu bằng `plugin`), `display` (tên hiện ra), `icon`, `language` (đổi mã ngôn ngữ của app sang mã mà dịch vụ của bạn dùng), `needs` (các ô cấu hình như khoá API, kiểu `input` hoặc `select`).
+- `main.js`: hàm chính theo loại plugin, ví dụ plugin dịch:
+
+```js
+async function translate(text, from, to, options) {
+    const { config, detect, setResult, utils } = options;
+    const { tauriFetch: fetch } = utils;   // gọi HTTP, không bị chặn CORS
+    const res = await fetch('https://api.example.com/translate', {
+        method: 'POST',
+        body: { type: 'Json', payload: { text, from, to, key: config.apiKey } },
+    });
+    return res.data.result;                // trả về chuỗi; dịch theo luồng thì gọi setResult(...)
+}
+```
+
+`utils` còn có `run` để chạy một chương trình có sẵn trên máy (ví dụ mô hình dịch chạy cục bộ), `CryptoJS`, `Database` và đường dẫn thư mục plugin. Plugin nằm ở `%APPDATA%\com.pot-app.desktop\plugins\<loại>\<tên>`, sửa `main.js` rồi mở lại cửa sổ là thấy kết quả. Mẫu để bắt đầu: [pot-app-translate-plugin-template](https://github.com/pot-app/pot-app-translate-plugin-template).
+
 ## Cài đặt và build
 
 Cần Node.js 18+, pnpm, Rust, và Visual Studio Build Tools (Desktop development with C++).
