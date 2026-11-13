@@ -202,7 +202,8 @@
                 "press_keys": "Press the keys…",
                 "record": "Record hotkey",
                 "clear": "Clear hotkey",
-                "selection_dictionary": "Look up selection in dictionary"
+                "selection_dictionary": "Look up selection in dictionary",
+                "dictionary_input": "Dictionary lookup (type a word)"
             },
             "service": {
                 "label": "Service",
@@ -296,7 +297,9 @@
                     "copy": "Copy",
                     "copy_desc": "Copy the selected text.",
                     "dictionary": "Dictionary",
-                    "dictionary_desc": "Look the selected word up in the English–Vietnamese dictionary in a small popup next to the pointer."
+                    "dictionary_desc": "Look the selected word up in the English–Vietnamese dictionary in a small popup next to the pointer.",
+                    "dictionary_input": "Type to look up",
+                    "dictionary_input_desc": "Open the dictionary with a search box so you can type a word, no selection needed."
                 },
                 "apps": "App filter",
                 "blacklist": "Hide in these apps",
@@ -307,7 +310,8 @@
                     "translate_copy": "Trans+copy",
                     "speak": "Speak",
                     "copy": "Copy",
-                    "dictionary": "Dictionary"
+                    "dictionary": "Dictionary",
+                    "dictionary_input": "Type"
                 },
                 "layout": "Layout",
                 "layout_horizontal": "Horizontal",
@@ -680,7 +684,13 @@
             "ai_retry": "Retry",
             "ai_no_service": "No AI service in the translate list (OpenAI, Claude, Gemini, DeepSeek, Ollama…).",
             "audio_fallback": "Could not load the recorded audio; reading with TTS instead (UK/US will sound the same).",
-            "similar": "Did you mean:"
+            "similar": "Did you mean:",
+            "search": "Type a word…",
+            "history": "Lookup history",
+            "history_clear": "Clear all",
+            "history_empty": "No words yet.",
+            "save": "Save to vocabulary book",
+            "save_no_service": "No vocabulary service is enabled (Services → Vocabulary)."
         }
     }
 }

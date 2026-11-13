@@ -1,10 +1,12 @@
-use std::fs;
 
+#[cfg(target_os = "macos")]
+use dirs::cache_dir;
+#[cfg(target_os = "macos")]
+use std::fs;
 use crate::config::get;
 use crate::config::set;
 use crate::StringWrapper;
 use crate::APP;
-use dirs::cache_dir;
 use log::{info, warn};
 use tauri::Manager;
 use tauri::Monitor;
@@ -518,6 +520,11 @@ pub fn dict_window(text: String) {
     if exists {
         window.emit("dict_text", text).unwrap();
     }
+}
+
+/// Hotkey / toolbar icon: open the dictionary popup with an empty search box to type a word.
+pub fn dict_input() {
+    dict_window(String::new());
 }
 
 /// Hotkey: look up the selected text in the dictionary.

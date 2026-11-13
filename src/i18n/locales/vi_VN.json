@@ -186,7 +186,9 @@
                     "copy": "Sao chép",
                     "copy_desc": "Chép đoạn đang chọn.",
                     "dictionary": "Tra từ điển",
-                    "dictionary_desc": "Tra từ đang chọn trong từ điển Anh–Việt, hiện popup nhỏ cạnh con trỏ."
+                    "dictionary_desc": "Tra từ đang chọn trong từ điển Anh–Việt, hiện popup nhỏ cạnh con trỏ.",
+                    "dictionary_input": "Tra từ gõ tay",
+                    "dictionary_input_desc": "Mở ô tra từ điển để tự gõ từ, không cần tô chữ."
                 },
                 "apps": "Bộ lọc ứng dụng",
                 "blacklist": "Ẩn trong các ứng dụng",
@@ -197,7 +199,8 @@
                     "translate_copy": "Dịch & chép",
                     "speak": "Đọc",
                     "copy": "Chép",
-                    "dictionary": "Từ điển"
+                    "dictionary": "Từ điển",
+                    "dictionary_input": "Gõ từ"
                 },
                 "layout": "Hướng bố trí",
                 "layout_horizontal": "Ngang",
@@ -254,7 +257,8 @@
                 "press_keys": "Nhấn tổ hợp phím…",
                 "record": "Ghi phím tắt",
                 "clear": "Xóa phím tắt",
-                "selection_dictionary": "Tra từ điển vùng chọn"
+                "selection_dictionary": "Tra từ điển vùng chọn",
+                "dictionary_input": "Tra từ điển gõ tay"
             },
             "service": {
                 "label": "Dịch vụ",
@@ -465,7 +469,13 @@
             "ai_retry": "Làm lại",
             "ai_no_service": "Chưa có dịch vụ AI nào trong danh sách dịch (OpenAI, Claude, Gemini, DeepSeek, Ollama…).",
             "audio_fallback": "Không tải được giọng thật, đang đọc bằng TTS (giọng UK/US sẽ giống nhau).",
-            "similar": "Có phải:"
+            "similar": "Có phải:",
+            "search": "Gõ từ cần tra…",
+            "history": "Lịch sử tra",
+            "history_clear": "Xoá hết",
+            "history_empty": "Chưa có từ nào.",
+            "save": "Lưu vào sổ từ vựng",
+            "save_no_service": "Chưa có dịch vụ sổ từ vựng nào đang bật (Dịch vụ → Sổ từ vựng)."
         }
     }
 }

@@ -382,6 +382,10 @@ export default function Hotkey() {
                     name='hotkey_selection_dictionary'
                     label={h('selection_dictionary')}
                 />
+                <HotkeyRow
+                    name='hotkey_dictionary_input'
+                    label={h('dictionary_input')}
+                />
             </Section>
             <Section title={h('group_screenshot')}>
                 <HotkeyRow

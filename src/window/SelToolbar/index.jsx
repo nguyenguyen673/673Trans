@@ -300,6 +300,15 @@ export default function SelToolbar() {
         }
     };
 
+    // Open the dictionary popup with an empty search box (type the word yourself)
+    const onDictionaryInput = async () => {
+        try {
+            await invoke('sel_toolbar_dictionary_input');
+        } catch (e) {
+            fail('dictionary_input', e);
+        }
+    };
+
     // Copy the selected text as is
     const onCopy = async () => {
         if (busy) return;
@@ -349,6 +358,11 @@ export default function SelToolbar() {
             icon: speaking ? <LuSquare /> : <LuVolume2 />,
             onClick: onVoice,
             active: speaking,
+        },
+        dictionary_input: {
+            title: t('config.toolbar.action.dictionary_input'),
+            icon: <LuSearch />,
+            onClick: onDictionaryInput,
         },
         dictionary: { title: t('config.toolbar.action.dictionary'), icon: <LuBookOpen />, onClick: onDictionary },
         copy: { title: t('translate.copy'), icon: <LuCopy />, onClick: onCopy },

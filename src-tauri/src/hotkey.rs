@@ -1,6 +1,6 @@
 use crate::config::{get, set};
 use crate::sel_toolbar::hotkey_action;
-use crate::window::{input_translate, ocr_recognize, ocr_to_clipboard, ocr_translate, selection_dictionary, selection_translate};
+use crate::window::{dict_input, input_translate, ocr_recognize, ocr_to_clipboard, ocr_translate, selection_dictionary, selection_translate};
 use crate::APP;
 use log::{info, warn};
 use std::sync::atomic::{AtomicBool, Ordering::SeqCst};
@@ -10,7 +10,7 @@ use tauri::{AppHandle, GlobalShortcutManager};
 type Handler = Box<dyn Fn() + Send + 'static>;
 
 /// Every hotkey that is a plain action. The config key is the same as the name.
-const ACTIONS: [&str; 11] = [
+const ACTIONS: [&str; 12] = [
     "hotkey_toggle_toolbar",
     "hotkey_input_translate",
     "hotkey_selection_translate",
@@ -18,6 +18,7 @@ const ACTIONS: [&str; 11] = [
     "hotkey_selection_replace",
     "hotkey_selection_speak",
     "hotkey_selection_dictionary",
+    "hotkey_dictionary_input",
     "hotkey_ocr_recognize",
     "hotkey_ocr_translate",
     "hotkey_ocr_copy",
@@ -59,6 +60,7 @@ fn handler_for(name: &str) -> Option<Handler> {
         "hotkey_selection_replace" => Box::new(|| hotkey_action("replace".into())),
         "hotkey_selection_speak" => Box::new(|| hotkey_action("speak".into())),
         "hotkey_selection_dictionary" => Box::new(selection_dictionary),
+        "hotkey_dictionary_input" => Box::new(dict_input),
         "hotkey_ocr_recognize" => Box::new(ocr_recognize),
         "hotkey_ocr_translate" => Box::new(ocr_translate),
         "hotkey_ocr_copy" => Box::new(|| ocr_to_clipboard("ocr_copy")),

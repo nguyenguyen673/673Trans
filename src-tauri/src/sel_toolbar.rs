@@ -803,6 +803,14 @@ pub fn sel_toolbar_dictionary() {
     crate::window::dict_window(text);
 }
 
+/// Dictionary button without a selection: open the popup to type a word.
+#[tauri::command(async)]
+pub fn sel_toolbar_dictionary_input() {
+    imp::set_sticky(false);
+    imp::hide();
+    crate::window::dict_input();
+}
+
 /// Button 2 (second half): replace the selection with `text` via Ctrl+V.
 #[tauri::command(async)]
 pub fn sel_toolbar_paste(text: String) -> Result<(), String> {

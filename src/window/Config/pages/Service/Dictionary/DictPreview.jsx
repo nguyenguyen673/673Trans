@@ -1,6 +1,6 @@
 // Static preview of the dictionary popup (the real one is src/window/Dict)
 import { useTranslation } from 'react-i18next';
-import { LuVolume2, LuBookOpen, LuChevronDown, LuX, LuSparkles } from 'react-icons/lu';
+import { LuVolume2, LuBookOpen, LuChevronDown, LuX, LuSparkles, LuSearch, LuHistory, LuStar } from 'react-icons/lu';
 import React from 'react';
 
 import '../../../../Dict/style.css';
@@ -12,14 +12,25 @@ export default function DictPreview() {
         <PreviewBox>
             <div className='dict-preview'>
                 <div className='dict-root bg-background text-foreground border-1 border-default-200'>
-                    <span className='dict-menu'>
-                        <LuBookOpen />
-                        <span>{t('services.dictionary.wiktionary.title')}</span>
-                        <LuChevronDown />
-                    </span>
-                    <span className='dict-close'>
-                        <LuX />
-                    </span>
+                    <div className='dict-top'>
+                        <span className='dict-search'>
+                            <LuSearch />
+                        </span>
+                        <span className='dict-icon-btn'>
+                            <LuHistory />
+                        </span>
+                        <span className='dict-icon-btn'>
+                            <LuStar />
+                        </span>
+                        <span className='dict-menu'>
+                            <LuBookOpen />
+                            <span>Wiktionary</span>
+                            <LuChevronDown />
+                        </span>
+                        <span className='dict-icon-btn'>
+                            <LuX />
+                        </span>
+                    </div>
                     <div className='dict-scroll'>
                         <div className='dict-head'>
                             <span className='dict-word'>window</span>

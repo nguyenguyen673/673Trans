@@ -161,6 +161,7 @@ fn main() {
             sel_toolbar_sticky,
             sel_toolbar_busy,
             sel_toolbar_dictionary,
+            sel_toolbar_dictionary_input,
             window::get_dict_text,
             dict_import
         ])

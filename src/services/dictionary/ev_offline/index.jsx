@@ -3,6 +3,7 @@
 // Format: { "word": { word, phonetic, meanings: [{ partOfSpeech, definitions: [], examples: [{ en, vi }] }] } }
 import { BaseDirectory, exists, readTextFile } from '@tauri-apps/api/fs';
 import { fetch, ResponseType } from '@tauri-apps/api/http';
+import { HTTP_HEADERS } from '../common';
 
 export const DATA_FILE = 'dict/dict-data.json';
 
@@ -178,7 +179,7 @@ export async function pronunciations(word) {
             method: 'GET',
             timeout: 5,
             responseType: ResponseType.JSON,
-            headers: { 'User-Agent': '673Trans/3.13 (personal translator app)' },
+            headers: HTTP_HEADERS,
         });
         if (res.ok && Array.isArray(res.data)) {
             const seen = new Set();
@@ -222,7 +223,7 @@ export async function fetchAudio(url) {
         method: 'GET',
         timeout: 4,
         responseType: ResponseType.Binary,
-        headers: { 'User-Agent': '673Trans/3.13 (personal translator app)' },
+        headers: HTTP_HEADERS,
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return res.data;

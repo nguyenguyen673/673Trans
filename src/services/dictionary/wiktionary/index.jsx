@@ -2,6 +2,8 @@
 // UK / US IPA with recorded audio, English definitions and example sentences.
 // Online, one small request per word, no key needed.
 import { fetch, ResponseType } from '@tauri-apps/api/http';
+import { HTTP_HEADERS } from '../common';
+
 import { BaseDirectory, createDir, exists, readTextFile, writeTextFile } from '@tauri-apps/api/fs';
 
 const cache = new Map();
@@ -22,7 +24,7 @@ async function fetchEntries(w) {
         method: 'GET',
         timeout: 15,
         responseType: ResponseType.Text,
-        headers: { 'User-Agent': '673Trans/3.13 (personal translator app)' },
+        headers: HTTP_HEADERS,
     });
     let entries = [];
     if (res.ok) {
