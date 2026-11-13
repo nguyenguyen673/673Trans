@@ -631,3 +631,9 @@
     width: 17px;
     height: 17px;
 }
+
+/* Lime accent: dark text on pale lime fills in the light theme */
+.light .preview-toggle,
+.light .preview-toggle:hover {
+    color: hsl(var(--nextui-foreground));
+}

@@ -1,5 +1,6 @@
 // Accent colours offered in Config > General. [hue, saturation %, lightness % (dark), lightness % (light)]
 export const ACCENTS = {
+    neon: [76, 92, 52, 40],
     violet: [245, 100, 76, 58],
     blue: [214, 95, 64, 50],
     cyan: [189, 78, 55, 38],
@@ -9,7 +10,7 @@ export const ACCENTS = {
     pink: [322, 80, 66, 52],
     gray: [240, 5, 82, 30],
 };
-export const DEFAULT_ACCENT = 'violet';
+export const DEFAULT_ACCENT = 'neon';
 
 // Overrides the NextUI theme variables (see tailwind.config.cjs) on <html>
 export function applyAccent(name, isDark) {
@@ -18,7 +19,9 @@ export function applyAccent(name, isDark) {
     const style = document.documentElement.style;
     style.setProperty('--nextui-primary', `${h} ${s}% ${l}%`);
     style.setProperty('--nextui-focus', `${h} ${s}% ${l}%`);
-    style.setProperty('--nextui-primary-foreground', isDark ? '240 14% 7%' : '0 0% 100%');
+    // Lime needs dark text on it in both themes
+    const fg = name === 'neon' || !(name in ACCENTS) ? '150 60% 8%' : isDark ? '240 14% 7%' : '0 0% 100%';
+    style.setProperty('--nextui-primary-foreground', fg);
 }
 
 export function accentCss(name, isDark) {

@@ -39,8 +39,8 @@ module.exports = {
                             900: '#ececf1',
                         },
                         primary: {
-                            DEFAULT: '#8f84ff',
-                            foreground: '#0f0f14',
+                            DEFAULT: '#bff03a',
+                            foreground: '#0b2a12',
                         },
                     },
                 },
@@ -66,8 +66,8 @@ module.exports = {
                             900: '#17171c',
                         },
                         primary: {
-                            DEFAULT: '#5a4be0',
-                            foreground: '#ffffff',
+                            DEFAULT: '#8fc90d',
+                            foreground: '#0b2a12',
                         },
                     },
                 },
