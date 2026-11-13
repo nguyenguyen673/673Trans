@@ -30,8 +30,8 @@ export default function Translate() {
     const [inputCloseOnBlur, setInputCloseOnBlur] = useConfig('translate_input_close_on_blur', false);
     const [autoSize, setAutoSize] = useConfig('translate_auto_size', false);
     const [rememberWindowSize, setRememberWindowSize] = useConfig('translate_remember_window_size', false);
-    const [hideSource, setHideSource] = useConfig('hide_source', false);
-    const [hideLanguage, setHideLanguage] = useConfig('hide_language', false);
+    const [hideSource, setHideSource] = useConfig('translate_hide_source', false);
+    const [hideLanguage, setHideLanguage] = useConfig('translate_hide_language', false);
     const [hideWindow, setHideWindow] = useConfig('translate_hide_window', false);
     const [closeOnBlur, setCloseOnBlur] = useConfig('translate_close_on_blur', true);
     const [alwaysOnTop, setAlwaysOnTop] = useConfig('translate_always_on_top', false);

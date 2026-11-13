@@ -43,7 +43,7 @@ export default function SourceArea(props) {
     const [recognizeServiceList] = useConfig('recognize_service_list', ['system', 'tesseract']);
     const [ttsServiceList] = useConfig('tts_service_list', ['lingva_tts']);
     const [hideWindow] = useConfig('translate_hide_window', false);
-    const [hideSource] = useConfig('hide_source', false);
+    const [hideSource] = useConfig('translate_hide_source', false);
     const [ttsPluginInfo, setTtsPluginInfo] = useState();
     const [windowType, setWindowType] = useAtom(windowTypeAtom);
     const toastStyle = useToastStyle();
