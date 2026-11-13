@@ -125,12 +125,12 @@
                     "24": "Siêu lớn (24px)"
                 },
                 "window_position": "Vị trí cửa sổ",
-                "mouse": "Theo con trỏ chuột",
-                "pre_state": "Nhớ vị trí cũ",
+                "mouse": "Vị trí con trỏ chuột",
+                "pre_state": "Vị trí lần trước",
                 "remember_window_size": "Nhớ kích thước cửa sổ",
-                "close_on_blur": "Đóng cửa sổ khi mất tiêu điểm",
-                "always_on_top": "Luôn ở trên cùng",
-                "hide_source": "Ẩn vùng văn bản gốc",
+                "close_on_blur": "Đóng cửa sổ dịch khi mất tiêu điểm",
+                "always_on_top": "Ghim cửa sổ dịch theo mặc định",
+                "hide_source": "Ẩn vùng nhập",
                 "hide_language": "Ẩn thanh ngôn ngữ",
                 "hide_window": "Ẩn cửa sổ dịch",
                 "detect_engine": "Công cụ phát hiện ngôn ngữ",
@@ -150,7 +150,16 @@
                 "delete_newline_desc": "Nối các dòng bị ngắt do PDF hoặc cột hẹp trước khi dịch.",
                 "remember_language_desc": "Giữ ngôn ngữ đích bạn đã chọn trong cửa sổ dịch.",
                 "hide_window_desc": "Dịch ngầm; kết hợp với Tự động sao chép để nhận kết quả trong clipboard.",
-                "close_on_blur_desc": "Cửa sổ dịch tự đóng khi bạn bấm ra chỗ khác."
+                "close_on_blur_desc": "Áp dụng cho cửa sổ dịch phần chọn và ảnh chụp màn hình.",
+                "input_position": "Vị trí cửa sổ dịch văn bản nhập",
+                "select_position": "Vị trí cửa sổ dịch văn bản được chọn/ảnh chụp màn hình",
+                "center": "Giữa màn hình",
+                "hide_source_desc": "Ẩn vùng văn bản nguồn khi dịch phần chọn và ảnh chụp màn hình; vùng này vẫn hiển thị khi dịch nội dung nhập.",
+                "hide_language_desc": "Ẩn các điều khiển ngôn ngữ khi dịch phần chọn và ảnh chụp màn hình; các điều khiển này vẫn hiển thị khi dịch nội dung nhập.",
+                "auto_size": "Tự động điều chỉnh kích thước cửa sổ dịch",
+                "auto_size_desc": "Điều chỉnh chiều cao cửa sổ theo nội dung; chỉ có thể thay đổi chiều rộng theo cách thủ công.",
+                "input_close_on_blur": "Đóng cửa sổ dịch nhập liệu khi mất tiêu điểm",
+                "input_close_on_blur_desc": "Tự động đóng cửa sổ dịch nhập liệu khi nó mất tiêu điểm."
             },
             "toolbar": {
                 "label": "Trợ lý chọn văn bản",
@@ -179,7 +188,26 @@
                 },
                 "apps": "Bộ lọc ứng dụng",
                 "blacklist": "Ẩn trong các ứng dụng",
-                "blacklist_desc": "Tên file chương trình, cách nhau bằng dấu phẩy."
+                "blacklist_desc": "Tên file chương trình, cách nhau bằng dấu phẩy.",
+                "short": {
+                    "translate": "Dịch",
+                    "replace": "Thay thế",
+                    "translate_copy": "Dịch & chép",
+                    "speak": "Đọc",
+                    "copy": "Chép"
+                },
+                "layout": "Hướng bố trí",
+                "layout_horizontal": "Ngang",
+                "layout_vertical": "Dọc",
+                "display": "Hiển thị thao tác",
+                "display_icon": "Chỉ biểu tượng",
+                "display_text": "Chỉ văn bản",
+                "display_both": "Biểu tượng và văn bản",
+                "offset_x": "Độ lệch ngang",
+                "offset_x_desc": "Dời thanh sang trái hoặc phải so với con trỏ chuột; giá trị dương dời sang phải.",
+                "offset_y": "Độ lệch dọc",
+                "offset_y_desc": "Dời thanh lên hoặc xuống so với con trỏ chuột; giá trị dương dời xuống.",
+                "position": "Bố trí và vị trí"
             },
             "recognize": {
                 "label": "Cài đặt OCR",
@@ -345,6 +373,9 @@
                 "gemini_tts": {
                     "title": "Gemini TTS",
                     "voice_hint": "vd: Kore, Puck, Aoede"
+                },
+                "local_tts": {
+                    "title": "Local TTS (Edge + Piper)"
                 }
             }
         },

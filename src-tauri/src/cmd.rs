@@ -223,3 +223,45 @@ pub fn open_devtools(window: tauri::Window) {
         window.close_devtools();
     }
 }
+
+// Start the Local TTS server (tts_server.py) hidden, from the folder given in the
+// Local TTS service settings. Uses the python listed in python_path.txt like the
+// server's own start_hidden.vbs does, else `pythonw` from PATH.
+#[tauri::command]
+pub fn local_tts_start(dir: String) -> Result<(), String> {
+    use std::path::PathBuf;
+    use std::process::{Command, Stdio};
+    let dir = PathBuf::from(dir.trim());
+    let script = dir.join("tts_server.py");
+    if !script.exists() {
+        return Err(format!("Không thấy {}", script.display()));
+    }
+    let mut python = String::from("pythonw");
+    if let Ok(bytes) = std::fs::read(dir.join("python_path.txt")) {
+        let text = if bytes.starts_with(&[0xFF, 0xFE]) {
+            let units: Vec<u16> = bytes[2..]
+                .chunks_exact(2)
+                .map(|c| u16::from_le_bytes([c[0], c[1]]))
+                .collect();
+            String::from_utf16_lossy(&units)
+        } else {
+            String::from_utf8_lossy(&bytes).to_string()
+        };
+        if let Some(line) = text.lines().map(|l| l.trim()).find(|l| !l.is_empty()) {
+            python = line.to_string();
+        }
+    }
+    let mut cmd = Command::new(python);
+    cmd.arg(&script)
+        .current_dir(&dir)
+        .stdin(Stdio::null())
+        .stdout(Stdio::null())
+        .stderr(Stdio::null());
+    #[cfg(target_os = "windows")]
+    {
+        use std::os::windows::process::CommandExt;
+        // CREATE_NO_WINDOW | DETACHED_PROCESS
+        cmd.creation_flags(0x08000000 | 0x00000008);
+    }
+    cmd.spawn().map(|_| ()).map_err(|e| e.to_string())
+}

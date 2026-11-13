@@ -178,6 +178,8 @@ export default function SelToolbar() {
     // name of the button that just succeeded (shows a check mark)
     const [done, setDone] = useState(null);
     const [enabledActions] = useConfig('selection_toolbar_actions', DEFAULT_ACTIONS);
+    const [layout] = useConfig('selection_toolbar_layout', 'horizontal');
+    const [display] = useConfig('selection_toolbar_display', 'icon');
     const failTimer = useRef(null);
 
     useEffect(() => {
@@ -304,7 +306,11 @@ export default function SelToolbar() {
 
     return (
         <div className='sel-toolbar-root'>
-            <div className='sel-toolbar bg-content1 text-foreground border-1 border-default-200'>
+            <div
+                className={`sel-toolbar bg-content1 text-foreground border-1 border-default-200 ${
+                    layout === 'vertical' ? 'is-vertical' : ''
+                } display-${display ?? 'icon'}`}
+            >
                 {buttons.map((button) => (
                     <button
                         key={button.name}
@@ -323,8 +329,13 @@ export default function SelToolbar() {
                             <span className='sel-toolbar-spinner' />
                         ) : done === button.name ? (
                             <LuCheck className='text-success' />
-                        ) : (
+                        ) : display === 'text' ? null : (
                             button.icon
+                        )}
+                        {display !== 'icon' && (
+                            <span className='sel-toolbar-label'>
+                                {speaking && button.name === 'speak' ? t('translate.stop') : t(`config.toolbar.short.${button.name}`)}
+                            </span>
                         )}
                     </button>
                 ))}

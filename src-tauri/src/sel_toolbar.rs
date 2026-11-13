@@ -33,14 +33,39 @@ const BUTTON_W: f64 = 40.0;
 #[allow(dead_code)]
 const BAR_H: f64 = 44.0;
 
-/// Width of the bar for the buttons the user enabled
+/// Size of the bar for the user's buttons, layout and display mode.
+/// Keep in sync with src/window/SelToolbar/style.css.
+///   selection_toolbar_layout   "horizontal" | "vertical"   default horizontal
+///   selection_toolbar_display  "icon" | "text" | "both"    default icon
 #[allow(dead_code)]
-fn bar_width() -> f64 {
+fn bar_size() -> (f64, f64) {
     let count = match get("selection_toolbar_actions") {
         Some(v) => v.as_array().map_or(3, |a| a.len()),
         None => 3,
-    };
-    BAR_PADDING + BUTTON_W * count.clamp(1, 8) as f64
+    }
+    .clamp(1, 8) as f64;
+    let vertical = cfg_string("selection_toolbar_layout") == "vertical";
+    let display = cfg_string("selection_toolbar_display");
+    if vertical {
+        let w = match display.as_str() {
+            "text" => 92.0,
+            "both" => 120.0,
+            _ => BUTTON_W,
+        };
+        (BAR_PADDING + w, BAR_PADDING + 34.0 * count)
+    } else {
+        let w = match display.as_str() {
+            "text" => 66.0,
+            "both" => 92.0,
+            _ => BUTTON_W,
+        };
+        (BAR_PADDING + w * count, BAR_H)
+    }
+}
+
+#[allow(dead_code)]
+fn cfg_num(key: &str, default: f64) -> f64 {
+    get(key).and_then(|v| v.as_f64()).unwrap_or(default)
 }
 
 #[allow(dead_code)]
@@ -67,7 +92,7 @@ fn cfg_string(key: &str) -> String {
 // ---------------------------------------------------------------------------
 #[cfg(target_os = "windows")]
 mod imp {
-    use super::{bar_width, cfg_bool, cfg_string, BAR_H, LABEL};
+    use super::{bar_size, cfg_bool, cfg_num, cfg_string, LABEL};
     use crate::APP;
     use log::{info, warn};
     use once_cell::sync::OnceCell;
@@ -291,7 +316,7 @@ mod imp {
         info!("Selection toolbar: creating window");
         let w = tauri::WindowBuilder::new(app, LABEL, tauri::WindowUrl::App("index.html".into()))
             .title("Selection Toolbar")
-            .inner_size(bar_width(), BAR_H)
+            .inner_size(bar_size().0, bar_size().1)
             .decorations(false)
             .transparent(true)
             .resizable(false)
@@ -344,15 +369,19 @@ mod imp {
             let (mut dpi_x, mut dpi_y) = (96u32, 96u32);
             let _ = GetDpiForMonitor(monitor, MDT_EFFECTIVE_DPI, &mut dpi_x, &mut dpi_y);
             let scale = dpi_x as f64 / 96.0;
-            let w = (bar_width() * scale).round() as i32;
-            let h = (BAR_H * scale).round() as i32;
+            let (bw, bh) = bar_size();
+            let w = (bw * scale).round() as i32;
+            let h = (bh * scale).round() as i32;
             let area = mi.rcWork;
 
-            // Prefer just above the cursor so the selection itself stays visible
-            let mut px = x + (8.0 * scale) as i32;
-            let mut py = y - h - (14.0 * scale) as i32;
-            if py < area.top {
-                py = y + (22.0 * scale) as i32;
+            // Below the cursor by default; offsets come from the settings
+            // (positive X = right, positive Y = down). No room below: flip above.
+            let off_x = (cfg_num("selection_toolbar_offset_x", 0.0) * scale) as i32;
+            let off_y = (cfg_num("selection_toolbar_offset_y", 12.0) * scale) as i32;
+            let mut px = x + off_x;
+            let mut py = y + off_y;
+            if py + h > area.bottom {
+                py = y - h - off_y.abs().max((8.0 * scale) as i32);
             }
             if area.right - w > area.left {
                 px = px.clamp(area.left, area.right - w);

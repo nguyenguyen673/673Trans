@@ -73,3 +73,34 @@
         transform: rotate(360deg);
     }
 }
+
+/* Vertical layout: buttons stacked (window is 12px + 34px per button high) */
+.sel-toolbar.is-vertical {
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 4px 0;
+    gap: 2px;
+}
+
+.sel-toolbar.is-vertical .sel-toolbar-button {
+    width: calc(100% - 8px);
+    flex: 1;
+    height: auto;
+}
+
+.sel-toolbar-label {
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* icon + text: small gap between them */
+.sel-toolbar.display-both .sel-toolbar-button {
+    gap: 5px;
+    font-size: 15px;
+}
+
+.sel-toolbar.display-text .sel-toolbar-button {
+    font-size: 12px;
+}

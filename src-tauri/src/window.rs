@@ -122,7 +122,32 @@ pub fn config_window() {
     window.center().unwrap();
 }
 
-fn translate_window() -> Window {
+// Where a translate window opens: "center" | "mouse" | "pre_state" (last position).
+// Typed text and selected text / screenshots have their own setting; the old
+// single `translate_window_position` is the fallback for selections.
+fn translate_position_type(input: bool) -> String {
+    let (key, default) = if input {
+        ("translate_input_position", "center")
+    } else {
+        ("translate_select_position", "")
+    };
+    if let Some(v) = get(key) {
+        if let Some(s) = v.as_str() {
+            return s.to_string();
+        }
+    }
+    if !input {
+        if let Some(v) = get("translate_window_position") {
+            if let Some(s) = v.as_str() {
+                return s.to_string();
+            }
+        }
+        return "mouse".to_string();
+    }
+    default.to_string()
+}
+
+fn translate_window(input: bool) -> Window {
     use mouse_position::mouse_position::{Mouse, Position};
     // Mouse physical position
     let mut mouse_position = match Mouse::get_mouse_position() {
@@ -163,12 +188,12 @@ fn translate_window() -> Window {
         ))
         .unwrap();
 
-    let position_type = match get("translate_window_position") {
-        Some(v) => v.as_str().unwrap().to_string(),
-        None => "mouse".to_string(),
-    };
+    let position_type = translate_position_type(input);
 
     match position_type.as_str() {
+        "center" => {
+            window.center().unwrap();
+        }
         "mouse" => {
             // Adjust window position
             let monitor_size = monitor.size();
@@ -234,7 +259,7 @@ pub fn selection_translate() {
         state.0.lock().unwrap().replace_range(.., &text);
     }
 
-    let window = translate_window();
+    let window = translate_window(false);
     window.emit("new_text", text).unwrap();
 }
 
@@ -247,12 +272,9 @@ pub fn input_translate() {
         .lock()
         .unwrap()
         .replace_range(.., "[INPUT_TRANSLATE]");
-    let window = translate_window();
-    let position_type = match get("translate_window_position") {
-        Some(v) => v.as_str().unwrap().to_string(),
-        None => "mouse".to_string(),
-    };
-    if position_type == "mouse" {
+    let window = translate_window(true);
+    // An already open window is moved too (a fresh one was placed by translate_window)
+    if translate_position_type(true) == "center" {
         window.center().unwrap();
     }
 
@@ -264,7 +286,7 @@ pub fn text_translate(text: String) {
     // Clear State
     let state: tauri::State<StringWrapper> = app_handle.state();
     state.0.lock().unwrap().replace_range(.., &text);
-    let window = translate_window();
+    let window = translate_window(false);
     window.emit("new_text", text).unwrap();
 }
 
@@ -276,7 +298,7 @@ pub fn image_translate() {
         .lock()
         .unwrap()
         .replace_range(.., "[IMAGE_TRANSLATE]");
-    let window = translate_window();
+    let window = translate_window(false);
     window.emit("new_text", "[IMAGE_TRANSLATE]").unwrap();
 }
 

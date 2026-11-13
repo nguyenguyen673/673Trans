@@ -25,7 +25,10 @@ export default function Translate() {
     const [deleteNewline, setDeleteNewline] = useConfig('translate_delete_newline', false);
     const [rememberLanguage, setRememberLanguage] = useConfig('translate_remember_language', false);
     // const [translateFontSize, setTranslateFontSize] = useConfig('translate_font_size', 16);
-    const [windowPosition, setWindowPosition] = useConfig('translate_window_position', 'mouse');
+    const [inputPosition, setInputPosition] = useConfig('translate_input_position', 'center');
+    const [selectPosition, setSelectPosition] = useConfig('translate_select_position', 'mouse');
+    const [inputCloseOnBlur, setInputCloseOnBlur] = useConfig('translate_input_close_on_blur', false);
+    const [autoSize, setAutoSize] = useConfig('translate_auto_size', false);
     const [rememberWindowSize, setRememberWindowSize] = useConfig('translate_remember_window_size', false);
     const [hideSource, setHideSource] = useConfig('hide_source', false);
     const [hideLanguage, setHideLanguage] = useConfig('hide_language', false);
@@ -261,19 +264,39 @@ export default function Translate() {
                         )}
                     </div> */}
                     <div className='config-item'>
-                        <h3 className='my-auto mx-0'>{t('config.translate.window_position')}</h3>
-                        {windowPosition !== null && (
+                        <h3 className='my-auto mx-0'>{t('config.translate.input_position')}</h3>
+                        {inputPosition !== null && (
                             <Dropdown>
                                 <DropdownTrigger>
-                                    <Button variant='bordered'>{t(`config.translate.${windowPosition}`)}</Button>
+                                    <Button variant='bordered'>{t(`config.translate.${inputPosition}`)}</Button>
                                 </DropdownTrigger>
                                 <DropdownMenu
-                                    aria-label='window position'
-                                    className='max-h-[50vh] overflow-y-auto'
+                                    aria-label='input_position'
                                     onAction={(key) => {
-                                        setWindowPosition(key);
+                                        setInputPosition(key);
                                     }}
                                 >
+                                    <DropdownItem key='center'>{t('config.translate.center')}</DropdownItem>
+                                    <DropdownItem key='mouse'>{t('config.translate.mouse')}</DropdownItem>
+                                    <DropdownItem key='pre_state'>{t('config.translate.pre_state')}</DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                        )}
+                    </div>
+                    <div className='config-item'>
+                        <h3 className='my-auto mx-0'>{t('config.translate.select_position')}</h3>
+                        {selectPosition !== null && (
+                            <Dropdown>
+                                <DropdownTrigger>
+                                    <Button variant='bordered'>{t(`config.translate.${selectPosition}`)}</Button>
+                                </DropdownTrigger>
+                                <DropdownMenu
+                                    aria-label='select_position'
+                                    onAction={(key) => {
+                                        setSelectPosition(key);
+                                    }}
+                                >
+                                    <DropdownItem key='center'>{t('config.translate.center')}</DropdownItem>
                                     <DropdownItem key='mouse'>{t('config.translate.mouse')}</DropdownItem>
                                     <DropdownItem key='pre_state'>{t('config.translate.pre_state')}</DropdownItem>
                                 </DropdownMenu>
@@ -317,7 +340,38 @@ export default function Translate() {
                         )}
                     </div>
                     <div className='config-item'>
-                        <h3 className='my-auto mx-0'>{t('config.translate.hide_source')}</h3>
+                        <div className='config-label'>
+                            <h3>{t('config.translate.auto_size')}</h3>
+                            <p className='config-desc'>{t('config.translate.auto_size_desc')}</p>
+                        </div>
+                        {autoSize !== null && (
+                            <Switch
+                                isSelected={autoSize}
+                                onValueChange={(v) => {
+                                    setAutoSize(v);
+                                }}
+                            />
+                        )}
+                    </div>
+                    <div className='config-item'>
+                        <div className='config-label'>
+                            <h3>{t('config.translate.input_close_on_blur')}</h3>
+                            <p className='config-desc'>{t('config.translate.input_close_on_blur_desc')}</p>
+                        </div>
+                        {inputCloseOnBlur !== null && (
+                            <Switch
+                                isSelected={inputCloseOnBlur}
+                                onValueChange={(v) => {
+                                    setInputCloseOnBlur(v);
+                                }}
+                            />
+                        )}
+                    </div>
+                    <div className='config-item'>
+                        <div className='config-label'>
+                            <h3>{t('config.translate.hide_source')}</h3>
+                            <p className='config-desc'>{t('config.translate.hide_source_desc')}</p>
+                        </div>
                         {hideSource !== null && (
                             <Switch
                                 isSelected={hideSource}
@@ -328,7 +382,10 @@ export default function Translate() {
                         )}
                     </div>
                     <div className='config-item'>
-                        <h3 className='my-auto mx-0'>{t('config.translate.hide_language')}</h3>
+                        <div className='config-label'>
+                            <h3>{t('config.translate.hide_language')}</h3>
+                            <p className='config-desc'>{t('config.translate.hide_language_desc')}</p>
+                        </div>
                         {hideLanguage !== null && (
                             <Switch
                                 isSelected={hideLanguage}

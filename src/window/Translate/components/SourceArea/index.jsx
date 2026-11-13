@@ -25,6 +25,8 @@ import { debug } from 'tauri-plugin-log-api';
 
 export const sourceTextAtom = atom('');
 export const detectLanguageAtom = atom('');
+// '[INPUT_TRANSLATE]' (typed text), '[SELECTION_TRANSLATE]' or '[IMAGE_TRANSLATE]'
+export const windowTypeAtom = atom('[SELECTION_TRANSLATE]');
 
 let unlisten = null;
 let timer = null;
@@ -43,7 +45,7 @@ export default function SourceArea(props) {
     const [hideWindow] = useConfig('translate_hide_window', false);
     const [hideSource] = useConfig('hide_source', false);
     const [ttsPluginInfo, setTtsPluginInfo] = useState();
-    const [windowType, setWindowType] = useState('[SELECTION_TRANSLATE]');
+    const [windowType, setWindowType] = useAtom(windowTypeAtom);
     const toastStyle = useToastStyle();
     const { t } = useTranslation();
     const textAreaRef = useRef();

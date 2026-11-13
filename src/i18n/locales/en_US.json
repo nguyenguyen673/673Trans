@@ -125,13 +125,13 @@
                     "24": "Very Very Large (24px)"
                 },
                 "window_position": "Window Position",
-                "mouse": "Follow the Mouse",
-                "pre_state": "Remember Position",
+                "mouse": "Mouse position",
+                "pre_state": "Last position",
                 "remember_window_size": "Remember Window Size",
-                "close_on_blur": "Close window when focus lost",
-                "always_on_top": "Always on Top",
-                "hide_source": "Hide Source Area",
-                "hide_language": "Hide Language Area",
+                "close_on_blur": "Close translate window when it loses focus",
+                "always_on_top": "Pin translate window by default",
+                "hide_source": "Hide source area",
+                "hide_language": "Hide language bar",
                 "hide_window": "Hide Translation Window",
                 "detect_engine": "Language Detection Engine",
                 "baidu": "Baidu",
@@ -150,7 +150,16 @@
                 "delete_newline_desc": "Joins lines broken by PDF or narrow columns before translating.",
                 "remember_language_desc": "Keep the target language you picked in the translation window.",
                 "hide_window_desc": "Translate in the background; combine with Auto Copy to get the result on the clipboard.",
-                "close_on_blur_desc": "The translation window closes as soon as you click somewhere else."
+                "close_on_blur_desc": "Applies to selected text and screenshot windows.",
+                "input_position": "Input translation window position",
+                "select_position": "Selected text / screenshot window position",
+                "center": "Center of screen",
+                "hide_source_desc": "Hide the source text when translating a selection or screenshot; it is still shown when translating typed text.",
+                "hide_language_desc": "Hide the language controls when translating a selection or screenshot; they are still shown when translating typed text.",
+                "auto_size": "Auto-fit window size",
+                "auto_size_desc": "Fit the window height to its content; only the width can be changed by hand.",
+                "input_close_on_blur": "Close input window when it loses focus",
+                "input_close_on_blur_desc": "Close the typed-text window automatically when it loses focus."
             },
             "recognize": {
                 "label": "Recognize",
@@ -263,7 +272,26 @@
                 },
                 "apps": "App filter",
                 "blacklist": "Hide in these apps",
-                "blacklist_desc": "Program file names, separated by commas."
+                "blacklist_desc": "Program file names, separated by commas.",
+                "short": {
+                    "translate": "Translate",
+                    "replace": "Replace",
+                    "translate_copy": "Trans+copy",
+                    "speak": "Speak",
+                    "copy": "Copy"
+                },
+                "layout": "Layout",
+                "layout_horizontal": "Horizontal",
+                "layout_vertical": "Vertical",
+                "display": "Show actions as",
+                "display_icon": "Icons only",
+                "display_text": "Text only",
+                "display_both": "Icons and text",
+                "offset_x": "Horizontal offset",
+                "offset_x_desc": "Move the bar left or right of the mouse pointer; positive moves right.",
+                "offset_y": "Vertical offset",
+                "offset_y_desc": "Move the bar up or down from the mouse pointer; positive moves down.",
+                "position": "Layout and position"
             }
         },
         "updater": {
@@ -528,6 +556,9 @@
                 "gemini_tts": {
                     "title": "Gemini TTS",
                     "voice_hint": "e.g. Kore, Puck, Aoede"
+                },
+                "local_tts": {
+                    "title": "Local TTS (Edge + Piper)"
                 }
             },
             "collection": {

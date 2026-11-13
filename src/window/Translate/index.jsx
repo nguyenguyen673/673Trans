@@ -1,17 +1,19 @@
 import { readDir, BaseDirectory, readTextFile, exists } from '@tauri-apps/api/fs';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
-import { appWindow, currentMonitor } from '@tauri-apps/api/window';
+import { appWindow, currentMonitor, LogicalSize } from '@tauri-apps/api/window';
 import { appConfigDir, join } from '@tauri-apps/api/path';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
 import { Spacer, Button } from '@nextui-org/react';
 import { AiFillCloseCircle } from 'react-icons/ai';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { listen } from '@tauri-apps/api/event';
 import { BsPinFill } from 'react-icons/bs';
 
 import LanguageArea from './components/LanguageArea';
 import SourceArea from './components/SourceArea';
 import TargetArea from './components/TargetArea';
+import { windowTypeAtom } from './components/SourceArea';
+import { useAtomValue } from 'jotai';
 import { osType } from '../../utils/env';
 import { useConfig } from '../../hooks';
 import { store } from '../../utils/store';
@@ -20,33 +22,29 @@ import { info } from 'tauri-plugin-log-api';
 let blurTimeout = null;
 let resizeTimeout = null;
 let moveTimeout = null;
+let autoSizeTimeout = null;
 
-const listenBlur = () => {
-    return listen('tauri://blur', () => {
-        if (appWindow.label === 'translate') {
-            if (blurTimeout) {
-                clearTimeout(blurTimeout);
-            }
-            info('Blur');
-            // 100ms后关闭窗口，因为在 windows 下拖动窗口时会先切换成 blur 再立即切换成 focus
-            // 如果直接关闭将导致窗口无法拖动
-            blurTimeout = setTimeout(async () => {
-                info('Confirm Blur');
-                await appWindow.close();
-            }, 100);
+// Live values the (module level) blur handler needs
+const blurState = { pined: false, closeSelection: true, closeInput: false, windowType: '[SELECTION_TRANSLATE]' };
+
+void listen('tauri://blur', () => {
+    if (appWindow.label !== 'translate') return;
+    if (blurTimeout) {
+        clearTimeout(blurTimeout);
+    }
+    info('Blur');
+    // Wait 100ms before closing: on Windows dragging the window blurs and re-focuses it at once
+    blurTimeout = setTimeout(async () => {
+        if (blurState.pined) return;
+        const isInput = blurState.windowType === '[INPUT_TRANSLATE]';
+        if (isInput ? blurState.closeInput : blurState.closeSelection) {
+            info('Confirm Blur');
+            await appWindow.close();
         }
-    });
-};
+    }, 100);
+});
 
-let unlisten = listenBlur();
-// 取消 blur 监听
-const unlistenBlur = () => {
-    unlisten.then((f) => {
-        f();
-    });
-};
-
-// 监听 focus 事件取消 blurTimeout 时间之内的关闭窗口
+// Focus / move cancel a close that is about to happen
 void listen('tauri://focus', () => {
     info('Focus');
     if (blurTimeout) {
@@ -54,7 +52,6 @@ void listen('tauri://focus', () => {
         clearTimeout(blurTimeout);
     }
 });
-// 监听 move 事件取消 blurTimeout 时间之内的关闭窗口
 void listen('tauri://move', () => {
     info('Move');
     if (blurTimeout) {
@@ -65,8 +62,15 @@ void listen('tauri://move', () => {
 
 export default function Translate() {
     const [closeOnBlur] = useConfig('translate_close_on_blur', true);
+    const [inputCloseOnBlur] = useConfig('translate_input_close_on_blur', false);
     const [alwaysOnTop] = useConfig('translate_always_on_top', false);
-    const [windowPosition] = useConfig('translate_window_position', 'mouse');
+    const [autoSize] = useConfig('translate_auto_size', false);
+    const [inputPosition] = useConfig('translate_input_position', 'center');
+    const [selectPosition] = useConfig('translate_select_position', 'mouse');
+    const windowType = useAtomValue(windowTypeAtom);
+    const contentRef = useRef(null);
+    // The last position is saved when either kind of window uses it
+    const windowPosition = inputPosition === 'pre_state' || selectPosition === 'pre_state' ? 'pre_state' : null;
     const [rememberWindowSize] = useConfig('translate_remember_window_size', false);
     const [translateServiceInstanceList, setTranslateServiceInstanceList] = useConfig('translate_service_list', [
         'deepl',
@@ -79,7 +83,9 @@ export default function Translate() {
     const [recognizeServiceInstanceList] = useConfig('recognize_service_list', ['system', 'tesseract']);
     const [ttsServiceInstanceList] = useConfig('tts_service_list', ['lingva_tts']);
     const [collectionServiceInstanceList] = useConfig('collection_service_list', []);
-    const [hideLanguage] = useConfig('hide_language', false);
+    const [hideLanguageConfig] = useConfig('hide_language', false);
+    // The language bar is only hidden for selected text / screenshots, never for typed text
+    const hideLanguage = hideLanguageConfig && windowType !== '[INPUT_TRANSLATE]';
     const [pined, setPined] = useState(false);
     const [pluginList, setPluginList] = useState(null);
     const [serviceInstanceConfigMap, setServiceInstanceConfigMap] = useState(null);
@@ -95,20 +101,47 @@ export default function Translate() {
         const items = reorder(translateServiceInstanceList, result.source.index, result.destination.index);
         setTranslateServiceInstanceList(items);
     };
-    // 是否自动关闭窗口
+    // Keep the blur handler's view of the settings up to date
     useEffect(() => {
-        if (closeOnBlur !== null && !closeOnBlur) {
-            unlistenBlur();
-        }
-    }, [closeOnBlur]);
-    // 是否默认置顶
+        blurState.closeSelection = closeOnBlur ?? true;
+        blurState.closeInput = inputCloseOnBlur ?? false;
+        blurState.windowType = windowType;
+    }, [closeOnBlur, inputCloseOnBlur, windowType]);
+    // Pinned by default
     useEffect(() => {
         if (alwaysOnTop !== null && alwaysOnTop) {
             appWindow.setAlwaysOnTop(true);
-            unlistenBlur();
+            blurState.pined = true;
             setPined(true);
         }
     }, [alwaysOnTop]);
+    // Fit the window height to its content (width stays as you set it)
+    useEffect(() => {
+        if (!autoSize || !contentRef.current) return;
+        const fit = () => {
+            if (autoSizeTimeout) clearTimeout(autoSizeTimeout);
+            autoSizeTimeout = setTimeout(async () => {
+                try {
+                    const el = contentRef.current;
+                    if (!el) return;
+                    const monitor = await currentMonitor();
+                    const factor = monitor.scaleFactor;
+                    const size = (await appWindow.innerSize()).toLogical(factor);
+                    const maxH = Math.floor(monitor.size.height / factor) * 0.9;
+                    const wanted = Math.min(Math.max(el.scrollHeight + 44, 160), maxH);
+                    if (Math.abs(wanted - size.height) > 3) {
+                        await appWindow.setSize(new LogicalSize(size.width, Math.round(wanted)));
+                    }
+                } catch {}
+            }, 80);
+        };
+        const observer = new ResizeObserver(fit);
+        observer.observe(contentRef.current);
+        fit();
+        return () => {
+            observer.disconnect();
+        };
+    }, [autoSize, pluginList, serviceInstanceConfigMap]);
     // 保存窗口位置
     useEffect(() => {
         if (windowPosition !== null && windowPosition === 'pre_state') {
@@ -191,9 +224,10 @@ export default function Translate() {
 
     useEffect(() => {
         loadPluginList();
-        if (!unlisten) {
-            unlisten = listen('reload_plugin_list', loadPluginList);
-        }
+        const unlistenReload = listen('reload_plugin_list', loadPluginList);
+        return () => {
+            unlistenReload.then((f) => f());
+        };
     }, []);
 
     const loadServiceInstanceConfigMap = async () => {
@@ -247,15 +281,8 @@ export default function Translate() {
                         disableAnimation
                         className='my-auto bg-transparent'
                         onPress={() => {
-                            if (pined) {
-                                if (closeOnBlur) {
-                                    unlisten = listenBlur();
-                                }
-                                appWindow.setAlwaysOnTop(false);
-                            } else {
-                                unlistenBlur();
-                                appWindow.setAlwaysOnTop(true);
-                            }
+                            blurState.pined = !pined;
+                            appWindow.setAlwaysOnTop(!pined);
                             setPined(!pined);
                         }}
                     >
@@ -276,6 +303,7 @@ export default function Translate() {
                 </div>
                 <div className={`${osType === 'Linux' ? 'h-[calc(100vh-37px)]' : 'h-[calc(100vh-35px)]'} px-[8px]`}>
                     <div className='h-full overflow-y-auto'>
+                        <div ref={contentRef}>
                         <div>
                             {serviceInstanceConfigMap !== null && (
                                 <SourceArea
@@ -337,6 +365,7 @@ export default function Translate() {
                                 )}
                             </Droppable>
                         </DragDropContext>
+                        </div>
                     </div>
                 </div>
             </div>
