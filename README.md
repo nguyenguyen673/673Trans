@@ -194,6 +194,6 @@ Hướng dẫn chi tiết, chỗ sửa từng phần của giao diện và cách
 
 ## Ghi công và giấy phép
 
-673Trans dùng base của [Pot](https://github.com/pot-app/pot-desktop) (dự án gốc đã ngừng cập nhật từ 2024), giữ nguyên giấy phép [GPL-3.0](LICENSE).
+673Trans cảm hứng từ app [Pot](https://github.com/pot-app/pot-desktop) (dự án gốc đã ngừng cập nhật từ 2024), Dùng chung giấy phép [GPL-3.0](LICENSE).
 
 Dữ liệu từ điển Anh–Việt offline là của [Dự án Từ điển tiếng Việt miễn phí](https://www.informatik.uni-leipzig.de/~duc/Dict/) (Hồ Ngọc Đức); Wiktionary thuộc Wikimedia Foundation, nội dung theo CC BY-SA, dữ liệu trích qua [kaikki.org](https://kaikki.org).
