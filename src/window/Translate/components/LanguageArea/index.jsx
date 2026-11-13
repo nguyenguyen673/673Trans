@@ -3,7 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { BiTransferAlt } from 'react-icons/bi';
 import React, { useEffect } from 'react';
 import { atom, useAtom, useAtomValue } from 'jotai';
+import { LuSparkles, LuListChecks } from 'react-icons/lu';
 
+import { translateModeAtom } from '../../../../utils/translate_mode';
 import { languageList } from '../../../../utils/language';
 import { detectLanguageAtom } from '../SourceArea';
 import { useConfig } from '../../../../hooks';
@@ -21,6 +23,7 @@ export default function LanguageArea() {
     const [targetLanguage, setTargetLanguage] = useAtom(targetLanguageAtom);
     const detectLanguage = useAtomValue(detectLanguageAtom);
     const { t } = useTranslation();
+    const [mode, setMode] = useAtom(translateModeAtom);
 
     useEffect(() => {
         if (translateSourceLanguage) {
@@ -39,90 +42,110 @@ export default function LanguageArea() {
     }, [sourceLanguage, targetLanguage, rememberLanguage]);
 
     return (
-        <Card
-            shadow='none'
-            className='bg-content2 h-[35px] rounded-[10px]'
-        >
-            <CardFooter className='bg-content2 flex justify-between p-0 rounded-[10px]'>
-                <div className='flex'>
-                    <Dropdown>
-                        <DropdownTrigger>
-                            <Button
-                                radius='sm'
-                                variant='light'
+        <>
+            <Card
+                shadow='none'
+                className='bg-content2 h-[35px] rounded-[10px]'
+            >
+                <CardFooter className='bg-content2 flex justify-between p-0 rounded-[10px]'>
+                    <div className='flex'>
+                        <Dropdown>
+                            <DropdownTrigger>
+                                <Button
+                                    radius='sm'
+                                    variant='light'
+                                >
+                                    {t(`languages.${sourceLanguage}`)}
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu
+                                aria-label='Source Language'
+                                className='max-h-[50vh] overflow-y-auto'
+                                onAction={(key) => {
+                                    setSourceLanguage(key);
+                                }}
                             >
-                                {t(`languages.${sourceLanguage}`)}
-                            </Button>
-                        </DropdownTrigger>
-                        <DropdownMenu
-                            aria-label='Source Language'
-                            className='max-h-[50vh] overflow-y-auto'
-                            onAction={(key) => {
-                                setSourceLanguage(key);
-                            }}
-                        >
-                            <DropdownItem key='auto'>{t('languages.auto')}</DropdownItem>
-                            {languageList.map((x) => {
-                                return <DropdownItem key={x}>{t(`languages.${x}`)}</DropdownItem>;
-                            })}
-                        </DropdownMenu>
-                    </Dropdown>
-                </div>
-                <div className='flex'>
-                    <Button
-                        isIconOnly
-                        size='sm'
-                        variant='light'
-                        className='text-[20px]'
-                        onPress={async () => {
-                            if (sourceLanguage !== 'auto') {
-                                const oldSourceLanguage = sourceLanguage;
-                                setSourceLanguage(targetLanguage);
-                                setTargetLanguage(oldSourceLanguage);
-                            } else {
-                                if (detectLanguage !== '') {
-                                    if (targetLanguage === translateTargetLanguage) {
-                                        setTargetLanguage(detectLanguage);
-                                    } else {
-                                        setTargetLanguage(translateTargetLanguage);
-                                    }
+                                <DropdownItem key='auto'>{t('languages.auto')}</DropdownItem>
+                                {languageList.map((x) => {
+                                    return <DropdownItem key={x}>{t(`languages.${x}`)}</DropdownItem>;
+                                })}
+                            </DropdownMenu>
+                        </Dropdown>
+                    </div>
+                    <div className='flex'>
+                        <Button
+                            isIconOnly
+                            size='sm'
+                            variant='light'
+                            className='text-[20px]'
+                            onPress={async () => {
+                                if (sourceLanguage !== 'auto') {
+                                    const oldSourceLanguage = sourceLanguage;
+                                    setSourceLanguage(targetLanguage);
+                                    setTargetLanguage(oldSourceLanguage);
                                 } else {
-                                    if (targetLanguage === translateSecondLanguage) {
-                                        setTargetLanguage(translateTargetLanguage);
+                                    if (detectLanguage !== '') {
+                                        if (targetLanguage === translateTargetLanguage) {
+                                            setTargetLanguage(detectLanguage);
+                                        } else {
+                                            setTargetLanguage(translateTargetLanguage);
+                                        }
                                     } else {
-                                        setTargetLanguage(secondLanguage);
+                                        if (targetLanguage === translateSecondLanguage) {
+                                            setTargetLanguage(translateTargetLanguage);
+                                        } else {
+                                            setTargetLanguage(secondLanguage);
+                                        }
                                     }
                                 }
-                            }
-                        }}
-                    >
-                        <BiTransferAlt />
-                    </Button>
-                </div>
-                <div className='flex'>
-                    <Dropdown>
-                        <DropdownTrigger>
-                            <Button
-                                radius='sm'
-                                variant='light'
-                            >
-                                {t(`languages.${targetLanguage}`)}
-                            </Button>
-                        </DropdownTrigger>
-                        <DropdownMenu
-                            aria-label='Target Language'
-                            className='max-h-[50vh] overflow-y-auto'
-                            onAction={(key) => {
-                                setTargetLanguage(key);
                             }}
                         >
-                            {languageList.map((x) => {
-                                return <DropdownItem key={x}>{t(`languages.${x}`)}</DropdownItem>;
-                            })}
-                        </DropdownMenu>
-                    </Dropdown>
-                </div>
-            </CardFooter>
-        </Card>
+                            <BiTransferAlt />
+                        </Button>
+                    </div>
+                    <div className='flex'>
+                        <Dropdown>
+                            <DropdownTrigger>
+                                <Button
+                                    radius='sm'
+                                    variant='light'
+                                >
+                                    {t(`languages.${targetLanguage}`)}
+                                </Button>
+                            </DropdownTrigger>
+                            <DropdownMenu
+                                aria-label='Target Language'
+                                className='max-h-[50vh] overflow-y-auto'
+                                onAction={(key) => {
+                                    setTargetLanguage(key);
+                                }}
+                            >
+                                {languageList.map((x) => {
+                                    return <DropdownItem key={x}>{t(`languages.${x}`)}</DropdownItem>;
+                                })}
+                            </DropdownMenu>
+                        </Dropdown>
+                    </div>
+                </CardFooter>
+            </Card>
+            <div className='mode-row'>
+                {[
+                    ['polish', <LuSparkles />],
+                    ['summarize', <LuListChecks />],
+                ].map(([m, icon]) => (
+                    <Button
+                        key={m}
+                        size='sm'
+                        radius='full'
+                        variant={mode === m ? 'solid' : 'flat'}
+                        color={mode === m ? 'primary' : 'default'}
+                        startContent={icon}
+                        onPress={() => setMode(mode === m ? 'translate' : m)}
+                    >
+                        {t(`translate.mode_${m}`)}
+                    </Button>
+                ))}
+            </div>
+        </>
     );
 }

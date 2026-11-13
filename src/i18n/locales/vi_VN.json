@@ -429,7 +429,10 @@
             "paste_translation": "Dịch và thay thế",
             "stop": "Dừng",
             "no_selection": "Chưa chọn đoạn chữ nào",
-            "translate_copy": "Dịch và sao chép"
+            "translate_copy": "Dịch và sao chép",
+            "mode_polish": "Trau chuốt",
+            "mode_summarize": "Tóm tắt",
+            "mode_unsupported": "Chế độ này chỉ dùng được với dịch vụ AI (OpenAI, Claude, Gemini, DeepSeek, Ollama…). Bấm lại nút để quay về dịch."
         },
         "recognize": {
             "recognize": "Nhận dạng",

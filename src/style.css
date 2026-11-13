@@ -34,3 +34,9 @@ html {
 *::-webkit-scrollbar-thumb:hover {
     background: #c0c1c550;
 }
+
+.mode-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+}

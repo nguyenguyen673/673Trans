@@ -644,7 +644,10 @@
             "paste_translation": "Replace with translation",
             "stop": "Stop",
             "no_selection": "No text selected",
-            "translate_copy": "Translate and copy"
+            "translate_copy": "Translate and copy",
+            "mode_polish": "Polish",
+            "mode_summarize": "Summarize",
+            "mode_unsupported": "This mode only works with AI services (OpenAI, Claude, Gemini, DeepSeek, Ollama…). Click the button again to go back to translating."
         },
         "recognize": {
             "recognize": "Recognize",

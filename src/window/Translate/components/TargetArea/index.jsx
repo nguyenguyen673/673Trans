@@ -15,6 +15,7 @@ import { BiCollapseVertical, BiExpandVertical } from 'react-icons/bi';
 import { BaseDirectory, readTextFile } from '@tauri-apps/api/fs';
 import { sendNotification } from '@tauri-apps/api/notification';
 import React, { useEffect, useState, useRef } from 'react';
+import { translateModeAtom, applyMode, modeSupported } from '../../../../utils/translate_mode';
 import { writeText } from '@tauri-apps/api/clipboard';
 import PulseLoader from 'react-spinners/PulseLoader';
 import { TbTransformFilled } from 'react-icons/tb';
@@ -75,6 +76,7 @@ export default function TargetArea(props) {
     const [result, setResult] = useState('');
     const [error, setError] = useState('');
 
+    const mode = useAtomValue(translateModeAtom);
     const sourceText = useAtomValue(sourceTextAtom);
     const sourceLanguage = useAtomValue(sourceLanguageAtom);
     const targetLanguage = useAtomValue(targetLanguageAtom);
@@ -134,6 +136,7 @@ export default function TargetArea(props) {
         hideWindow,
         currentTranslateServiceInstanceKey,
         clipboardMonitor,
+        mode,
     ]);
 
     // todo: history panel use service instance key
@@ -178,6 +181,15 @@ export default function TargetArea(props) {
         translateID[index] = id;
 
         const translateServiceName = getServiceName(currentTranslateServiceInstanceKey);
+
+        if (
+            mode !== 'translate' &&
+            (whetherPluginService(currentTranslateServiceInstanceKey) || !modeSupported(translateServiceName, mode))
+        ) {
+            setIsLoading(false);
+            setError(t('translate.mode_unsupported'));
+            return;
+        }
 
         if (whetherPluginService(currentTranslateServiceInstanceKey)) {
             const pluginInfo = pluginList['translate'][translateServiceName];
@@ -262,7 +274,11 @@ export default function TargetArea(props) {
                 }
                 setIsLoading(true);
                 setHide(true);
-                const instanceConfig = serviceInstanceConfigMap[currentTranslateServiceInstanceKey];
+                const instanceConfig = applyMode(
+                    translateServiceName,
+                    serviceInstanceConfigMap[currentTranslateServiceInstanceKey],
+                    mode
+                );
                 const setHideOnce = invokeOnce(setHide);
                 builtinServices[translateServiceName]
                     .translate(sourceText.trim(), LanguageEnum[sourceLanguage], LanguageEnum[newTargetLanguage], {
@@ -283,7 +299,7 @@ export default function TargetArea(props) {
                             if (v !== '') {
                                 setHideOnce(false);
                             }
-                            if (!historyDisable) {
+                            if (!historyDisable && mode === 'translate') {
                                 addToHistory(
                                     sourceText.trim(),
                                     detectLanguage,
