@@ -16,7 +16,7 @@
 
 ### Thanh icon nổi khi chọn chữ
 
-<img src="asset/app-toolbar.png" align="right" width="360"/>
+<img src="asset/ui-toolbar.png" align="right" width="360"/>
 
 - Hiện cạnh con trỏ khi bôi đen chữ, nhấp đúp một từ, hoặc bấm Ctrl+A trong ô nhập, ở bất kỳ app nào.
 - 7 nút bật/tắt được: Dịch, Dịch và thay thế (dán bản dịch đè lên đoạn đang chọn), Dịch và sao chép, Đọc to, Tra từ điển, Gõ từ, Sao chép.
@@ -33,13 +33,13 @@ Có sẵn DeepSeek, Claude, GPT, Gemini và "Tương thích OpenAI" (OpenRouter,
 - **Viết lại, chính tả**: sửa lỗi chính tả, ngữ pháp, dấu câu và cách dùng từ, giữ nguyên giọng văn và độ dài; ít can thiệp hơn Trau chuốt (ảnh bên dưới).
 - **Tóm tắt**: rút gọn đoạn dài thành vài ý chính, ngắn gọn và dễ đọc.
 
-<img src="asset/app-mode-rewrite.png" width="640"/>
+<img src="asset/ui-mode-rewrite.png" width="640"/>
 
 Công tắc nguồn cho từng dịch vụ: tắt thì chỉ dịch khi bạn mở thẻ của nó.
 
 ### Từ điển
 
-<img src="asset/app-dict.png" align="right" width="300"/>
+<img src="asset/ui-dict.png" align="right" width="300"/>
 
 Tô một từ, bấm icon quyển sách hoặc dùng phím tắt.
 
@@ -54,7 +54,7 @@ Tô một từ, bấm icon quyển sách hoặc dùng phím tắt.
 
 Dịch, OCR và giọng nói đều có sẵn các hãng AI (DeepSeek, Claude, GPT/OpenAI, Gemini, tương thích OpenAI), bật/tắt và sắp xếp thứ tự bằng kéo thả:
 
-<img src="asset/app-services-translate.png" width="560"/>
+<img src="asset/ui-services-translate.png" width="560"/>
 
 - Công tắc bật/tắt cho mọi dịch vụ (dịch, OCR, giọng nói, từ điển, sổ từ vựng) mà không cần xoá. Mặc định bật Google và Bing.
 - Có sẵn và bật sẵn: OCR của Windows (System) và **Tesseract** (dữ liệu tiếng Anh, Việt, Trung đã nhúng trong exe, chạy offline). OCR bằng AI: DeepSeek, Gemini, GPT, Claude, tương thích OpenAI.
@@ -62,7 +62,7 @@ Dịch, OCR và giọng nói đều có sẵn các hãng AI (DeepSeek, Claude, G
 
 ### Phím tắt
 
-<img src="asset/app-hotkeys.png" width="620"/>
+<img src="asset/ui-hotkeys.png" width="620"/>
 
 - Bật/tắt tất cả, bật/tắt thanh trợ lý, dịch và chép, dịch và thay thế, đọc to vùng chọn, OCR và chép, dịch ảnh và chép, đổi cặp ngôn ngữ đích, tra từ điển, tra từ gõ tay.
 - Nút icon gọn: bấm để gán phím, ✕ để huỷ, thùng rác để xoá; rê chuột để xem chú thích.
@@ -74,7 +74,7 @@ Dịch, OCR và giọng nói đều có sẵn các hãng AI (DeepSeek, Claude, G
 
 ### Tự cập nhật
 
-<img src="asset/app-update.png" align="right" width="300"/>
+<img src="asset/ui-update.png" align="right" width="300"/>
 
 Khi mở app, tự kiểm tra bản mới trên [Releases](https://github.com/nguyenguyen673/673Trans/releases); bấm Cập nhật là tự tải, thay file và mở lại.
 
