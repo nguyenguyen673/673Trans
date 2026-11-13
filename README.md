@@ -71,7 +71,9 @@ Công tắc nguồn cho từng dịch vụ: tắt thì chỉ dịch khi bạn m�
 
 **Dịch và thay thế**: bôi đen một câu, bấm nút thay thế, bản dịch được dán đè đúng chỗ đang chọn, không cần copy-paste.
 
-<p align="center"><img src="asset/ui-replace-v2.png" width="880"/></p>
+> **Lưu ý:** bản dịch thay thế theo đúng giọng bạn muốn: thân mật, lịch sự, chat-chit như nhắn tin bạn bè… Chỉnh trong phần prompt tùy chỉnh của dịch vụ AI.
+
+<p align="center"><img src="asset/ui-replace-v3.png" width="880"/></p>
 
 ### Từ điển
 
