@@ -134,7 +134,8 @@ Chỉ cần file `.exe` để chạy (Windows 10/11 có WebView2). Wiktionary v�
 
 ## Nâng cao
 
-### Gọi 673Trans từ app khác (localhost)
+<details>
+<summary><b>Gọi 673Trans từ app khác (localhost)</b></summary>
 
 App mở sẵn một máy chủ nội bộ tại `http://127.0.0.1:60828` (chỉ máy bạn truy cập được; đổi cổng ở Cài đặt chung). Script, AutoHotkey, Stream Deck hay bất kỳ app nào gửi được yêu cầu HTTP đều điều khiển được app:
 
@@ -157,7 +158,10 @@ Invoke-RestMethod -Method Post -Uri http://127.0.0.1:60828/translate -Body "Hell
 Invoke-RestMethod http://127.0.0.1:60828/selection_translate
 ```
 
-### Tự tạo plugin cho bản thân
+</details>
+
+<details>
+<summary><b>Tự tạo plugin cho bản thân</b></summary>
 
 Plugin mở rộng được 4 loại dịch vụ: **dịch**, **OCR**, **giọng đọc** và **sổ từ vựng**. Cài bằng nút **Thêm plugin** trong Cài đặt → Dịch vụ (chọn file `.potext`).
 
@@ -179,6 +183,8 @@ async function translate(text, from, to, options) {
 ```
 
 `utils` còn có `run` để chạy một chương trình có sẵn trên máy (ví dụ mô hình dịch chạy cục bộ), `CryptoJS`, `Database` và đường dẫn thư mục plugin. Plugin nằm ở `%APPDATA%\com.pot-app.desktop\plugins\<loại>\<tên>`, sửa `main.js` rồi mở lại cửa sổ là thấy kết quả.
+
+</details>
 
 ## Cài đặt và build
 
