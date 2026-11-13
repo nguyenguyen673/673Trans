@@ -1,14 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="116" fill="#0B5E69"/>
-  <path d="M92 172 A58 58 0 0 1 150 114" fill="none" stroke="#8FD99B" stroke-width="22" stroke-linecap="butt"/>
-  <g fill="none" stroke="#25D3E8" stroke-width="30" stroke-linejoin="miter">
-    <path d="M100 392 L170 206 L240 392"/>
-    <path d="M128 328 H212"/>
-  </g>
-  <g fill="none" stroke="#FFC53D" stroke-width="30" stroke-linejoin="miter" stroke-linecap="butt">
-    <path d="M346 96 V134"/>
-    <path d="M238 158 H454"/>
-    <path d="M284 178 L424 372"/>
-    <path d="M402 178 L262 372"/>
-  </g>
+<defs><clipPath id="c"><rect width="512" height="512" rx="116"/></clipPath>
+<g id="b"><path d="M326 78 Q352 98 340 140 M196 186 Q330 152 468 184 M396 206 C384 306 320 388 214 436 M262 222 C330 336 400 406 472 436"/></g></defs>
+<g clip-path="url(#c)">
+<rect width="512" height="512" fill="#C6F432"/>
+<g fill="none" stroke-linecap="round" stroke-linejoin="round">
+<path d="M56 428 Q104 280 138 170 Q176 280 226 428 M90 348 Q138 334 192 348" stroke="#0A4A52" stroke-width="38"/>
+<g transform="translate(14 20) scale(0.92)">
+<use href="#b" stroke="#C6F432" stroke-width="66"/>
+<use href="#b" stroke="#10181B" stroke-width="40"/>
+</g></g></g>
 </svg>

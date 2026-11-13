@@ -12,68 +12,70 @@
 <br/>
 <hr/>
 
-<table>
-<tr>
-    <td> <img src="asset/673trans-toolbar.png">
-    <td> <img src="asset/673trans-translate-settings.png">
-</table>
-
 ## Tính năng
 
-**Thanh icon nổi khi chọn chữ**
+### Thanh icon nổi khi chọn chữ
 
-<img src="asset/f-toolbar.png" width="400"/>
+<img src="asset/app-toolbar.png" align="right" width="360"/>
 
 - Hiện cạnh con trỏ khi bôi đen chữ, nhấp đúp một từ, hoặc bấm Ctrl+A trong ô nhập, ở bất kỳ app nào.
 - 7 nút bật/tắt được: Dịch, Dịch và thay thế (dán bản dịch đè lên đoạn đang chọn), Dịch và sao chép, Đọc to, Tra từ điển, Gõ từ, Sao chép.
-- Kéo thả đổi thứ tự nút; ngang/dọc; chỉ icon, chỉ chữ hoặc cả hai; độ lệch; danh sách app không hiện thanh; có ô xem trước.
+- Kéo thả đổi thứ tự nút; ngang/dọc; chỉ icon, chỉ chữ hoặc cả hai; độ lệch; danh sách app không hiện thanh; có ô **Xem trước** ngay trong cài đặt.
 
-**Dịch bằng AI**
+<br clear="right"/>
 
-<img src="asset/f-ai.png" width="400"/>
+### Dịch bằng AI: Trau chuốt, Viết lại / chính tả, Tóm tắt
 
-- Có sẵn DeepSeek, Claude, GPT, Gemini và "Tương thích OpenAI" (OpenRouter, Qwen, Kimi, SiliconFlow, LM Studio…).
-- Nút **Trau chuốt**, **Viết lại, chính tả** và **Tóm tắt** ngay trong cửa sổ dịch.
-- Công tắc nguồn cho từng dịch vụ: tắt thì chỉ dịch khi bạn mở thẻ của nó.
+Có sẵn DeepSeek, Claude, GPT, Gemini và "Tương thích OpenAI" (OpenRouter, Qwen, Kimi, SiliconFlow, LM Studio…). Ngay dưới ô nhập của cửa sổ dịch có 3 nút chế độ; bấm một nút để AI xử lý đoạn đang chọn, bấm lại để quay về dịch thường. Ba chế độ chỉ chạy với dịch vụ AI (Google, Bing… sẽ báo không hỗ trợ).
 
-**Từ điển** (tô một từ, bấm icon quyển sách hoặc dùng phím tắt)
+| Chế độ | Làm gì | Ví dụ |
+|---|---|---|
+| **Trau chuốt** | Viết lại cho tự nhiên, mượt và chuyên nghiệp hơn, giữ nguyên ý và ngôn ngữ của bạn. Hợp để chỉnh email, bài đăng, mô tả. | <img src="asset/app-mode-polish.png" width="300"/> |
+| **Viết lại, chính tả** | Sửa lỗi chính tả, ngữ pháp, dấu câu và cách dùng từ, giữ nguyên giọng văn và độ dài; ít can thiệp hơn Trau chuốt. | <img src="asset/app-mode-rewrite.png" width="300"/> |
+| **Tóm tắt** | Rút gọn đoạn dài thành vài ý chính, ngắn gọn và dễ đọc. | <img src="asset/app-mode-summarize.png" width="300"/> |
 
-<img src="asset/f-dict.png" width="400"/>
+Công tắc nguồn cho từng dịch vụ: tắt thì chỉ dịch khi bạn mở thẻ của nó.
+
+### Từ điển
+
+<img src="asset/app-dict.png" align="right" width="300"/>
+
+Tô một từ, bấm icon quyển sách hoặc dùng phím tắt.
 
 - Popup kiểu Cambridge hiện cạnh con trỏ, có IPA UK/US và giọng đọc.
 - 3 từ điển, đổi bằng menu: **Anh–Việt offline** (103k từ, **đã nhúng sẵn trong exe**, tra ngược Việt → Anh, gợi ý từ gần giống), **Wiktionary** (giọng ghi âm thật, định nghĩa, câu ví dụ, lưu đệm), **Từ điển AI** (chọn hãng DeepSeek, OpenAI, Claude, Gemini hoặc tương thích OpenAI, nhập khoá API riêng).
 - ⭐ lưu từ vào sổ từ vựng, 🕘 lịch sử tra từ, ô gõ từ (có phím tắt riêng), nút "Giải thích bằng AI" chạy khi bấm.
 - Nhớ kích thước popup; tuỳ chọn đọc giọng US bằng TTS.
 
-**OCR và giọng đọc**
+<br clear="right"/>
 
-<img src="asset/f-services.png" width="400"/>
+### Dịch vụ, OCR và giọng đọc
 
-- Có sẵn và bật sẵn: OCR của Windows (System) và **Tesseract** (dữ liệu tiếng Anh, Việt, Trung đã nhúng trong exe, chạy offline).
-- OCR bằng AI: DeepSeek, Gemini, GPT, Claude, tương thích OpenAI.
+<img src="asset/app-services.png" width="440"/> <img src="asset/app-dict-services.png" width="440"/>
+
+- Công tắc bật/tắt cho mọi dịch vụ (dịch, OCR, giọng nói, từ điển, sổ từ vựng) mà không cần xoá. Mặc định bật Google và Bing.
+- Có sẵn và bật sẵn: OCR của Windows (System) và **Tesseract** (dữ liệu tiếng Anh, Việt, Trung đã nhúng trong exe, chạy offline). OCR bằng AI: DeepSeek, Gemini, GPT, Claude, tương thích OpenAI.
 - Giọng đọc: ElevenLabs, OpenAI TTS, Gemini TTS, và **Local TTS**: giọng Edge neural **có sẵn trong exe** (cần mạng, không cần cài gì); ai có server riêng thì dùng thêm Piper offline và kho audio người thật.
 
-**Dịch vụ và phím tắt**
+### Phím tắt
 
-<img src="asset/f-hotkeys.png" width="400"/>
+<img src="asset/app-hotkeys.png" width="620"/>
 
-- Công tắc bật/tắt cho mọi dịch vụ (dịch, OCR, giọng nói, từ điển, sổ từ vựng) mà không cần xoá.
-- Trang Phím tắt: bật/tắt tất cả, bật/tắt thanh trợ lý, dịch+chép, dịch+thay thế, đọc to vùng chọn, OCR+chép, dịch ảnh+chép, đổi cặp ngôn ngữ đích, tra từ điển, tra từ gõ tay.
+- Bật/tắt tất cả, bật/tắt thanh trợ lý, dịch và chép, dịch và thay thế, đọc to vùng chọn, OCR và chép, dịch ảnh và chép, đổi cặp ngôn ngữ đích, tra từ điển, tra từ gõ tay.
+- Nút icon gọn: bấm để gán phím, ✕ để huỷ, thùng rác để xoá; rê chuột để xem chú thích.
 
-**Cửa sổ dịch**
-- Vị trí riêng cho chữ nhập và chữ chọn/ảnh chụp, ẩn vùng nhập hoặc thanh ngôn ngữ, tự chỉnh chiều cao, ghim mặc định, đóng khi mất tiêu điểm, có ô xem trước.
+### Cửa sổ dịch và giao diện
 
-**Giao diện**
-
-<img src="asset/f-theme.png" width="400"/>
-
+- Vị trí riêng cho chữ nhập và chữ chọn/ảnh chụp, ẩn vùng nhập hoặc thanh ngôn ngữ, tự chỉnh chiều cao, ghim mặc định, đóng khi mất tiêu điểm.
 - Tiếng Việt, font Inter có sẵn, màu chủ đạo chọn được, sáng/tối, cỡ chữ kéo theo từng px, nhớ kích thước cửa sổ.
 
-**Tự cập nhật**
+### Tự cập nhật
 
-<img src="asset/f-update.png" width="400"/>
+<img src="asset/app-update.png" align="right" width="300"/>
 
-- Khi mở app, tự kiểm tra bản mới trên [Releases](https://github.com/nguyenguyen673/673Trans/releases); bấm Cập nhật là tự tải, thay file và mở lại.
+Khi mở app, tự kiểm tra bản mới trên [Releases](https://github.com/nguyenguyen673/673Trans/releases); bấm Cập nhật là tự tải, thay file và mở lại.
+
+<br clear="right"/>
 
 Chỉ cần file `.exe` để chạy (Windows 10/11 có WebView2). Wiktionary và các dịch vụ AI cần internet; dịch vụ AI cần khoá API của bạn.
 
