@@ -32,8 +32,16 @@ function candidateKeys(word) {
     if (w.endsWith('ies') && w.length > 4) c.push(w.slice(0, -3) + 'y');
     if (w.endsWith('es') && w.length > 3) c.push(w.slice(0, -2));
     if (w.endsWith('s') && w.length > 2) c.push(w.slice(0, -1));
-    if (w.endsWith('ing') && w.length > 5) c.push(w.slice(0, -3), w.slice(0, -3) + 'e');
-    if (w.endsWith('ed') && w.length > 4) c.push(w.slice(0, -2), w.slice(0, -1));
+    if (w.endsWith('ing') && w.length > 5) {
+        const b = w.slice(0, -3);
+        c.push(b, b + 'e');
+        if (b[b.length - 1] === b[b.length - 2]) c.push(b.slice(0, -1));
+    }
+    if (w.endsWith('ed') && w.length > 4) {
+        const b = w.slice(0, -2);
+        c.push(b, w.slice(0, -1));
+        if (b[b.length - 1] === b[b.length - 2]) c.push(b.slice(0, -1));
+    }
     if (w.endsWith('ly') && w.length > 4) c.push(w.slice(0, -2));
     return [...new Set(c)];
 }
@@ -42,7 +50,12 @@ function candidateKeys(word) {
 export async function lookup(text) {
     const dict = await load();
     for (const key of candidateKeys(text)) {
-        if (dict[key]) return { ...dict[key], word: dict[key].word || key };
+        if (dict[key]) {
+            const e = dict[key];
+            // phonetic field can hold several variants: "a/ (b) /c" -> keep the first
+            const phonetic = (e.phonetic ?? '').split('/')[0].trim();
+            return { ...e, word: e.word || key, phonetic };
+        }
     }
     return null;
 }
