@@ -23,7 +23,7 @@
 
 ### Thanh icon nổi khi chọn chữ
 
-<img src="asset/ui-toolbar.png" align="right" width="360"/>
+<img src="asset/ui-toolbar-v2.png" align="right" width="520"/>
 
 - Hiện cạnh con trỏ khi bôi đen chữ, nhấp đúp một từ, hoặc bấm Ctrl+A trong ô nhập, ở bất kỳ app nào.
 - 7 nút bật/tắt được: Dịch, Dịch và thay thế (dán bản dịch đè lên đoạn đang chọn), Dịch và sao chép, Đọc to, Tra từ điển, Gõ từ, Sao chép.
