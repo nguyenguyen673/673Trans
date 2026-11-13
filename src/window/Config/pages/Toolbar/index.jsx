@@ -61,9 +61,7 @@ export default function Toolbar() {
                                             title={t(`config.toolbar.action.${id}`)}
                                         >
                                             {display !== 'text' && <Icon />}
-                                            {display !== 'icon' && (
-                                                <em>{t(`config.toolbar.short.${id}`)}</em>
-                                            )}
+                                            {display !== 'icon' && <em>{t(`config.toolbar.short.${id}`)}</em>}
                                         </span>
                                     );
                                 })}
@@ -72,50 +70,6 @@ export default function Toolbar() {
                     </div>
                 </>
             )}
-
-            <Section title={t('config.toolbar.general')}>
-                <Row label={t('config.toolbar.enable')}>
-                    {enable !== null && (
-                        <Switch
-                            isSelected={enable}
-                            onValueChange={setEnable}
-                        />
-                    )}
-                </Row>
-                <Row
-                    label={t('config.toolbar.double_click')}
-                    desc={t('config.toolbar.double_click_desc')}
-                >
-                    {doubleClick !== null && (
-                        <Switch
-                            isSelected={doubleClick}
-                            onValueChange={setDoubleClick}
-                        />
-                    )}
-                </Row>
-                <Row
-                    label={t('config.toolbar.ctrl_a')}
-                    desc={t('config.toolbar.ctrl_a_desc')}
-                >
-                    {ctrlA !== null && (
-                        <Switch
-                            isSelected={ctrlA}
-                            onValueChange={setCtrlA}
-                        />
-                    )}
-                </Row>
-                <Row
-                    label={t('config.toolbar.ibeam_only')}
-                    desc={t('config.toolbar.ibeam_only_desc')}
-                >
-                    {ibeamOnly !== null && (
-                        <Switch
-                            isSelected={ibeamOnly}
-                            onValueChange={setIbeamOnly}
-                        />
-                    )}
-                </Row>
-            </Section>
 
             <Section title={t('config.toolbar.position')}>
                 <Row label={t('config.toolbar.layout')}>
@@ -196,6 +150,50 @@ export default function Toolbar() {
                             />
                             <span>{offsetY} px</span>
                         </div>
+                    )}
+                </Row>
+            </Section>
+
+            <Section title={t('config.toolbar.general')}>
+                <Row label={t('config.toolbar.enable')}>
+                    {enable !== null && (
+                        <Switch
+                            isSelected={enable}
+                            onValueChange={setEnable}
+                        />
+                    )}
+                </Row>
+                <Row
+                    label={t('config.toolbar.double_click')}
+                    desc={t('config.toolbar.double_click_desc')}
+                >
+                    {doubleClick !== null && (
+                        <Switch
+                            isSelected={doubleClick}
+                            onValueChange={setDoubleClick}
+                        />
+                    )}
+                </Row>
+                <Row
+                    label={t('config.toolbar.ctrl_a')}
+                    desc={t('config.toolbar.ctrl_a_desc')}
+                >
+                    {ctrlA !== null && (
+                        <Switch
+                            isSelected={ctrlA}
+                            onValueChange={setCtrlA}
+                        />
+                    )}
+                </Row>
+                <Row
+                    label={t('config.toolbar.ibeam_only')}
+                    desc={t('config.toolbar.ibeam_only_desc')}
+                >
+                    {ibeamOnly !== null && (
+                        <Switch
+                            isSelected={ibeamOnly}
+                            onValueChange={setIbeamOnly}
+                        />
                     )}
                 </Row>
             </Section>
