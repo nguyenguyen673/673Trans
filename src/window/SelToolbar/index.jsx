@@ -17,6 +17,7 @@ import {
     LuClipboardCopy,
     LuCheck,
     LuBookOpen,
+    LuSearch,
 } from 'react-icons/lu';
 import { writeText } from '@tauri-apps/api/clipboard';
 import { useTranslation } from 'react-i18next';
