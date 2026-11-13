@@ -1,0 +1,621 @@
+/* Settings window (673Trans look).
+   Layout: sidebar (220px) + main area. Colours come from tailwind.config.cjs. */
+
+/* ---------- Sidebar ---------- */
+.config-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 220px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.config-brand {
+    height: 64px;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 17px;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+}
+
+.config-brand-mark {
+    padding: 2px 7px;
+    border-radius: 7px;
+    color: hsl(var(--nextui-primary-foreground));
+    background: hsl(var(--nextui-primary));
+    font-variant-numeric: tabular-nums;
+}
+
+.config-nav {
+    flex: 1;
+    padding: 4px 10px 12px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.config-nav-item {
+    position: relative;
+    height: 36px;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: hsl(var(--nextui-default-600));
+    font: inherit;
+    font-size: 13.5px;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    outline: none;
+    transition:
+        background-color 120ms,
+        color 120ms;
+}
+
+.config-nav-item:hover {
+    background: hsl(var(--nextui-default-100));
+    color: hsl(var(--nextui-foreground));
+}
+
+.config-nav-item.is-active {
+    background: hsl(var(--nextui-default-100));
+    color: hsl(var(--nextui-foreground));
+}
+
+.config-nav-item.is-active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 10px;
+    bottom: 10px;
+    width: 3px;
+    border-radius: 3px;
+    background: hsl(var(--nextui-primary));
+}
+
+.config-nav-icon {
+    flex: none;
+    font-size: 17px;
+}
+
+.config-nav-item.is-active .config-nav-icon {
+    color: hsl(var(--nextui-primary));
+}
+
+/* ---------- Main area ---------- */
+.config-main {
+    margin-left: 220px;
+    height: 100vh;
+}
+
+.config-header {
+    height: 52px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.config-title {
+    margin: auto 0 auto 24px;
+    font-size: 18px;
+    font-weight: 620;
+    letter-spacing: -0.015em;
+}
+
+.config-page {
+    height: calc(100vh - 52px);
+    padding: 4px 24px 24px;
+    overflow-y: auto;
+    font-size: 13.5px;
+}
+
+/* Cards that group settings */
+.config-page [data-slot='base'].mb-\[10px\],
+.config-page > .mb-\[10px\] {
+    margin-bottom: 14px;
+    border: 1px solid hsl(var(--nextui-default-100));
+    border-radius: 12px;
+    box-shadow: none;
+}
+
+/* ---------- One setting row ---------- */
+.config-item {
+    min-height: 44px;
+    margin: 0;
+    padding: 5px 2px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.config-item + .config-item {
+    border-top: 1px solid hsl(var(--nextui-default-100));
+}
+
+.config-item > h3 {
+    margin: 0;
+    font-size: 13.5px;
+    font-weight: 500;
+    line-height: 1.35;
+}
+
+/* Dropdown triggers / buttons on the right side of a row */
+.config-item > button,
+.config-item > div > button {
+    height: 32px;
+    min-width: 0;
+    padding: 0 12px;
+    border-width: 1px;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+/* (inputs with a floating label inside keep their own height) */
+.config-item [data-slot='input-wrapper']:not(:has(label)) {
+    height: 32px;
+    min-height: 32px;
+    border-width: 1px;
+    border-radius: 8px;
+}
+
+.config-item [data-slot='input'] {
+    font-size: 13px;
+}
+
+/* ---------- Section title above a card ---------- */
+.config-section-title {
+    margin: 14px 2px 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    color: hsl(var(--nextui-default-500));
+}
+
+.config-page > .config-section-title:first-child {
+    margin-top: 2px;
+}
+
+/* Label + small description on the left of a row */
+.config-label {
+    min-width: 0;
+    flex: 1;
+    padding: 4px 0;
+}
+
+.config-label > h3 {
+    margin: 0;
+    font-size: 13.5px;
+    font-weight: 500;
+    line-height: 1.35;
+}
+
+.config-desc {
+    overflow-wrap: anywhere;
+    margin-top: 2px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: hsl(var(--nextui-default-500));
+}
+
+/* ---------- Accent colour swatches ---------- */
+.accent-swatches {
+    display: flex;
+    gap: 8px;
+}
+
+.accent-swatch {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 2px solid transparent;
+    border-radius: 7px;
+    cursor: pointer;
+    outline: none;
+    background-clip: padding-box;
+    transition: transform 120ms;
+}
+
+.accent-swatch:hover {
+    transform: scale(1.08);
+}
+
+.accent-swatch.is-active {
+    border-color: hsl(var(--nextui-foreground));
+    box-shadow: 0 0 0 2px hsl(var(--nextui-background)) inset;
+}
+
+/* ---------- Selection toolbar preview ---------- */
+.toolbar-preview {
+    position: relative;
+    height: 150px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 1px solid hsl(var(--nextui-default-100));
+    border-radius: 12px;
+    background: hsl(var(--nextui-content1));
+}
+
+/* text at the left, bar placed under its end like on the real screen */
+.toolbar-preview-stage {
+    position: relative;
+    width: 240px;
+    height: 70px;
+}
+
+.toolbar-preview-text {
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 1px 3px;
+    font-size: 14px;
+    color: hsl(var(--nextui-primary-foreground));
+    background: hsl(var(--nextui-primary));
+}
+
+.toolbar-preview-bar {
+    position: absolute;
+    left: 120px;
+    top: 28px;
+    padding: 3px;
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    transition: transform 120ms;
+}
+
+.toolbar-preview-bar.is-vertical {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.toolbar-preview-bar > span {
+    min-width: 34px;
+    height: 28px;
+    padding: 0 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    font-size: 16px;
+}
+
+.toolbar-preview-bar > span > em {
+    font-style: normal;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.toolbar-slider {
+    width: 220px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.toolbar-slider > span {
+    min-width: 48px;
+    text-align: right;
+    font-size: 13px;
+    color: hsl(var(--nextui-default-500));
+}
+
+/* ---------- Add / edit service dialog ---------- */
+.service-dialog-title {
+    padding-bottom: 6px;
+    font-size: 16px;
+    font-weight: 620;
+}
+
+.service-dialog {
+    font-size: 13.5px;
+    gap: 0;
+}
+
+.service-dialog-provider {
+    min-height: 48px;
+    padding: 6px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    border: 1px solid hsl(var(--nextui-default-100));
+    border-radius: 12px;
+    background: hsl(var(--nextui-content1));
+    font-weight: 500;
+}
+
+.service-dialog-select {
+    width: 52%;
+    height: 34px;
+    padding: 0 10px;
+    border-width: 1px;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+.service-dialog-fixed {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.service-dialog-footer {
+    padding: 12px 24px;
+    border-top: 1px solid hsl(var(--nextui-default-100));
+}
+
+.service-dialog-footer button {
+    min-width: 88px;
+    height: 34px;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+/* The provider form's own Save button (see useFormSaveButton) */
+.service-dialog-hidden-save {
+    display: none !important;
+}
+
+.service-icon {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    object-fit: contain;
+}
+
+/* Grouped rows inside the LLM provider form */
+.llm-group {
+    padding: 2px 14px;
+    border: 1px solid hsl(var(--nextui-default-100));
+    border-radius: 12px;
+    background: hsl(var(--nextui-content1));
+}
+
+.llm-field-control {
+    flex: none;
+    width: 52%;
+}
+
+/* ---------- Service list rows (compact) ---------- */
+.service-row {
+    align-items: center;
+    border-radius: 10px;
+}
+
+.service-row h2 {
+    font-size: 13.5px;
+    font-weight: 500;
+}
+
+/* Save button of the AI provider form stays visible while the form scrolls
+   (in the translation service dialog it is replaced by the footer buttons) */
+.llm-save {
+    position: sticky !important;
+    bottom: 0;
+    z-index: 5;
+    box-shadow: 0 -10px 12px 2px hsl(var(--nextui-content1));
+}
+
+/* ---------- Hotkeys page ---------- */
+.hotkey-control {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.hotkey-keys {
+    min-width: 120px;
+    height: 32px;
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.hotkey-keys.is-recording {
+    outline: 1.5px solid hsl(var(--nextui-primary));
+    background: hsl(var(--nextui-primary) / 0.1);
+}
+
+.hotkey-kbd {
+    padding: 1px 7px;
+    font-family: inherit;
+    font-size: 12px;
+    color: hsl(var(--nextui-default-600));
+    background: hsl(var(--nextui-default-100));
+    border-radius: 6px;
+}
+
+.hotkey-hint {
+    font-size: 12px;
+    color: hsl(var(--nextui-default-400));
+}
+
+.hotkey-status {
+    min-width: 62px;
+    justify-content: center;
+}
+
+.hotkey-pair {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.hotkey-control button svg {
+    width: 17px;
+    height: 17px;
+}
+
+.toolbar-grip {
+    display: flex;
+    align-items: center;
+    cursor: grab;
+    color: hsl(var(--nextui-default-400));
+    font-size: 18px;
+}
+
+.toolbar-grip:hover {
+    color: hsl(var(--nextui-default-700));
+}
+
+.toolbar-row-dragging {
+    background: hsl(var(--nextui-content2));
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+/* ---------- Popup previews ---------- */
+.popup-preview,
+.dict-preview {
+    margin-bottom: 14px;
+}
+
+.popup-preview-window {
+    width: 340px;
+    padding: 8px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+}
+
+.popup-preview-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 2px;
+    font-size: 15px;
+}
+
+.popup-preview-card {
+    padding: 8px 10px;
+    border-radius: 10px;
+}
+
+.popup-preview-card b {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 12px;
+    color: hsl(var(--nextui-default-500));
+}
+
+.popup-preview-lang {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.dict-preview .dict-root {
+    position: relative;
+    width: 400px;
+    max-width: 100%;
+    height: auto;
+}
+
+.dict-preview .dict-scroll {
+    height: auto;
+    overflow: visible;
+}
+
+.dict-preview .dict-ai-btn {
+    cursor: default;
+}
+
+.preview-box {
+    margin-bottom: 12px;
+}
+
+.preview-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 2px;
+    border: none;
+    background: transparent;
+    color: hsl(var(--nextui-default-500));
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.preview-toggle:hover {
+    color: hsl(var(--nextui-foreground));
+}
+
+.preview-body {
+    margin-top: 6px;
+}
+
+/* ---------- Stronger "Preview" toggle and hotkey controls (3.22) ---------- */
+.preview-toggle {
+    width: 100%;
+    padding: 9px 14px;
+    border: 1px solid hsl(var(--nextui-primary) / 0.45);
+    border-radius: 10px;
+    background: hsl(var(--nextui-primary) / 0.12);
+    color: hsl(var(--nextui-primary));
+    font-size: 14px;
+    font-weight: 650;
+    transition:
+        background-color 120ms,
+        border-color 120ms;
+}
+
+.preview-toggle:hover {
+    color: hsl(var(--nextui-primary));
+    background: hsl(var(--nextui-primary) / 0.22);
+    border-color: hsl(var(--nextui-primary));
+}
+
+.preview-toggle .preview-toggle-hint {
+    margin-left: auto;
+    font-size: 12px;
+    font-weight: 500;
+    opacity: 0.85;
+}
+
+.hotkey-keys {
+    min-width: 150px;
+    justify-content: center;
+    border: 1px dashed hsl(var(--nextui-default-400));
+    background: hsl(var(--nextui-default-100));
+}
+
+.hotkey-keys:hover {
+    border-color: hsl(var(--nextui-primary));
+}
+
+.hotkey-keys.is-recording {
+    border-style: solid;
+    border-color: hsl(var(--nextui-primary));
+}
+
+.hotkey-btn {
+    height: 32px;
+    padding: 0 10px;
+    font-size: 12.5px;
+    font-weight: 600;
+}
+
+.hotkey-btn svg {
+    margin-right: 4px;
+}
