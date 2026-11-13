@@ -174,8 +174,18 @@ pub fn install_plugin(path_list: Vec<String>) -> Result<i32, Error> {
     Ok(success_count)
 }
 
+// async = runs off the main thread, so the confirmation dialog inside cannot freeze the UI
 #[tauri::command(async)]
 pub fn run_binary(
+    plugin_type: String,
+    plugin_name: String,
+    cmd_name: String,
+    args: Vec<String>,
+) -> Result<Value, String> {
+    run_binary_inner(plugin_type, plugin_name, cmd_name, args).map_err(|e| e.to_string())
+}
+
+fn run_binary_inner(
     plugin_type: String,
     plugin_name: String,
     cmd_name: String,
@@ -203,7 +213,10 @@ pub fn run_binary(
             ),
         );
         if !ok {
-            return Err(Error::Error("Đã từ chối chạy chương trình của plugin".into()));
+            return Err(Error::Io(std::io::Error::new(
+                std::io::ErrorKind::PermissionDenied,
+                "Đã từ chối chạy chương trình của plugin",
+            )));
         }
         allowed.push(allow_key);
         crate::config::set("plugin_exec_allow", allowed);

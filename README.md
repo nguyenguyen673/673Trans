@@ -14,8 +14,8 @@
 <p align="center">
   <a href="https://github.com/nguyenguyen673/673Trans/releases/latest"><img src="https://img.shields.io/badge/%E2%AC%87%20T%E1%BA%A3i%20673Trans%20(.exe)-Releases-bff03a?style=for-the-badge&labelColor=0b2a12" alt="Tải 673Trans"/></a>
 </p>
-<p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.1/673Trans-3.27.1.exe">Tải trực tiếp 673Trans-3.27.1.exe</a> &middot; <a href="https://github.com/nguyenguyen673/673Trans/releases">Tất cả bản phát hành</a></p>
-<p align="center">Windows 10/11 &middot; Chỉ cần 1 file <code>.exe</code>, Không cần cài thêm gì &middot; Phiên bản hiện tại: 3.27.1</p>
+<p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.2/673Trans-3.27.2.exe">Tải trực tiếp 673Trans-3.27.2.exe</a> &middot; <a href="https://github.com/nguyenguyen673/673Trans/releases">Tất cả bản phát hành</a></p>
+<p align="center">Windows 10/11 &middot; Chỉ cần 1 file <code>.exe</code>, Không cần cài thêm gì &middot; Phiên bản hiện tại: 3.27.2</p>
 
 <hr/>
 
@@ -187,6 +187,14 @@ async function translate(text, from, to, options) {
 `utils` còn có `run` để chạy một chương trình có sẵn trên máy (ví dụ mô hình dịch chạy cục bộ), `CryptoJS`, `Database` và đường dẫn thư mục plugin. Plugin nằm ở `%APPDATA%\com.pot-app.desktop\plugins\<loại>\<tên>`, sửa `main.js` rồi mở lại cửa sổ là thấy kết quả.
 
 </details>
+
+## Bảo mật
+
+- Khi bật **Tự cập nhật**, app chỉ tải từ release của repo này, tải đúng file của bản mới nhất và kiểm tra mã SHA-256 do GitHub công bố trước khi thay file.
+- API localhost chỉ nhận lệnh từ chương trình chạy trên máy bạn (trang web trong trình duyệt bị chặn). Muốn chặt hơn, thêm `"server_token": "mật-khẩu-của-bạn"` vào `config.json` rồi gửi kèm header `X-Token`.
+- Plugin muốn chạy chương trình ngoài (ví dụ Python) sẽ hiện hộp thoại hỏi bạn một lần cho mỗi plugin. Chỉ cài plugin bạn tin tưởng.
+- Chế độ **theo dõi clipboard** (tắt mặc định) chỉ dịch nội dung mới sao chép sau khi bật, bỏ qua nội dung rỗng hoặc quá dài.
+- Nội dung bạn dịch sẽ được gửi tới dịch vụ bạn chọn (Google, Bing, DeepSeek...). Với nội dung nhạy cảm, dùng các chức năng offline (từ điển Anh–Việt offline, OCR Tesseract).
 
 ## Cài đặt và build
 

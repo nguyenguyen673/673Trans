@@ -34,14 +34,16 @@ pub fn start_server() {
 /// Only local programs may call this API: a web page opened in the browser must not be
 /// able to trigger it (cross-site requests, DNS rebinding). Optional shared secret:
 /// set `server_token` in config.json and send it as the `X-Token` header.
+fn header_of(request: &Request, name: &'static str) -> Option<String> {
+    request
+        .headers()
+        .iter()
+        .find(|h| h.field.equiv(name))
+        .map(|h| h.value.as_str().to_string())
+}
+
 fn is_allowed(request: &Request, port: i64) -> bool {
-    let header = |name: &str| {
-        request
-            .headers()
-            .iter()
-            .find(|h| h.field.equiv(name))
-            .map(|h| h.value.as_str().to_string())
-    };
+    let header = |name: &'static str| header_of(request, name);
     // Browsers always attach Origin to cross-origin POSTs and Sec-Fetch-Site to fetches
     if header("Origin").is_some() {
         return false;
