@@ -14,8 +14,8 @@
         "allowlist": {
             "all": false,
             "shell": {
-                "all": true,
-                "open": ".*"
+                "all": false,
+                "open": "^https?://"
             },
             "path": {
                 "all": true
@@ -104,8 +104,8 @@
             }
         },
         "security": {
-            "csp": "default-src * data: ; img-src * 'self' asset: https: data: ; style-src * 'unsafe-inline'; worker-src 'self' blob: ; script-src * 'unsafe-eval';",
-            "devCsp": "default-src * data: ; img-src * 'self' asset: https: data: ; style-src * 'unsafe-inline'; worker-src 'self' blob: ; script-src * 'unsafe-eval';"
+            "csp": "default-src * data: ; img-src * 'self' asset: https: data: ; style-src * 'unsafe-inline'; worker-src 'self' blob: ; script-src 'self' 'unsafe-eval' 'sha256-Z0v81kF0WXtDneJg806Dc6stXHzvxg4PrTgFyTwd6XA=';",
+            "devCsp": "default-src * data: ; img-src * 'self' asset: https: data: ; style-src * 'unsafe-inline'; worker-src 'self' blob: ; script-src 'self' 'unsafe-eval' 'sha256-Z0v81kF0WXtDneJg806Dc6stXHzvxg4PrTgFyTwd6XA=';"
         },
         "windows": [
             {
@@ -119,15 +119,6 @@
         "systemTray": {
             "iconPath": "icons/icon.png",
             "iconAsTemplate": true
-        },
-        "updater": {
-            "active": true,
-            "dialog": false,
-            "endpoints": [
-                "https://dl.pot-app.com/https://github.com/pot-app/pot-desktop/releases/download/updater/update.json",
-                "https://github.com/pot-app/pot-desktop/releases/download/updater/update.json"
-            ],
-            "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDVBRTQxQTNDQjM5QzQzM0EKUldRNlE1eXpQQnJrV21mM1Bram5LRlF6UDA3K0Jab2FYL2lZSWhXTE5McWs2NUdJS0dtYkd5VGMK"
         }
     }
 }

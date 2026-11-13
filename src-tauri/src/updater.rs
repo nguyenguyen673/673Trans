@@ -18,6 +18,7 @@ pub struct UpdateInfo {
     notes: String,
     url: String,
     size: u64,
+    sha256: String,
 }
 
 fn parse_version(v: &str) -> Vec<u64> {
@@ -76,6 +77,12 @@ async fn latest_release(current: &str) -> Result<Option<UpdateInfo>, String> {
         notes: release["body"].as_str().unwrap_or_default().to_string(),
         url: asset["browser_download_url"].as_str().unwrap_or_default().to_string(),
         size: asset["size"].as_u64().unwrap_or(0),
+        // GitHub publishes "sha256:<hex>" for every release asset
+        sha256: asset["digest"]
+            .as_str()
+            .and_then(|d| d.strip_prefix("sha256:"))
+            .unwrap_or_default()
+            .to_lowercase(),
     }))
 }
 
@@ -116,8 +123,18 @@ pub async fn check_github_update(app_handle: tauri::AppHandle) -> Result<Option<
 
 #[tauri::command(async)]
 pub async fn install_github_update(app_handle: tauri::AppHandle, url: String) -> Result<(), String> {
-    if !url.starts_with("https://github.com/") {
+    // Never trust the address coming from the UI: it must be a release asset of this repo,
+    // and must be the one GitHub currently lists for the latest release.
+    let prefix = format!("https://github.com/{}/releases/download/", REPO);
+    if !url.starts_with(&prefix) || url.contains("..") {
         return Err("Địa chỉ tải không hợp lệ".to_string());
+    }
+    let current = app_handle.package_info().version.to_string();
+    let info = latest_release(&current)
+        .await?
+        .ok_or_else(|| "Không có bản mới".to_string())?;
+    if info.url != url {
+        return Err("Địa chỉ tải không khớp với bản phát hành mới nhất".to_string());
     }
     let exe = std::env::current_exe().map_err(|e| e.to_string())?;
     let new_path = exe.with_extension("exe.new");
@@ -145,6 +162,19 @@ pub async fn install_github_update(app_handle: tauri::AppHandle, url: String) ->
     // A real exe starts with "MZ"; anything else is an error page
     if data.len() < 1_000_000 || &data[..2] != b"MZ" {
         return Err("File tải về không phải bản cài hợp lệ".to_string());
+    }
+    // Integrity check against the SHA-256 GitHub lists for this asset
+    if !info.sha256.is_empty() {
+        use sha2::{Digest, Sha256};
+        let got = Sha256::digest(&data)
+            .iter()
+            .map(|b| format!("{:02x}", b))
+            .collect::<String>();
+        if got != info.sha256 {
+            return Err("Mã SHA-256 của file tải về không khớp, đã huỷ cập nhật".to_string());
+        }
+    } else {
+        warn!("Release asset has no SHA-256 digest, skipping hash check");
     }
     std::fs::write(&new_path, &data).map_err(|e| e.to_string())?;
 

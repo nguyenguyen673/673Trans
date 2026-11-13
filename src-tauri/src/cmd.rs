@@ -174,7 +174,7 @@ pub fn install_plugin(path_list: Vec<String>) -> Result<i32, Error> {
     Ok(success_count)
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn run_binary(
     plugin_type: String,
     plugin_name: String,
@@ -184,6 +184,30 @@ pub fn run_binary(
     #[cfg(target_os = "windows")]
     use std::os::windows::process::CommandExt;
     use std::process::Command;
+
+    // A plugin may only run a program after the user has said yes (asked once per
+    // plugin + program, then remembered).
+    let allow_key = format!("{}/{}/{}", plugin_type, plugin_name, cmd_name);
+    let mut allowed: Vec<String> = crate::config::get("plugin_exec_allow")
+        .and_then(|v| serde_json::from_value(v).ok())
+        .unwrap_or_default();
+    if !allowed.contains(&allow_key) {
+        let ok = tauri::api::dialog::blocking::ask(
+            None::<&tauri::Window>,
+            "673Trans - Plugin muốn chạy chương trình",
+            format!(
+                "Plugin \"{}\" muốn chạy:\n\n{} {}\n\nChỉ cho phép nếu bạn tin plugin này. Cho phép?",
+                plugin_name,
+                cmd_name,
+                args.join(" ")
+            ),
+        );
+        if !ok {
+            return Err(Error::Error("Đã từ chối chạy chương trình của plugin".into()));
+        }
+        allowed.push(allow_key);
+        crate::config::set("plugin_exec_allow", allowed);
+    }
 
     let config_path = dirs::config_dir().unwrap();
     let config_path = config_path.join(APP.get().unwrap().config().tauri.bundle.identifier.clone());

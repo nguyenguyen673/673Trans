@@ -6,7 +6,14 @@ pub struct ClipboardMonitorEnableWrapper(pub Mutex<String>);
 
 pub fn start_clipboard_monitor(app_handle: tauri::AppHandle) {
     tauri::async_runtime::spawn(async move {
-        let mut pre_text = "".to_string();
+        // Start from what is already on the clipboard: enabling the monitor must not
+        // translate (and send to a translation service) old clipboard content
+        let mut pre_text = app_handle
+            .clipboard_manager()
+            .read_text()
+            .ok()
+            .flatten()
+            .unwrap_or_default();
         loop {
             let handle = app_handle.app_handle();
             let state = handle.state::<ClipboardMonitorEnableWrapper>();
@@ -16,8 +23,13 @@ pub fn start_clipboard_monitor(app_handle: tauri::AppHandle) {
                         match result {
                             Some(v) => {
                                 if v != pre_text {
-                                    text_translate(v.clone());
-                                    pre_text = v;
+                                    pre_text = v.clone();
+                                    // Skip empty or huge clipboards (files, dumps): they are
+                                    // not sentences, and would be sent to a remote service
+                                    let len = v.trim().chars().count();
+                                    if len > 0 && len <= 5000 {
+                                        text_translate(v);
+                                    }
                                 }
                             }
                             None => {}
