@@ -410,3 +410,57 @@
     z-index: 5;
     box-shadow: 0 -10px 12px 2px hsl(var(--nextui-content1));
 }
+
+/* ---------- Hotkeys page ---------- */
+.hotkey-control {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.hotkey-keys {
+    min-width: 120px;
+    height: 32px;
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 4px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.hotkey-keys.is-recording {
+    outline: 1.5px solid hsl(var(--nextui-primary));
+    background: hsl(var(--nextui-primary) / 0.1);
+}
+
+.hotkey-kbd {
+    padding: 1px 7px;
+    font-family: inherit;
+    font-size: 12px;
+    color: hsl(var(--nextui-default-600));
+    background: hsl(var(--nextui-default-100));
+    border-radius: 6px;
+}
+
+.hotkey-hint {
+    font-size: 12px;
+    color: hsl(var(--nextui-default-400));
+}
+
+.hotkey-status {
+    min-width: 62px;
+    justify-content: center;
+}
+
+.hotkey-pair {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.hotkey-control button svg {
+    width: 17px;
+    height: 17px;
+}

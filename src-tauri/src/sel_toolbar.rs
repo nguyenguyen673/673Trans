@@ -163,6 +163,8 @@ mod imp {
     /// When true, the bar does not auto-hide after a few seconds (a button is working).
     /// Clicking elsewhere still hides it, which cancels a pending paste.
     static BUSY: AtomicBool = AtomicBool::new(false);
+    /// A hotkey (not the bar) started the current action: allow paste with the bar hidden
+    static HOTKEY_MODE: AtomicBool = AtomicBool::new(false);
     /// Bar rectangle in physical screen coordinates
     static RECT_L: AtomicI32 = AtomicI32::new(0);
     static RECT_T: AtomicI32 = AtomicI32::new(0);
@@ -349,6 +351,7 @@ mod imp {
         }
         VISIBLE.store(false, SeqCst);
         BUSY.store(false, SeqCst);
+        HOTKEY_MODE.store(false, SeqCst);
     }
 
     fn show_at(x: i32, y: i32, source: HWND) {
@@ -673,7 +676,8 @@ mod imp {
     pub fn paste(text: String) -> Result<(), String> {
         // The bar was dismissed while translating (the user clicked somewhere else):
         // pasting now would land in the wrong place, so give up quietly.
-        if !VISIBLE.load(SeqCst) {
+        let allowed = VISIBLE.load(SeqCst) || HOTKEY_MODE.load(SeqCst);
+        if !allowed {
             return Err("cancelled".into());
         }
         STICKY.store(false, SeqCst);
@@ -694,6 +698,26 @@ mod imp {
             return Err("Failed to send Ctrl+V".into());
         }
         Ok(())
+    }
+
+    /// Run a toolbar action from a global hotkey: remember the app that has the
+    /// selection, then tell the (hidden) toolbar webview to do the work.
+    pub fn hotkey_run(action: String) {
+        unsafe {
+            SRC_HWND.store(GetForegroundWindow().0 as isize, SeqCst);
+        }
+        HOTKEY_MODE.store(true, SeqCst);
+        thread::spawn(move || {
+            let fresh = APP.get().and_then(|a| a.get_window(LABEL)).is_none();
+            let Some(window) = bar_window() else {
+                return;
+            };
+            if fresh {
+                // let the webview load its scripts first
+                thread::sleep(Duration::from_millis(1800));
+            }
+            let _ = window.emit("sel_toolbar_hotkey", action);
+        });
     }
 
     /// The translate window is shown by its own webview a bit later. Our process
@@ -738,11 +762,18 @@ mod imp {
         Err("Selection toolbar is only available on Windows".into())
     }
     pub fn focus_translate_window() {}
+    pub fn hotkey_run(_action: String) {}
 }
 
 /// Start watching for text selections. Call once after the config is loaded.
 pub fn init_selection_toolbar() {
     imp::init();
+}
+
+/// Run a toolbar action (translate_copy, replace, speak, ocr_copy, ocr_translate_copy)
+/// from a global hotkey. The hidden toolbar webview does the work.
+pub fn hotkey_action(action: String) {
+    imp::hotkey_run(action);
 }
 
 /// Read the text currently selected in the source app.

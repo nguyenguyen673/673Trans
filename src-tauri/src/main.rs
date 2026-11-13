@@ -144,6 +144,7 @@ fn main() {
             local_tts_start,
             open_devtools,
             register_shortcut_by_frontend,
+            register_language_pair_hotkey,
             update_tray,
             updater_window,
             screenshot,

@@ -422,6 +422,22 @@ pub fn ocr_translate() {
     }
 }
 
+/// Screenshot, then hand the image to the hidden toolbar webview, which runs OCR
+/// (and translation) and puts the result on the clipboard, without any window.
+pub fn ocr_to_clipboard(action: &'static str) {
+    #[cfg(not(target_os = "macos"))]
+    {
+        let window = screenshot_window();
+        let window_ = window.clone();
+        window.listen("success", move |event| {
+            crate::sel_toolbar::hotkey_action(action.to_string());
+            window_.unlisten(event.id())
+        });
+    }
+    #[cfg(target_os = "macos")]
+    let _ = action;
+}
+
 #[tauri::command(async)]
 pub fn updater_window() {
     let (window, _exists) = build_window("updater", "Updater");

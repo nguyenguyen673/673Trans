@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { listen } from '@tauri-apps/api/event';
 import { error as logError } from 'tauri-plugin-log-api';
 import { invoke } from '@tauri-apps/api';
+import { recognizeScreenshot } from '../../utils/recognize_first';
 
 import { getServiceName, whetherPluginService } from '../../utils/service_instance';
 import * as builtinTranslateServices from '../../services/translate';
@@ -101,7 +102,7 @@ async function translateForPaste(text) {
     for (const instanceKey of serviceList) {
         const config = (await store.get(instanceKey)) ?? {};
         if (!(config.enable ?? true)) continue;
-        ((config.auto ?? true) ? automatic : manual).push(instanceKey);
+        (config.auto ?? true ? automatic : manual).push(instanceKey);
     }
 
     let lastError = new Error('No translate service configured');
@@ -188,6 +189,16 @@ export default function SelToolbar() {
             setFailed(null);
             setDone(null);
         });
+        return () => {
+            unlisten.then((f) => f());
+        };
+    }, []);
+
+    // Global hotkeys (Config > Hotkeys) run these actions without showing the bar.
+    // The handler is kept in a ref so it always sees the latest functions.
+    const hotkeyRef = useRef(null);
+    useEffect(() => {
+        const unlisten = listen('sel_toolbar_hotkey', (event) => hotkeyRef.current?.(event.payload));
         return () => {
             unlisten.then((f) => f());
         };
@@ -300,6 +311,21 @@ export default function SelToolbar() {
         },
         copy: { title: t('translate.copy'), icon: <LuCopy />, onClick: onCopy },
     };
+    hotkeyRef.current = async (action) => {
+        try {
+            if (action === 'translate_copy') await onTranslateCopy();
+            else if (action === 'replace') await onReplace();
+            else if (action === 'speak') await onVoice();
+            else if (action === 'ocr_copy' || action === 'ocr_translate_copy') {
+                const text = await recognizeScreenshot();
+                const out = action === 'ocr_copy' ? text : await translateForPaste(text);
+                await writeText(out);
+                sendNotification({ title: '673Trans', body: out.length > 120 ? out.slice(0, 120) + '…' : out });
+            }
+        } catch (e) {
+            fail(action, e);
+        }
+    };
     const buttons = (enabledActions ?? DEFAULT_ACTIONS)
         .filter((name) => name in actions)
         .map((name) => ({ name, ...actions[name] }));
@@ -334,7 +360,9 @@ export default function SelToolbar() {
                         )}
                         {display !== 'icon' && (
                             <span className='sel-toolbar-label'>
-                                {speaking && button.name === 'speak' ? t('translate.stop') : t(`config.toolbar.short.${button.name}`)}
+                                {speaking && button.name === 'speak'
+                                    ? t('translate.stop')
+                                    : t(`config.toolbar.short.${button.name}`)}
                             </span>
                         )}
                     </button>
