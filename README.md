@@ -31,6 +31,10 @@
 
 <br clear="right"/>
 
+**Dịch và thay thế**: bôi đen một câu, bấm nút thay thế, bản dịch được dán đè đúng chỗ đang chọn, không cần copy-paste.
+
+<p align="center"><img src="asset/ui-replace-v2.png" width="880"/></p>
+
 ### Dịch bằng AI: Trau chuốt, Viết lại / chính tả, Tóm tắt
 
 Có sẵn DeepSeek, Claude, GPT, Gemini và "Tương thích OpenAI" (OpenRouter, Qwen, Kimi, SiliconFlow, LM Studio…). Ngay dưới ô nhập của cửa sổ dịch có 3 nút chế độ; bấm một nút để AI xử lý đoạn đang chọn, bấm lại để quay về dịch thường. Ba chế độ chỉ chạy với dịch vụ AI (Google, Bing… sẽ báo không hỗ trợ).
