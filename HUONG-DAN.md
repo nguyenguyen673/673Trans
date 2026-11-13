@@ -14,7 +14,7 @@ Bản Pot riêng của Nguyen, fork từ [pot-app/pot-desktop](https://github.co
 8. **Trang Phím tắt mới**: mỗi hành động một phím (bấm nút bàn phím rồi nhấn tổ hợp), trạng thái Đã tắt/Đang bật/Thất bại. Có bật/tắt tất cả phím tắt, bật/tắt trợ lý chọn, dịch+chép / dịch+thay thế / đọc to vùng chọn, OCR+chép, dịch ảnh+chép, và phím chuyển cặp ngôn ngữ đích. Code: `src/window/Config/pages/Hotkey/index.jsx`, `src-tauri/src/hotkey.rs`.
 9. **Tự cập nhật từ GitHub Releases** (`src-tauri/src/updater.rs`): mở app là kiểm tra bản mới; Release phải có file `.exe` đính kèm và tag dạng `v3.20.0`. Tắt ở Cài đặt chung.
 10. **Từ điển** (trang Dịch vụ → Từ điển): tô một từ rồi bấm icon quyển sách, hoặc dùng phím tắt, popup nhỏ hiện ngay cạnh con trỏ. Có 3 từ điển, đổi bằng menu ở góc popup: **Anh–Việt offline** (Hồ Ngọc Đức, 103k từ, nhúng sẵn trong exe: lần đầu mở app tự giải nén ra thư mục cấu hình, file có sẵn ở đó thì giữ nguyên; có tra ngược Việt → Anh và gợi ý từ gần giống), **Wiktionary kiểu Cambridge** (IPA UK/US, giọng ghi âm thật, định nghĩa và câu ví dụ; lưu đệm vào máy), **Từ điển AI** (AI viết mục từ điển, có hãng AI + khoá API + mô hình riêng ở Dịch vụ → Từ điển → Từ điển AI, không dùng chung với danh sách dịch; đọc bằng TTS của bạn). Nút ⭐ lưu từ vào sổ từ vựng, nút đồng hồ xem lịch sử tra, ô tìm trên cùng để gõ từ (có phím tắt và icon "Gõ từ" trên thanh trợ lý). Nút "Giải thích bằng AI" chỉ chạy khi bấm.
-11. **Trau chuốt / Tóm tắt** ngay trong cửa sổ dịch (chỉ với dịch vụ AI).
+11. **Trau chuốt / Viết lại, chính tả / Tóm tắt** ngay trong cửa sổ dịch (chỉ với dịch vụ AI).
 12. **Công tắc bật/tắt** cho từng dịch vụ (dịch, OCR, giọng nói, từ điển, sổ từ vựng) mà không phải xoá. Cửa sổ cài đặt và popup từ điển nhớ kích thước.
 
 Mọi thứ khác giữ nguyên. Bản này dùng chung cấu hình và plugin với Pot gốc (`%APPDATA%\com.pot-app.desktop`), nên plugin TTS, từ điển, OCR đã cài vẫn chạy. Vì vậy **không mở được cùng lúc với Pot gốc**: thoát Pot gốc ở khay hệ thống trước.
@@ -33,7 +33,7 @@ Chưa làm: chọn chữ bằng Shift + mũi tên chưa bật thanh.
 
 ## Số phiên bản
 
-Mỗi bản build có số riêng, xem ở tooltip của icon khay hệ thống hoặc trang Giới thiệu (bản này: 3.22.1). Đổi số ở `version` trong `src-tauri/tauri.conf.json`.
+Mỗi bản build có số riêng, xem ở tooltip của icon khay hệ thống hoặc trang Giới thiệu (bản này: 3.23.0). Đổi số ở `version` trong `src-tauri/tauri.conf.json`.
 
 ## Code nằm ở đâu
 

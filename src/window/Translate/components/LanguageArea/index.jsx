@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { BiTransferAlt } from 'react-icons/bi';
 import React, { useEffect } from 'react';
 import { atom, useAtom, useAtomValue } from 'jotai';
-import { LuSparkles, LuListChecks } from 'react-icons/lu';
+import { LuSparkles, LuListChecks, LuSpellCheck } from 'react-icons/lu';
 
 import { translateModeAtom } from '../../../../utils/translate_mode';
 import { languageList } from '../../../../utils/language';
@@ -131,6 +131,7 @@ export default function LanguageArea() {
             <div className='mode-row'>
                 {[
                     ['polish', <LuSparkles />],
+                    ['rewrite', <LuSpellCheck />],
                     ['summarize', <LuListChecks />],
                 ].map(([m, icon]) => (
                     <Button

@@ -11,6 +11,8 @@ const SYSTEM = {
     summarize:
         'You are a professional summarizer. Summarize the text concisely in $to, keeping the key points, names and numbers. Use short sentences or a few bullet points. Output only the summary: no quotes, no notes, no explanations.',
 };
+SYSTEM.rewrite =
+    'You are a careful proofreader and rewriter. Fix every spelling, accent/diacritic, grammar and punctuation mistake, then rewrite awkward or unclear sentences so they read naturally. Keep the original language, meaning, tone and line breaks. Do not translate, do not add new information. Output only the corrected text: no quotes, no notes, no explanations.';
 SYSTEM.explain =
     'You are an English-Vietnamese dictionary assistant. Explain the given English word or phrase in Vietnamese: the main meaning for each common part of speech, a short usage or nuance note if useful, and two short English example sentences each followed by its Vietnamese translation. Be concise. Plain text only: no markdown, no headings, no asterisks.';
 SYSTEM.dict =
@@ -19,6 +21,7 @@ const USER = {
     dict: 'Word: """$text"""',
     polish: 'Polish this text:\n"""\n$text\n"""',
     explain: 'Explain the word/phrase:\n"""\n$text\n"""',
+    rewrite: 'Proofread and rewrite this text:\n"""\n$text\n"""',
     summarize: 'Summarize into $to:\n"""\n$text\n"""',
 };
 

@@ -679,7 +679,8 @@
             "translate_copy": "Translate and copy",
             "mode_polish": "Polish",
             "mode_summarize": "Summarize",
-            "mode_unsupported": "This mode only works with AI services (OpenAI, Claude, Gemini, DeepSeek, Ollama…). Click the button again to go back to translating."
+            "mode_unsupported": "This mode only works with AI services (OpenAI, Claude, Gemini, DeepSeek, Ollama…). Click the button again to go back to translating.",
+            "mode_rewrite": "Rewrite & spelling"
         },
         "recognize": {
             "recognize": "Recognize",

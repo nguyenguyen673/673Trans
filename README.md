@@ -33,7 +33,7 @@
 <img src="asset/f-ai.png" width="400"/>
 
 - Có sẵn DeepSeek, Claude, GPT, Gemini và "Tương thích OpenAI" (OpenRouter, Qwen, Kimi, SiliconFlow, LM Studio…).
-- Nút **Trau chuốt** và **Tóm tắt** ngay trong cửa sổ dịch.
+- Nút **Trau chuốt**, **Viết lại, chính tả** và **Tóm tắt** ngay trong cửa sổ dịch.
 - Công tắc nguồn cho từng dịch vụ: tắt thì chỉ dịch khi bạn mở thẻ của nó.
 
 **Từ điển** (tô một từ, bấm icon quyển sách hoặc dùng phím tắt)

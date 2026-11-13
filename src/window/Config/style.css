@@ -619,3 +619,15 @@
 .hotkey-btn svg {
     margin-right: 4px;
 }
+
+.hotkey-btn {
+    width: 32px;
+    min-width: 32px;
+    padding: 0;
+}
+
+.hotkey-btn svg {
+    margin-right: 0;
+    width: 17px;
+    height: 17px;
+}

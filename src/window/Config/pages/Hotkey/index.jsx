@@ -3,8 +3,8 @@
 //  - status: Off (empty) / Active / Failed (another app already uses that combination)
 // Rust side: src-tauri/src/hotkey.rs (add a new action there, then add a row here).
 import { unregister, isRegistered } from '@tauri-apps/api/globalShortcut';
-import { Button, Chip, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react';
-import { LuKeyboard, LuX, LuPlus, LuArrowRightLeft } from 'react-icons/lu';
+import { Button, Chip, Tooltip, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/react';
+import { LuKeyboard, LuTrash2, LuX, LuPlus, LuArrowRightLeft } from 'react-icons/lu';
 import toast, { Toaster } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import React, { useEffect, useState } from 'react';
@@ -138,27 +138,33 @@ function HotkeyControl({ value, onSet }) {
                     <span className='hotkey-hint'>{t('config.hotkey.not_set')}</span>
                 )}
             </div>
-            <Button
-                size='sm'
-                className='hotkey-btn'
-                variant={recording ? 'solid' : 'flat'}
-                color='primary'
-                startContent={<LuKeyboard />}
-                onPress={() => setRecording(!recording)}
-            >
-                {recording ? t('config.hotkey.cancel') : value ? t('config.hotkey.change') : t('config.hotkey.assign')}
-            </Button>
-            <Button
-                size='sm'
-                className='hotkey-btn'
-                variant='flat'
-                color='danger'
-                startContent={<LuX />}
-                isDisabled={!value}
-                onPress={() => onSet('', value)}
-            >
-                {t('config.hotkey.clear_short')}
-            </Button>
+            <Tooltip content={recording ? t('config.hotkey.cancel') : value ? t('config.hotkey.change') : t('config.hotkey.assign')}>
+                <Button
+                    isIconOnly
+                    size='sm'
+                    className='hotkey-btn'
+                    variant={recording ? 'solid' : 'flat'}
+                    color='primary'
+                    onPress={() => setRecording(!recording)}
+                >
+                    {recording ? <LuX /> : <LuKeyboard />}
+                </Button>
+            </Tooltip>
+            <Tooltip content={t('config.hotkey.clear')}>
+                <span>
+                    <Button
+                        isIconOnly
+                        size='sm'
+                        className='hotkey-btn'
+                        variant='flat'
+                        color='danger'
+                        isDisabled={!value}
+                        onPress={() => onSet('', value)}
+                    >
+                        <LuTrash2 />
+                    </Button>
+                </span>
+            </Tooltip>
             <Chip
                 size='sm'
                 variant='flat'
