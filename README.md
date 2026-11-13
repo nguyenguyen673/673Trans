@@ -136,6 +136,6 @@ Hướng dẫn chi tiết, chỗ sửa từng phần của giao diện và cách
 
 ## Ghi công và giấy phép
 
-673Trans là bản fork của [Pot](https://github.com/pot-app/pot-desktop) 3.0.7 (dự án gốc đã ngừng cập nhật), giữ nguyên giấy phép [GPL-3.0](LICENSE). Cảm ơn tác giả và những người đóng góp cho Pot. Bản này dùng chung cấu hình và plugin với Pot nên **không chạy cùng lúc với Pot**.
+673Trans dùng base của [Pot](https://github.com/pot-app/pot-desktop) (dự án gốc đã ngừng cập nhật từ 2024), giữ nguyên giấy phép [GPL-3.0](LICENSE).
 
 Dữ liệu từ điển Anh–Việt offline là của [Dự án Từ điển tiếng Việt miễn phí](https://www.informatik.uni-leipzig.de/~duc/Dict/) (Hồ Ngọc Đức); Wiktionary thuộc Wikimedia Foundation, nội dung theo CC BY-SA, dữ liệu trích qua [kaikki.org](https://kaikki.org).
