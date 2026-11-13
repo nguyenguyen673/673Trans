@@ -163,8 +163,11 @@ pub async fn install_github_update(app_handle: tauri::AppHandle, url: String) ->
     if data.len() < 1_000_000 || &data[..2] != b"MZ" {
         return Err("File tải về không phải bản cài hợp lệ".to_string());
     }
-    // Integrity check against the SHA-256 GitHub lists for this asset
-    if !info.sha256.is_empty() {
+    // Integrity check against the SHA-256 GitHub lists for this asset. No digest = no update.
+    if info.sha256.len() != 64 {
+        return Err("Bản phát hành không có mã SHA-256 để xác minh, đã huỷ cập nhật".to_string());
+    }
+    {
         use sha2::{Digest, Sha256};
         let got = Sha256::digest(&data)
             .iter()
@@ -173,8 +176,6 @@ pub async fn install_github_update(app_handle: tauri::AppHandle, url: String) ->
         if got != info.sha256 {
             return Err("Mã SHA-256 của file tải về không khớp, đã huỷ cập nhật".to_string());
         }
-    } else {
-        warn!("Release asset has no SHA-256 digest, skipping hash check");
     }
     std::fs::write(&new_path, &data).map_err(|e| e.to_string())?;
 

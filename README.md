@@ -14,8 +14,8 @@
 <p align="center">
   <a href="https://github.com/nguyenguyen673/673Trans/releases/latest"><img src="https://img.shields.io/badge/%E2%AC%87%20T%E1%BA%A3i%20673Trans%20(.exe)-Releases-bff03a?style=for-the-badge&labelColor=0b2a12" alt="Tải 673Trans"/></a>
 </p>
-<p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.4/673Trans-3.27.4.exe">Tải trực tiếp 673Trans-3.27.4.exe</a> &middot; <a href="https://github.com/nguyenguyen673/673Trans/releases">Tất cả bản phát hành</a></p>
-<p align="center">Windows 10/11 &middot; Chỉ cần 1 file <code>.exe</code>, Không cần cài thêm gì &middot; Phiên bản hiện tại: 3.27.4</p>
+<p align="center"><a href="https://github.com/nguyenguyen673/673Trans/releases/download/v3.27.5/673Trans-3.27.5.exe">Tải trực tiếp 673Trans-3.27.5.exe</a> &middot; <a href="https://github.com/nguyenguyen673/673Trans/releases">Tất cả bản phát hành</a></p>
+<p align="center">Windows 10/11 &middot; Chỉ cần 1 file <code>.exe</code>, Không cần cài thêm gì &middot; Phiên bản hiện tại: 3.27.5</p>
 
 <hr/>
 

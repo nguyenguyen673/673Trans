@@ -206,7 +206,7 @@ fn run_binary_inner(
             None::<&tauri::Window>,
             "673Trans - Plugin muốn chạy chương trình",
             format!(
-                "Plugin \"{}\" muốn chạy:\n\n{} {}\n\nChỉ cho phép nếu bạn tin plugin này. Cho phép?",
+                "Plugin \"{}\" muốn chạy:\n\n{} {}\n\nNếu đồng ý, plugin này được chạy chương trình trên với BẤT KỲ tham số nào, và sẽ không hỏi lại. Chỉ cho phép nếu bạn tin plugin này.",
                 plugin_name,
                 cmd_name,
                 args.join(" ")
