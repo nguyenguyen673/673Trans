@@ -84,7 +84,8 @@ export default function Dict() {
         setState(null);
         setProns([]);
         stopAudio();
-        if (!skipAi) explain(clean);
+        aiId.current++;
+        setAi({ text: '', loading: false, error: '', name: '' });
         appWindow.show();
         appWindow.setFocus();
         const list = listRef.current ?? ['ev_offline'];
@@ -103,6 +104,25 @@ export default function Dict() {
             setState(e?.message === 'NO_DATA' ? { noData: true } : { error: String(e?.message ?? e) });
         }
     };
+
+    // remember the size the user gives the popup
+    useEffect(() => {
+        let timer = null;
+        const unlisten = appWindow.onResized(({ payload }) => {
+            clearTimeout(timer);
+            timer = setTimeout(async () => {
+                const factor = await appWindow.scaleFactor();
+                const size = payload.toLogical(factor);
+                await store.set('dict_window_w', Math.round(size.width));
+                await store.set('dict_window_h', Math.round(size.height));
+                await store.save();
+            }, 400);
+        });
+        return () => {
+            clearTimeout(timer);
+            unlisten.then((f) => f());
+        };
+    }, []);
 
     useEffect(() => {
         if (serviceList === null) return;
@@ -298,6 +318,14 @@ export default function Dict() {
                             </div>
                         </div>
                     ))}
+                {entry && !ai.loading && !ai.text && !ai.error && (
+                    <button
+                        className='dict-ai-btn'
+                        onClick={() => explain(word)}
+                    >
+                        <LuSparkles /> {t('dict.ai_title')}
+                    </button>
+                )}
                 {(ai.loading || ai.text || ai.error) && (
                     <div className='dict-ai'>
                         <div className='dict-ai-head'>

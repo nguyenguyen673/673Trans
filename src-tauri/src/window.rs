@@ -475,7 +475,17 @@ pub fn dict_window(text: String) {
     window.set_skip_taskbar(true).unwrap();
     let monitor = window.current_monitor().unwrap().unwrap();
     let dpi = monitor.scale_factor();
-    let (w, h) = (400.0 * dpi, 440.0 * dpi);
+    // size the user last gave the popup (logical px, saved by the frontend)
+    let saved = |k: &str, d: f64, min: f64| {
+        crate::config::get(k)
+            .and_then(|v| v.as_f64())
+            .unwrap_or(d)
+            .max(min)
+    };
+    let (w, h) = (
+        saved("dict_window_w", 400.0, 300.0) * dpi,
+        saved("dict_window_h", 440.0, 200.0) * dpi,
+    );
     window.set_size(tauri::PhysicalSize::new(w, h)).unwrap();
     let mp = monitor.position();
     let ms = monitor.size();
