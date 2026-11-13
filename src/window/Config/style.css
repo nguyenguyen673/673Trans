@@ -637,3 +637,16 @@
 .light .preview-toggle:hover {
     color: hsl(var(--nextui-foreground));
 }
+
+/* Bigger icons in hotkey buttons (3.27.1) */
+.hotkey-btn {
+    width: 36px !important;
+    min-width: 36px !important;
+    height: 36px !important;
+}
+.hotkey-btn svg {
+    width: 22px !important;
+    height: 22px !important;
+    max-width: none !important;
+    flex-shrink: 0;
+}

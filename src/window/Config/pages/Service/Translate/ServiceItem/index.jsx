@@ -83,7 +83,7 @@ export default function ServiceItem(props) {
                         <Button
                             isIconOnly
                             size='sm'
-                            variant={serviceInstanceConfig['auto'] ?? true ? 'flat' : 'light'}
+                            variant={serviceInstanceConfig['auto'] ?? true ? 'solid' : 'flat'}
                             color={serviceInstanceConfig['auto'] ?? true ? 'primary' : 'default'}
                             isDisabled={!(serviceInstanceConfig['enable'] ?? true)}
                             onPress={() => {
@@ -93,7 +93,7 @@ export default function ServiceItem(props) {
                                 });
                             }}
                         >
-                            <LuPower className='text-[17px]' />
+                            <LuPower className='text-[18px]' strokeWidth={2.4} />
                         </Button>
                     </Tooltip>
                     <Spacer x={3} />

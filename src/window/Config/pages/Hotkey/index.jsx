@@ -143,11 +143,11 @@ function HotkeyControl({ value, onSet }) {
                     isIconOnly
                     size='sm'
                     className='hotkey-btn'
-                    variant={recording ? 'solid' : 'flat'}
+                    variant='solid'
                     color='primary'
                     onPress={() => setRecording(!recording)}
                 >
-                    {recording ? <LuX /> : <LuKeyboard />}
+                    {recording ? <LuX size={20} /> : <LuKeyboard size={22} />}
                 </Button>
             </Tooltip>
             <Tooltip content={t('config.hotkey.clear')}>
